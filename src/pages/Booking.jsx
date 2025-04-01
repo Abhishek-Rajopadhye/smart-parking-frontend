@@ -290,114 +290,113 @@ const Booking = ({ spot_information, user_id }) => {
 
 	return (
 		<Dialog open={true}>
-		<LocalizationProvider dateAdapter={AdapterDateFns}>
-			<Box className="form-container">
+			<LocalizationProvider dateAdapter={AdapterDateFns}>
 				<Box className="form-container">
-					{/* Circular Button to Go Back */}
-					<IconButton
-						onClick={() => navigate(-1)}
-						sx={{
-							position: "relative",
-							bottom: "20%",
-							right: "5%",
-							backgroundColor: "white",
-							border: "1px solid gray",
-							"&:hover": { backgroundColor: "lightgray" },
-						}}
-					>
-						<ArrowBackIcon />
-					</IconButton>
-					<Box className="form-box">
-						<Typography variant="h5" gutterBottom align="center">
-							Book Your Parking Spot
-						</Typography>
+					<Box className="form-container">
+						{/* Circular Button to Go Back */}
+						<IconButton
+							onClick={() => navigate(-1)}
+							sx={{
+								position: "relative",
+								bottom: "20%",
+								right: "5%",
+								backgroundColor: "white",
+								border: "1px solid gray",
+								"&:hover": { backgroundColor: "lightgray" },
+							}}
+						>
+							<ArrowBackIcon />
+						</IconButton>
+						<Box className="form-box">
+							<Typography variant="h5" gutterBottom align="center">
+								Book Your Parking Spot
+							</Typography>
 
-						<Grid container spacing={2}>
-							<Grid item xs={12}>
-								<TextField
-									fullWidth
-									label="Total Slots"
-									type="number"
-									value={totalSlots}
-									onChange={(e) => setTotalSlots(Number(e.target.value))}
-								/>
-							</Grid>
+							<Grid container spacing={2}>
+								<Grid item xs={12}>
+									<TextField
+										fullWidth
+										label="Total Slots"
+										type="number"
+										value={totalSlots}
+										onChange={(e) => setTotalSlots(Number(e.target.value))}
+									/>
+								</Grid>
 
-							<Grid item xs={12}>
-								<DateTimePicker
-									label="Start Time"
-									value={startTime}
-									onChange={setStartTime}
-									renderInput={(params) => <TextField {...params} fullWidth />}
-								/>
-							</Grid>
+								<Grid item xs={12}>
+									<DateTimePicker
+										label="Start Time"
+										value={startTime}
+										onChange={setStartTime}
+										renderInput={(params) => <TextField {...params} fullWidth />}
+									/>
+								</Grid>
 
-							<Grid item xs={12}>
-								<DateTimePicker
-									label="End Time"
-									value={endTime}
-									onChange={setEndTime}
-									renderInput={(params) => <TextField {...params} fullWidth />}
-								/>
-							</Grid>
+								<Grid item xs={12}>
+									<DateTimePicker
+										label="End Time"
+										value={endTime}
+										onChange={setEndTime}
+										renderInput={(params) => <TextField {...params} fullWidth />}
+									/>
+								</Grid>
 
-							<Grid item xs={12}>
-								<Button variant="contained" color="secondary" fullWidth onClick={calculateAmount}>
-									Book Spot
-								</Button>
-								{paymentDetails && (
-									<Button variant="contained" color="primary" onClick={downloadPDF} sx={{ mt: 2, mr: 2 }}>
-										Download Receipt
+								<Grid item xs={12}>
+									<Button variant="contained" color="secondary" fullWidth onClick={calculateAmount}>
+										Book Spot
 									</Button>
-								)}
-								<Button
-									variant="contained"
-									color="primary"
-									onClick={() => {
-										navigate("/home");
-									}}
-									sx={{ mt: 2 }}
-								>
-									GO HOME
-								</Button>
+									{paymentDetails && (
+										<Button variant="contained" color="primary" onClick={downloadPDF} sx={{ mt: 2, mr: 2 }}>
+											Download Receipt
+										</Button>
+									)}
+									<Button
+										variant="contained"
+										color="primary"
+										onClick={() => {
+											navigate("/home");
+										}}
+										sx={{ mt: 2 }}
+									>
+										GO HOME
+									</Button>
+								</Grid>
 							</Grid>
-						</Grid>
+						</Box>
 					</Box>
 				</Box>
-			</Box>
-			<Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-				<DialogTitle>Total Amount</DialogTitle>
-				<DialogContent>
-					<Typography variant="h6">You need to pay ₹{totalAmount}</Typography>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={() => setOpenDialog(false)} color="secondary">
-						Cancel
-					</Button>
-					<Button
-						onClick={() => {
-							setOpenDialog(false);
-							processPayment();
-						}}
-						color="primary"
-					>
-						OK
-					</Button>
-				</DialogActions>
-			</Dialog>
+				<Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+					<DialogTitle>Total Amount</DialogTitle>
+					<DialogContent>
+						<Typography variant="h6">You need to pay ₹{totalAmount}</Typography>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={() => setOpenDialog(false)} color="secondary">
+							Cancel
+						</Button>
+						<Button
+							onClick={() => {
+								setOpenDialog(false);
+								processPayment();
+							}}
+							color="primary"
+						>
+							OK
+						</Button>
+					</DialogActions>
+				</Dialog>
 
-			<Snackbar
-				open={openSnackbar.open}
-				autoHideDuration={3000}
-				onClose={() => setOpenSnackbar({ ...openSnackbar, open: false })}
-			>
-				<Alert severity={openSnackbar.severity} variant="filled">
-					{openSnackbar.message}
-				</Alert>
-			</Snackbar>
-		</LocalizationProvider>
+				<Snackbar
+					open={openSnackbar.open}
+					autoHideDuration={3000}
+					onClose={() => setOpenSnackbar({ ...openSnackbar, open: false })}
+				>
+					<Alert severity={openSnackbar.severity} variant="filled">
+						{openSnackbar.message}
+					</Alert>
+				</Snackbar>
+			</LocalizationProvider>
 		</Dialog>
-
 	);
 };
 

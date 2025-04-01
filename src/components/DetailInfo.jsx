@@ -219,4 +219,4 @@ const itemData = [
 
 const days = ["Monday", "tuesday", "wednesday"];
 
-export default DetailInfo;
+export { DetailInfo };

@@ -84,7 +84,6 @@ const Spot = ({ userId }) => {
 			return;
 		}
 
-
 		if (latitude === "" || longitude === "") {
 			setOpenSnackbar({ open: true, message: "Invalid Address", severity: "error" });
 			return;
