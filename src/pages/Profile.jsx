@@ -34,7 +34,7 @@ const Profile = () => {
 		const token = localStorage.getItem("token");
 		const user_id = String(localStorage.getItem("user_id"));
 		try {
-			const response = await axios.get(`http://localhost:8000/users/profile/${user_id}`, {
+			const response = await axios.get(`${import.meta.env.VITE_APP_BACKEND_URL}/users/profile/${user_id}`, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 			const data = response.data;
@@ -81,7 +81,7 @@ const Profile = () => {
 	const handleSave = async (updatedUser) => {
 		try {
 			const user_id = String(localStorage.getItem("user_id"));
-			const response = await axios.put(`http://localhost:8000/users/profile/${user_id}`, updatedUser, {
+			const response = await axios.put(`${import.meta.env.VITE_APP_BACKEND_URL}/users/profile/${user_id}`, updatedUser, {
 				headers: {
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${localStorage.getItem("token")}`,

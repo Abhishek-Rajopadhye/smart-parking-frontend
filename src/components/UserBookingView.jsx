@@ -10,7 +10,7 @@ const UserBookingView = () => {
 
 	useEffect(() => {
 		const fetchDetails = async () => {
-			const response = await axios.get(`http://localhost:8000/bookings/user/${user.id}`);
+			const response = await axios.get(`${import.meta.env.VITE_APP_BACKEND_URL}/bookings/user/${user.id}`);
 			if (response.status == 200) {
 				setBookings(response.data);
 			}

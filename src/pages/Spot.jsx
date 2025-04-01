@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Box, Typography, TextField, Button, Grid, Snackbar, Alert, CircularProgress, IconButton } from "@mui/material";
+import { Box, Typography, TextField, Button, Grid, Snackbar, Alert, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "../style/spot.css";
 
 const Spot = ({ userId }) => {
@@ -60,21 +59,13 @@ const Spot = ({ userId }) => {
 
 	const validateForm = () => {
 		if (!spotTitle.trim()) return "Spot Title is required";
-
 		if (!spotAddress.trim()) return "Address is required";
-
 		if (!openTime) return "Open Time is required";
-
 		if (!closeTime) return "Close Time is required";
-
 		if (!hourlyRate || hourlyRate <= 0) return "Hourly Rate must be positive";
-
 		if (!totalSlots || totalSlots <= 0) return "Total Slots must be a positive number";
-
 		if (!availableSlots || availableSlots < 0) return "Available Slots cannot be negative";
-
 		if (parseInt(availableSlots) > parseInt(totalSlots)) return "Available Slots cannot exceed Total Slots";
-
 		if (!Object.values(openDays).includes(true)) return "At least one open day must be selected";
 
 		return null;
@@ -83,7 +74,6 @@ const Spot = ({ userId }) => {
 	const handleAddSpot = async () => {
 		if (!(latitude >= 6.554607 && latitude <= 35.674545 && longitude >= 68.162385 && longitude <= 97.395561)) {
 			setOpenSnackbar({ open: true, message: "Only India Coordinates allowed", severity: "error" });
-
 			return;
 		}
 
@@ -91,38 +81,26 @@ const Spot = ({ userId }) => {
 
 		if (error) {
 			setOpenSnackbar({ open: true, message: error, severity: "error" });
-
 			return;
 		}
 
-		//fetchCoordinates();
 
 		if (latitude === "" || longitude === "") {
 			setOpenSnackbar({ open: true, message: "Invalid Address", severity: "error" });
-
 			return;
 		}
 
 		setLoading(true);
 
 		console.log("Latitude:", latitude);
-
 		console.log("Longitude:", longitude);
-
 		console.log("Spot Title:", spotTitle);
-
 		console.log("Spot Address:", spotAddress);
-
 		console.log("Spot Description:", spotDescription);
-
 		console.log("Open Time:", openTime);
-
 		console.log("Close Time:", closeTime);
-
 		console.log("Hourly Rate:", hourlyRate);
-
 		console.log("Total Slots:", totalSlots);
-
 		console.log("Available Slots:", availableSlots);
 
 		let open_days = [];
@@ -134,63 +112,43 @@ const Spot = ({ userId }) => {
 		}
 
 		let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
-
 		let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
-
 		let new_open_time = openTime + " " + open;
-
 		let new_close_time = closeTime + " " + close;
 
 		console.log("Open Days:", open_days);
 
 		try {
-			const response = await axios.post("http://localhost:8000/spots/add-spot/", {
+			const response = await axios.post(`${import.meta.env.VITE_APP_BACKEND_URL}/spots/add-spot/`, {
 				owner_id: userId,
-
 				spot_title: spotTitle,
-
 				spot_address: spotAddress,
-
 				spot_description: spotDescription,
-
 				open_time: new_open_time,
-
 				close_time: new_close_time,
-
 				hourly_rate: hourlyRate,
-
 				total_slots: totalSlots,
-
 				available_slots: availableSlots,
-
 				latitude,
-
 				longitude,
-
 				available_days: open_days,
-
 				image: image || "",
 			});
 
 			if (response.status === 200) {
 				setOpenSnackbar({ open: true, message: "Parking spot added successfully!", severity: "success" });
-
 				setSpotTitle("");
 				setSpotAddress("");
 				setSpotDescription("");
-
 				setOpenTime("");
 				setCloseTime("");
 				setHourlyRate("");
-
 				setTotalSlots("");
 				setAvailableSlots("");
 				setImage(null);
 				setImagePreview(null);
-
 				setLatitude("");
 				setLongitude("");
-
 				setOpenDays({ Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false, Sat: false });
 			}
 		} catch (error) {

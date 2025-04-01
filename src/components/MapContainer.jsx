@@ -39,7 +39,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
     useEffect(() => {
         const fetchMarkers = async () => {
             try {
-                const response = await axios.get("http://127.0.0.1:8000/spotdetails/getparkingspot");
+                const response = await axios.get(`${import.meta.env.VITE_APP_BACKEND_URL}/spotdetails/getparkingspot`);
                 setMarkers(response.data);
                 setError(null);
 

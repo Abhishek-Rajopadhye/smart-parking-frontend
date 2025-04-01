@@ -29,7 +29,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
 	useEffect(() => {
 		const fetchDetails = async () => {
 			try {
-				const response = await axios.get(`http://127.0.0.1:8000/review/spot/${selectedMarker.spot_id}`);
+				const response = await axios.get(`${import.meta.env.VITE_APP_BACKEND_URL}/review/spot/${selectedMarker.spot_id}`);
 				const data = await response.json();
 				console.log("Received data ", data);
 				setReviews(data);
