@@ -1,0 +1,88 @@
+html, body {
+  margin: 0;
+  padding-top: 6%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.form-container {
+  right: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50vw;
+  height: 100vh;
+  transition: all 0.3s ease-in-out;
+}
+
+.form-box {
+  width: 500px;
+  max-width: 90%; 
+  /* padding-top: 200px; */
+  background: white;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  text-align: center;
+}
+
+@media screen and (max-width: 1024px) {
+  html, body {
+    margin: 0;
+    padding-top: 10%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .form-container {
+    width: 70vw; 
+    justify-content: flex-start; 
+    padding-left: 5vw;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  html, body {
+    margin: 0;
+    padding-top: 12%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .form-container {
+    width: 80vw; 
+    padding-left: 3vw;
+    right:5%;
+  }
+
+  .form-box {
+    width: 80%;
+    padding: 15px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  html, body {
+    margin: 0;
+    padding-top: 24%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .form-container {
+    width: 100vw; 
+    padding-left: 2vw;
+  }
+
+  .form-box {
+    width: 95%;
+    padding: 10px;
+  }
+}
