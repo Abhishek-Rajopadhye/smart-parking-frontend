@@ -17,11 +17,9 @@ const NavBar = ({ user, logout }) => {
 			sx={{
 				width: 310,
 				height: "100vh",
-				display: "flex",
-				flexDirection: "column",
-				justifyContent: "space-between",
 				borderRight: "1px solid #ddd",
 				padding: 2,
+				zIndex:1
 			}}
 		>
 			<Box>

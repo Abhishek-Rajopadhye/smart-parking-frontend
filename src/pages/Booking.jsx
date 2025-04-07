@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -17,15 +17,17 @@ import {
 	Alert,
 	IconButton,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "../style/booking.css";
+import { BACKEND_URL } from "../const";
+import { AuthContext } from "../context/AuthContext";
 
 //spot_information is object which hold the all information
-const Booking = ({ spot_information, user_id }) => {
+const Booking = ({ spot_information, open, set_dialog}) => {
 	const navigate = useNavigate();
+	const { user } = useContext(AuthContext)
 	const [totalSlots, setTotalSlots] = useState(1);
 	const [startTime, setStartTime] = useState(null);
 	const [endTime, setEndTime] = useState(null);
@@ -116,7 +118,10 @@ const Booking = ({ spot_information, user_id }) => {
 
 	useEffect(() => {
 		if (paymentStatus) {
-			navigate("/booking");
+			setEndTime("");
+			setStartTime("");
+			setTotalSlots("");
+			// navigate("/booking");
 		}
 	}, [paymentStatus, navigate]);
 
@@ -205,8 +210,8 @@ const Booking = ({ spot_information, user_id }) => {
 				showSnackbar("No Slots availables", "error");
 				return;
 			}
-			orderResponse = await axios.post(`${import.meta.env.VITE_APP_BACKEND_URL}/bookings/book-spot`, {
-				user_id: user_id.toString(),
+			orderResponse = await axios.post(`${BACKEND_URL}/bookings/book-spot`, {
+				user_id: user.id.toString(),
 				spot_id: spot_information.spot_id,
 				total_slots: totalSlots,
 				total_amount: totalAmount,
@@ -226,7 +231,7 @@ const Booking = ({ spot_information, user_id }) => {
 			}
 
 			const options = {
-				key: "rzp_test_JcFPR4o6XJnTf8",
+				key: "rzp_test_82K1eUDvrHocUu",
 				amount: orderData.amount,
 				currency: orderData.currency,
 				name: "Parking Service",
@@ -289,25 +294,11 @@ const Booking = ({ spot_information, user_id }) => {
 	};
 
 	return (
-		<Dialog open={true}>
+		<Dialog open={open}>
 			<LocalizationProvider dateAdapter={AdapterDateFns}>
 				<Box className="form-container">
 					<Box className="form-container">
-						{/* Circular Button to Go Back */}
-						<IconButton
-							onClick={() => navigate(-1)}
-							sx={{
-								position: "relative",
-								bottom: "20%",
-								right: "5%",
-								backgroundColor: "white",
-								border: "1px solid gray",
-								"&:hover": { backgroundColor: "lightgray" },
-							}}
-						>
-							<ArrowBackIcon />
-						</IconButton>
-						<Box className="form-box">
+						<Box className="form-box" 	sx={{mt:0}}>
 							<Typography variant="h5" gutterBottom align="center">
 								Book Your Parking Spot
 							</Typography>
@@ -360,6 +351,16 @@ const Booking = ({ spot_information, user_id }) => {
 									>
 										GO HOME
 									</Button>
+									<Button
+										variant="contained"
+										color="primary"
+										onClick={() => {
+											set_dialog();
+										}}
+										sx={{ mt: 2, ml: 2 }}
+									>
+										Cancel
+									</Button>
 								</Grid>
 							</Grid>
 						</Box>
@@ -397,6 +398,7 @@ const Booking = ({ spot_information, user_id }) => {
 				</Snackbar>
 			</LocalizationProvider>
 		</Dialog>
+
 	);
 };
 

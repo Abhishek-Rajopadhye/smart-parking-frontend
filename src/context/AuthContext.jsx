@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import { BACKEND_URL } from "../const";
 
 /**
  * Authentication context to manage user state and authentication functions.
@@ -24,7 +25,7 @@ const AuthProvider = ({ children }) => {
 			const token = localStorage.getItem("token");
 			const user_id = String(localStorage.getItem("user_id"));
 			try {
-				const response = await axios.get(`${import.meta.env.VITE_APP_BACKEND_URL}/users/profile/${user_id}`, {
+				const response = await axios.get(`${BACKEND_URL}/users/profile/${user_id}`, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
 				const data = response.data;
@@ -45,7 +46,7 @@ const AuthProvider = ({ children }) => {
 	 * @param {string} provider - The OAuth provider (e.g., "google", "facebook").
 	 */
 	const login = (provider) => {
-		window.location.href = `${import.meta.env.VITE_APP_BACKEND_URL}/api/v1/auth/${provider}/login`;
+		window.location.href = `${BACKEND_URL}/api/v1/auth/${provider}/login`;
 	};
 
 	/**

@@ -1,0 +1,5 @@
+.TabPanel {
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+}

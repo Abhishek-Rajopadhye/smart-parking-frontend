@@ -1,88 +1,63 @@
 html, body {
-  margin: 0;
-  padding-top: 6%;
-  height: 100%;
-  display: flex;
+  margin: auto;
+  padding: 0;
+  min-height: 100vh; /* Ensures proper height on all devices */
   justify-content: center;
   align-items: center;
+  overflow: auto;
+  /* background-color: #f4f4f4; Optional: background color */
 }
 
-
 .form-container {
-  right: 10%;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 50vw;
-  height: 100vh;
-  transition: all 0.3s ease-in-out;
+  width: 90vw;
+  max-width: 600px;
+  min-height: 80vh;
+  margin: auto;
 }
 
 .form-box {
-  width: 500px;
-  max-width: 90%; 
-  /* padding-top: 200px; */
+  position: relative;
+  /* left:50%; */
+  margin-top: 50%;
+  width: 100%;
   background: white;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
+  padding: 20px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
 }
 
+/* Ensures form is centered properly */
 @media screen and (max-width: 1024px) {
-  html, body {
-    margin: 0;
-    padding-top: 10%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
   .form-container {
-    width: 70vw; 
-    justify-content: flex-start; 
-    padding-left: 5vw;
+    width: 80vw;
   }
 }
 
 @media screen and (max-width: 768px) {
-  html, body {
-    margin: 0;
-    padding-top: 12%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
   .form-container {
-    width: 80vw; 
-    padding-left: 3vw;
-    right:5%;
+    width: 90vw;
+    padding: 10px;
   }
-
   .form-box {
-    width: 80%;
-    padding: 15px;
+    /* left:30%; */
+    padding-top: 20%;
   }
 }
 
 @media screen and (max-width: 480px) {
-  html, body {
-    margin: 0;
-    padding-top: 24%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
   .form-container {
-    width: 100vw; 
-    padding-left: 2vw;
+    width: 95vw;
   }
-
   .form-box {
-    width: 95%;
-    padding: 10px;
+    /* left:5%; */
+    padding-top: 32%;
   }
 }
