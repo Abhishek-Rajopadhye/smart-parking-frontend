@@ -139,7 +139,7 @@ const AppLayout = () => {
 						)}
 					</Toolbar>
 				</AppBar>
-				<Toolbar />
+				
 			</Box>
 			<Box sx={{ flexGrow: 1 }}>
 				<Drawer
