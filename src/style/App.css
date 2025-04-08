@@ -1,9 +1,9 @@
-
-body,html{
-  width: 100%;
-  align-items: center;
+body,
+html {
+    width: 100%;
+    align-items: center;
 }
 
-#root{
-  width: 100%;
+#root {
+    width: 100%;
 }

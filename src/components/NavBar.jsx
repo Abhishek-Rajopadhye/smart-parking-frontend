@@ -19,7 +19,7 @@ const NavBar = ({ user, logout }) => {
 				height: "100vh",
 				borderRight: "1px solid #ddd",
 				padding: 2,
-				zIndex:1
+				zIndex: 1,
 			}}
 		>
 			<Box>

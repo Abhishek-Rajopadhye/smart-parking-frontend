@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Autocomplete, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button, Container } from "@mui/material";
-import { Search as SearchIcon, FilterAlt as FilterAltIcon } from "@mui/icons-material";
+import { Autocomplete, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Button, Container } from "@mui/material";
+import { Search as SearchIcon } from "@mui/icons-material";
 import { geocodeByAddress, getLatLng } from "react-places-autocomplete";
 
 /**
@@ -13,30 +13,33 @@ import { geocodeByAddress, getLatLng } from "react-places-autocomplete";
  * @returns {JSX.Element} The SearchBar component.
  */
 const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
-    const [address, setAddress] = useState("");
-    const [suggestions, setSuggestions] = useState([]);
-    const [showFilter, setShowFilter] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
-    
+	const [address, setAddress] = useState("");
+	const [suggestions, setSuggestions] = useState([]);
+	const [showFilter, setShowFilter] = useState(false);
+	const [isFocused, setIsFocused] = useState(false);
+
 	/**
 	 * Handles input changes and fetches location suggestions.
 	 *
 	 * @param {Object} event - The input event.
 	 * @param {string} value - The current input value.
 	 */
-    const handleInputChange = (event, value) => {
-        setAddress(value);
-        if (value.length > 2) {
-            const service = new window.google.maps.places.AutocompleteService();
-            service.getPlacePredictions({ input: value ,componentRestrictions:{country:"IN"},types:["geocode"],}, (predictions, status) => {
-                if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-                    setSuggestions(predictions.map(prediction => prediction.description));
-                }
-            });
-        } else {
-            setSuggestions([]);
-        }
-    };
+	const handleInputChange = (event, value) => {
+		setAddress(value);
+		if (value.length > 2) {
+			const service = new window.google.maps.places.AutocompleteService();
+			service.getPlacePredictions(
+				{ input: value, componentRestrictions: { country: "IN" }, types: ["geocode"] },
+				(predictions, status) => {
+					if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+						setSuggestions(predictions.map((prediction) => prediction.description));
+					}
+				}
+			);
+		} else {
+			setSuggestions([]);
+		}
+	};
 
 	/**
 	 * Handles location selection and updates the map.
@@ -54,11 +57,11 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
 		setNewMarker(newSearchMarker);
 		setSelectedMarker(newSearchMarker);
 
-        if (mapRef.current) {
-             mapRef.current.panTo(latLng);
-            mapRef.current.setZoom(14);
-        }
-    };
+		if (mapRef.current) {
+			mapRef.current.panTo(latLng);
+			mapRef.current.setZoom(14);
+		}
+	};
 
 	/**
 	 * Toggles the filter dialog box visibility.
@@ -94,9 +97,6 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
 					/>
 				)}
 			/>
-			<IconButton onClick={handleFilter}>
-				<FilterAltIcon />
-			</IconButton>
 
 			<Dialog open={showFilter} onClose={handleFilter}>
 				<DialogTitle>Filter Options</DialogTitle>
