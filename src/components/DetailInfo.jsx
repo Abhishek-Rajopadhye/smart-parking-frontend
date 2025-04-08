@@ -81,7 +81,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
 	};
 	console.log("ownerrimages ", ownerDetail.profile_picture);
 	return (
-		<Box sx={{ position: "relative", width: "95%", margin: "auto", padding: 3, top: 350 }}>
+		<Box sx={{ position: "relative", width: "95%", margin: "auto", padding: 3}}>
 			<Paper sx={{ padding: 2, textAlign: "left" }}>
 				<CardMedia
 					component="img"
@@ -100,7 +100,6 @@ const DetailInfo = ({ selectedMarker, user }) => {
 					<Paper elevation={6} sx={{ padding: 3, height: "500px", overflow: "hidden" }}>
 						<Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
 							<Avatar alt="Owner" src={ownerDetail.profile_picture} sx={{ mr: 2, width: 56, height: 56 }} />
-
 							<Typography variant="h5">{ownerDetail.name || "Unknown Owner"}</Typography>
 						</Box>
 

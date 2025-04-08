@@ -6,14 +6,11 @@ import { Login } from "./pages/Login";
 import { Profile } from "./pages/Profile";
 import { Booking } from "./pages/Booking";
 import { BookingHistory } from "./pages/BookingHistory";
-import { MySpots } from "./pages/MySpots";
 import { Home } from "./pages/Home";
 import { SearchBar } from "./components/SearchBar2";
 import { Auth } from "./pages/Auth";
 import { Spot } from "./pages/Spot";
-import { AddReview } from "./components/AddReview";
 import DetailInfo from "./components/DetailInfo";
-import { FilterPanel } from "./components/FilterPanel";
 import { MapProvider } from "./context/MapContext";
 
 const AppLayout = () => {
@@ -64,8 +61,6 @@ const AppLayout = () => {
 				return "Profile";
 			case "/booking-history":
 				return "Booking History";
-			case "/my-spots":
-				return "My Spots";
 			case "/spot":
 				return "Add Spot";
 			case "/home":
@@ -93,7 +88,6 @@ const AppLayout = () => {
 		{ label: "Home", path: "/home" },
 		{ label: "Profile", path: "/profile" },
 		{ label: "Booking History", path: "/booking-history" },
-		{ label: "My Spots", path: "/my-spots" },
 	];
 
 	if (!user) {
@@ -153,8 +147,6 @@ const AppLayout = () => {
 					<Route path="/spot" element={<Spot />} />
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
-					<Route path="/my-spots" element={<MySpots />} />
-					<Route path="/add-review" element={<AddReview />} />
 					<Route
 						path="/home"
 						element={
