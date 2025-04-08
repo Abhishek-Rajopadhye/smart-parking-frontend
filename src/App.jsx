@@ -16,7 +16,7 @@ import { Auth } from "./pages/Auth";
 import { Spot } from "./pages/Spot";
 import { AddReview } from "./components/AddReview";
 import DetailInfo from "./components/DetailInfo";
-import FilterPanel from "./components/FilterPanel";
+import { FilterPanel } from "./components/FilterPanel";
 import { MapProvider } from "./context/MapContext";
 
 /**
