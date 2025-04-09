@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Autocomplete, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Button, Container } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
 import { geocodeByAddress, getLatLng } from "react-places-autocomplete";
+import { FilterPanel } from "./FilterPanel";
 
 /**
  * SearchBar component for searching locations and managing map markers.
@@ -12,7 +13,7 @@ import { geocodeByAddress, getLatLng } from "react-places-autocomplete";
  * @param {Object} props.mapRef - Reference to the map object.
  * @returns {JSX.Element} The SearchBar component.
  */
-const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
+const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef, filters, setFilters }) => {
 	const [address, setAddress] = useState("");
 	const [suggestions, setSuggestions] = useState([]);
 	const [showFilter, setShowFilter] = useState(false);
@@ -97,6 +98,7 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
 					/>
 				)}
 			/>
+			<FilterPanel filters={filters} setFilters={setFilters} />
 
 			<Dialog open={showFilter} onClose={handleFilter}>
 				<DialogTitle>Filter Options</DialogTitle>

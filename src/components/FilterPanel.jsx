@@ -10,6 +10,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 
+// eslint-disable-next-line no-unused-vars
 const FilterPanel = ({ filters, setFilters }) => {
 	const [showFilter, setShowFilter] = useState(false);
 	const [parkingPrice, setPrice] = useState(0);

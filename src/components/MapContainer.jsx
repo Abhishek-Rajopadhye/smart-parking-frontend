@@ -31,8 +31,8 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 		elementType: "all",
 		width: "90vw",
 		height: "85vh",
-		top: 50,
-		left: -150,
+		top: 25,
+		left:-300,
 	};
 
 	const defaultCenter = {
@@ -242,6 +242,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 
 					{/* Navigation button to add new parking spot */}
 					<Button
+						sx={{bottom: 20, left:-200, position:"relative"}}
 						onClick={() => navigate("/spot")}
 						variant="contained"
 						disableElevation
