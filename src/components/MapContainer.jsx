@@ -233,6 +233,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 
 					{/* Navigation button to add new parking spot */}
 					<Button
+						sx={{bottom: 20, left:-200, position:"relative"}}
 						onClick={() => navigate("/spot")}
 						variant="contained"
 						disableElevation

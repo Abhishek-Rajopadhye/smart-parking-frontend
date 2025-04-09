@@ -98,18 +98,22 @@ const Spot = () => {
 	 */
 
 	const validateForm = () => {
+		const total = parseInt(totalSlots);
+		console.log(typeof totalSlots);
+		console.log(typeof availableSlots);
 		if (!spotTitle.trim()) return "Spot Title is required";
 		if (!spotAddress.trim()) return "Address is required";
 		if (location == null) return "Please select a location to proceed";
 		setLatitude(location.lat);
 		setLongitude(location.lng);
-		setAvailableSlots(totalSlots);
 		if (!openTime) return "Open Time is required";
 		if (!closeTime) return "Close Time is required";
 		if (!hourlyRate || hourlyRate <= 0) return "Hourly Rate must be positive";
 		if (!totalSlots || totalSlots <= 0) return "Total Slots must be a positive number";
 		if (!Object.values(openDays).includes(true)) return "At least one open day must be selected";
-		return null;
+		console.log(total);
+		console.log(typeof total);
+		return total;
 	};
 
 	const handleDeleteImage = (index) => {
@@ -128,15 +132,16 @@ const Spot = () => {
 	 * @returns
 	 */
 	const handleAddSpot = async () => {
+		console.log("Location:", location);
 		const error = validateForm();
-		if (error) {
+		if(error )
+		if (error && typeof error === "string") {
 			setOpenSnackbar({ open: true, message: error, severity: "error" });
 			return;
 		}
+		setTotalSlots(error);
 		//console.log(openTime);
-		alert(latitude);
-		alert(longitude);
-		if (!(latitude >= 6.554607 && latitude <= 35.674545 && longitude >= 68.162385 && longitude <= 97.395561)) {
+		if (!(location.lat >= 6.554607 && location.lat <= 35.674545 && location.lng >= 68.162385 && location.lng <= 97.395561)) {
 			setOpenSnackbar({
 				open: true,
 				message: "Please select a location within India",
@@ -179,7 +184,7 @@ const Spot = () => {
 		let new_open_time = openTime + " " + open;
 		let new_close_time = closeTime + " " + close;
 		console.log("Open Days:", open_days);
-
+		setTotalSlots(parseInt(totalSlots));
 		try {
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot/`, {
 				owner_id: user.id,
@@ -190,9 +195,9 @@ const Spot = () => {
 				close_time: new_close_time,
 				hourly_rate: hourlyRate,
 				total_slots: totalSlots,
-				available_slots: availableSlots,
-				latitude,
-				longitude,
+				available_slots: totalSlots,
+				latitude: location.lat,
+				longitude: location.lng,
 				available_days: open_days,
 				image: images,
 			});
@@ -359,6 +364,7 @@ const Spot = () => {
 								onClose={() => setMapOpen(false)}
 								onSave={(coords, msg) => {
 									setLocation(coords);
+									console.log("Location:", coords);
 									if (msg == "success") {
 										setOpenSnackbar({
 											open: true,
