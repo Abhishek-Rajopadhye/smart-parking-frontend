@@ -16,12 +16,17 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import HomeIcon from "@mui/icons-material/Home";
+import CancelIcon from "@mui/icons-material/Cancel";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "../style/booking.css";
 import { BACKEND_URL } from "../const";
 import { AuthContext } from "../context/AuthContext";
+import { set } from "date-fns";
 
 //spot_information is object which hold the all information
 const Booking = ({ spot_information, open, set_dialog }) => {
@@ -30,6 +35,8 @@ const Booking = ({ spot_information, open, set_dialog }) => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   console.log(user.email);
+  const [razorpay_signature, setRazorpaySignature] = useState(null);
+  const [razorpay_order_id, setRazorpayOrderId] = useState(null);
   const [totalSlots, setTotalSlots] = useState(1);
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
@@ -45,6 +52,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
   const [paymentStatus, setPaymentStatus] = useState(false);
   const [indianStartTime, setIndianStartTime] = useState(null);
   const [indianEndTime, setIndianEndTime] = useState(null);
+  const [flag, setFlag] = useState(false);
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   yesterday.setHours(0, 0, 0, 0);
@@ -125,7 +133,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
     const primaryColor = "#007bff";
     const lightGray = "#f2f2f2";
     const darkGray = "#333";
-		//E9DFC3
+    //E9DFC3
     const currentDate = new Date().toLocaleDateString("en-IN", {
       day: "2-digit",
       month: "short",
@@ -164,44 +172,46 @@ const Booking = ({ spot_information, open, set_dialog }) => {
       return yPos + 10;
     };
 
-		const drawTable = (headers, dataRows, startY) => {
-			// Header
-			doc.setFillColor(lightGray);
-			doc.setTextColor(darkGray);
-			doc.setFontSize(11);
-			doc.setFont("helvetica", "bold");
-			doc.rect(20, startY, 170, lineHeight, "F");
-			headers.forEach((header, i) => {
-				doc.text(header, 25 + i * 85, startY + 6);
-			});
-		
-			startY += lineHeight;
-		
-			doc.setFont("helvetica", "bold");
-			doc.setTextColor(0, 0, 0);
-		
-			dataRows.forEach((row) => {
-				const cell1 = String(row[0]);
-				const cell2Lines = doc.splitTextToSize(String(row[1]), 80); // Wrap to 80 width
-				const cellHeight = cell2Lines.length * 8; // Dynamic height based on lines
-		
-				doc.text(cell1, 25, startY + 6);
-				doc.text(cell2Lines, 110, startY + 6); // Adjust column position for second column
-		
-				doc.rect(20, startY, 170, cellHeight); // Border
-				startY += cellHeight;
-			});
-		
-			return startY + 10;
-		};
-		
+    const drawTable = (headers, dataRows, startY) => {
+      // Header
+      doc.setFillColor(lightGray);
+      doc.setTextColor(darkGray);
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.rect(20, startY, 170, lineHeight, "F");
+      headers.forEach((header, i) => {
+        doc.text(header, 25 + i * 85, startY + 6);
+      });
+
+      startY += lineHeight;
+
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(0, 0, 0);
+
+      dataRows.forEach((row) => {
+        const cell1 = String(row[0]);
+        const cell2Lines = doc.splitTextToSize(String(row[1]), 80); // Wrap to 80 width
+        const cellHeight = cell2Lines.length * 8; // Dynamic height based on lines
+
+        doc.text(cell1, 25, startY + 6);
+        doc.text(cell2Lines, 110, startY + 6); // Adjust column position for second column
+
+        doc.rect(20, startY, 170, cellHeight); // Border
+        startY += cellHeight;
+      });
+
+      return startY + 10;
+    };
+
     y = drawSectionTitle("Booking Information", y);
     y = drawTable(
       ["Details", "Value"],
       [
         ["Spot Name", spot_information.spot_title],
-        ["Address", ["Address", doc.splitTextToSize(spot_information.address, 80)]
-			],
+        [
+          "Address",
+          ["Address", doc.splitTextToSize(spot_information.address, 80)],
+        ],
         ["Total Slots", totalSlots],
       ],
       y
@@ -311,6 +321,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
       downloadPDF();
       setEndTime("");
       setStartTime("");
+      setTotalSlots(1);
       setPaymentStatus(false);
       // navigate("/booking");
     }
@@ -399,7 +410,8 @@ const Booking = ({ spot_information, open, set_dialog }) => {
       const end_time = dateTimeToString(endTime);
       console.log(startTime, start_time);
       console.log(endTime, end_time);
-
+      setRazorpaySignature(null);
+      setRazorpayOrderId(null);
       orderResponse = await axios.post(`${BACKEND_URL}/bookings/book-spot`, {
         user_id: user.id.toString(),
         spot_id: spot_information.spot_id,
@@ -419,7 +431,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
         showSnackbar(orderResponse.data.detail, "error");
         return;
       }
-
+      setRazorpayOrderId(orderData.order_id);
       const options = {
         key: "rzp_test_82K1eUDvrHocUu",
         amount: orderData.amount,
@@ -438,16 +450,21 @@ const Booking = ({ spot_information, open, set_dialog }) => {
             start_time,
             end_time,
           });
-          try {
-            const check_payment = await axios.post(`${BACKEND_URL}/bookings/update-payment-status`, {
-              start_time: indianStartTime,
-              end_time: indianEndTime,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              payment_id: orderData.payment_id,
-              total_slots: totalSlots,
-            });
           
+          try {
+            setRazorpaySignature(response.razorpay_signature);
+            console.log("Payment response:", response);
+            const check_payment = await axios.post(
+              `${BACKEND_URL}/bookings/update-payment-status`,
+              {
+                start_time: indianStartTime,
+                end_time: indianEndTime,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                payment_id: orderData.payment_id,
+                total_slots: totalSlots,
+              }
+            );
             if (check_payment.status === 200) {
               setPaymentStatus(true);
               console.log("Payment successful:", check_payment.data);
@@ -455,12 +472,17 @@ const Booking = ({ spot_information, open, set_dialog }) => {
           } catch (error) {
             if (error.response) {
               const errorMsg = error.response.data?.detail || "Payment failed.";
-              showSnackbar(errorMsg, "error");
+              showSnackbar(
+                "Booking failed We're refunding your payment",
+                "error"
+              );
             } else {
-              showSnackbar("Server error or network issue.", "error");
+              showSnackbar(
+                "Booking failed We're refunding your payment",
+                "error"
+              );
             }
           }
-          
         },
         theme: { color: "#4F46E5" },
       };
@@ -481,118 +503,124 @@ const Booking = ({ spot_information, open, set_dialog }) => {
       }
     }
   };
+
+  const handleCancel = async () => {
+    try {
+      if(razorpay_signature == null){
+        const response = await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
+          spot_id: spot_information.spot_id,
+          total_slots: totalSlots,
+        })
+      } 
+      set_dialog();
+    } catch(error) {
+      console.error("Error:", error);
+      // showSnackbar("Failed to cancel booking", "error");
+    }
+   
+   }
+
+
   return (
     <Dialog open={open}>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <Box className="form-container">
-          <Box className="form-container">
-            <Box className="form-box" sx={{ mt: 0 }}>
-              <Typography variant="h5" gutterBottom align="center">
-                Book Your Parking Spot
-              </Typography>
+        {/* <Box className="form-container"> */}
+        <Box
+          className="booking-form-container"
+          sx={{
+            // p: 3,
+            width: "100%",
+            maxWidth: 500,
+            mx: "auto",
+            overflowX: "hidden",
+            "@media (max-width: 600px)": {
+              // p: 2,
+              maxWidth: "100%",
+            },
+          }}
+        >
+          <Box className="form-box" sx={{ mt: 0, width: "auto" }}>
+            <Typography
+              variant="h4"
+              gutterBottom
+              align="center"
+              fontWeight="bold"
+            >
+              🚗 Book Parking Spot
+            </Typography>
 
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Total Slots"
-                    type="number"
-                    value={totalSlots}
-                    onChange={(e) => setTotalSlots(Number(e.target.value))}
-                  />
-                </Grid>
-
-                <Grid item xs={12}>
-                  <DateTimePicker
-                    label="Start Time"
-                    value={startTime}
-                    onChange={setStartTime}
-                    renderInput={(params) => (
-                      <TextField {...params} fullWidth />
-                    )}
-                    minDateTime={new Date()}
-                    shouldDisableDate={(date) => {
-                      const days = [
-                        "Sun",
-                        "Mon",
-                        "Tue",
-                        "Wed",
-                        "Thu",
-                        "Fri",
-                        "Sat",
-                      ];
-                      const day = date.getDay();
-                      const dayName = days[day];
-                      return !spot_information.available_days.includes(dayName);
-                    }}
-                  />
-                </Grid>
-
-                <Grid item xs={12}>
-                  <DateTimePicker
-                    label="End Time"
-                    value={endTime}
-                    onChange={setEndTime}
-                    renderInput={(params) => (
-                      <TextField {...params} fullWidth />
-                    )}
-                    minDateTime={new Date()}
-                    shouldDisableDate={(date) => {
-                      const days = [
-                        "Sun",
-                        "Mon",
-                        "Tue",
-                        "Wed",
-                        "Thu",
-                        "Fri",
-                        "Sat",
-                      ];
-                      const day = date.getDay();
-                      const dayName = days[day];
-                      return !spot_information.available_days.includes(dayName);
-                    }}
-                  />
-                </Grid>
-
-                <Grid item xs={12}>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    fullWidth
-                    onClick={calculateAmount}
-                  >
-                    Book Spot
-                  </Button>
-                  {/* {paymentDetails && (
-										<Button variant="contained" color="primary" onClick={downloadPDF} sx={{ mt: 2, mr: 2 }}>
-											Download Receipt
-										</Button>
-									)} */}
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => {
-                      navigate("/home");
-                    }}
-                    sx={{ mt: 2 }}
-                  >
-                    GO HOME
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => {
-                      set_dialog();
-                    }}
-                    sx={{ mt: 2, ml: 2 }}
-                  >
-                    Cancel
-                  </Button>
-                </Grid>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Total Slots"
+                  type="number"
+                  value={totalSlots}
+                  onChange={(e) => setTotalSlots(Number(e.target.value))}
+                />
               </Grid>
-            </Box>
+
+              <Grid item xs={12}>
+                <DateTimePicker
+                  label="Start Time"
+                  value={startTime}
+                  onChange={setStartTime}
+                  minDateTime={new Date()}
+                  shouldDisableDate={(date) => {
+                    const days = [
+                      "Sun",
+                      "Mon",
+                      "Tue",
+                      "Wed",
+                      "Thu",
+                      "Fri",
+                      "Sat",
+                    ];
+                    return !spot_information.available_days.includes(
+                      days[date.getDay()]
+                    );
+                  }}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      variant: "outlined",
+                    },
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <DateTimePicker
+                  label="End Time"
+                  value={endTime}
+                  onChange={setEndTime}
+                  minDateTime={new Date()}
+                  shouldDisableDate={(date) => {
+                    const days = [
+                      "Sun",
+                      "Mon",
+                      "Tue",
+                      "Wed",
+                      "Thu",
+                      "Fri",
+                      "Sat",
+                    ];
+                    return !spot_information.available_days.includes(
+                      days[date.getDay()]
+                    );
+                  }}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      variant: "outlined",
+                    },
+                  }}
+                />
+              </Grid>
+            </Grid>
           </Box>
         </Box>
+        {/* </Box> */}
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
           <DialogTitle>Total Amount</DialogTitle>
           <DialogContent>
@@ -624,6 +652,27 @@ const Booking = ({ spot_information, open, set_dialog }) => {
           </Alert>
         </Snackbar>
       </LocalizationProvider>
+      <DialogActions>
+        <Button
+          startIcon={<DirectionsCarIcon />}
+          variant="contained"
+          color="secondary"
+          //fullWidth
+          onClick={calculateAmount}
+        >
+          Book Spot
+        </Button>
+        <Button
+          startIcon={<CancelIcon />}
+          variant="outlined"
+          color="error"
+          // fullWidth
+          onClick={() => handleCancel()}
+          disabled={flag}
+        >
+          Cancel
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };

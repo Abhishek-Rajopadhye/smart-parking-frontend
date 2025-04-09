@@ -156,8 +156,7 @@ const AppLayout = () => {
 					<Route path="/spot" element={<Spot />} />
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
-					<Route path="/my-spots" element={<MySpots />} />
-					<Route path="/add-review" element={<AddReview />} />
+				
 					<Route path="/HomePage" element={<HomePage/>}/>
 
             <Route

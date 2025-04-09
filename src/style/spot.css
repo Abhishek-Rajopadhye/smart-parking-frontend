@@ -17,6 +17,7 @@
 }
 
 .form-box {
+    margin-top: 15%;
     max-height: 90vh;
     overflow-y: auto;
     width: 100%;
