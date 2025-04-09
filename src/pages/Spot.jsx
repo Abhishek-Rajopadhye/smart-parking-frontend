@@ -351,11 +351,11 @@ const Spot = () => {
 							style={{ display: "none" }}
 							id="image-upload"
 						/>
-						<label htmlFor="image-upload" style={{ marginBottom: "5px" }}>
-							<Button variant="outlined" color="primary" component="span">
+						<label htmlFor="image-upload" style={{ marginBottom: "2px" }}>
+							<Button variant="outlined" color="primary" component="span" sx={{ mt: 2 }}>
 								Upload Images
 							</Button>
-							<Button variant="outlined" onClick={() => setMapOpen(true)} sx={{ ml: 2 }}>
+							<Button variant="outlined" onClick={() => setMapOpen(true)} sx={{ ml: 2, mt: 2}}>
 								Set Location
 							</Button>
 
@@ -376,7 +376,7 @@ const Spot = () => {
 							/>
 						</label>
 						{images ? (
-							<Grid container spacing={1}>
+							<Grid container spacing={1} sx={{mt:2}}>
 								{imagePreviews.map((preview, index) => (
 									<Grid item xs={3} key={index} style={{ position: "relative" }}>
 										<img
