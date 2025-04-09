@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate, useLocation } from "react-router-dom";
-import { Box, CircularProgress, AppBar, Toolbar, Typography, IconButton, Avatar, Menu, MenuItem } from "@mui/material";
+import { Box, CircularProgress, AppBar, Toolbar, Typography, IconButton, Avatar, Menu, MenuItem, Container } from "@mui/material";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import { Login } from "./pages/Login";
 import { Profile } from "./pages/Profile";
@@ -12,6 +12,9 @@ import { Auth } from "./pages/Auth";
 import { Spot } from "./pages/Spot";
 import DetailInfo from "./components/DetailInfo";
 import { MapProvider } from "./context/MapContext";
+import HomePage from "./pages/HomePage";
+import { LoadScript } from "@react-google-maps/api";
+
 
 const AppLayout = () => {
 	const { user, logout } = useContext(AuthContext);
@@ -99,7 +102,7 @@ const AppLayout = () => {
 	}
 
 	return (
-		<Box sx={{ display: "flex", flexDirection: "column", height: "100vh", width: "100vw" }}>
+		<Box sx={{ display: "flex",flexDirection:"column", width: "100%" }}>
 			<AppBar position="fixed" sx={{ zIndex: 3 }}>
 				<Toolbar>
 					<Typography variant="h6" sx={{ flexGrow: 1 }}>
@@ -147,12 +150,17 @@ const AppLayout = () => {
 					</Menu>
 				</Toolbar>
 			</AppBar>
-			<Box sx={{ flexGrow: 1, position: "relative", p: 3 }}>
+
+			<Box variant="main>
 				<Routes>
 					<Route path="/spot" element={<Spot />} />
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
-					<Route
+					<Route path="/my-spots" element={<MySpots />} />
+					<Route path="/add-review" element={<AddReview />} />
+					<Route path="/HomePage" element={<HomePage/>}/>
+
+            <Route
 						path="/home"
 						element={
 							<Home
