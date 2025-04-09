@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState } from "react";
 import { Box, Button, Alert, Snackbar } from "@mui/material";
 import { GoogleMap } from "@react-google-maps/api";
@@ -15,7 +14,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 	const {isLoaded,loadError} = useContext(MapContext);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-	// const navigate = useNavigate();
+	const navigate = useNavigate();
 	const [currentPosition, setCurrentPosition] = useState(null);
 	const [snackbar, setSnackbar] = useState({
 		open: false,
@@ -107,7 +106,6 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 			navigator.geolocation.getCurrentPosition(
 				(position) => {
 					const { latitude, longitude } = position.coords;
-					setDraggableMarker({ lat: latitude, lng: longitude });
 					setCurrentPosition({ lat: latitude, lng: longitude });
 
 					setSnackbar({
