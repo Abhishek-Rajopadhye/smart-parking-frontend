@@ -147,7 +147,6 @@ const AppLayout = () => {
 					</Menu>
 				</Toolbar>
 			</AppBar>
-			<Toolbar />
 			<Box sx={{ flexGrow: 1, position: "relative", p: 3 }}>
 				<Routes>
 					<Route path="/spot" element={<Spot />} />
