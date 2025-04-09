@@ -105,13 +105,19 @@ const AppLayout = () => {
 					<Typography variant="h6" sx={{ flexGrow: 1 }}>
 						{getPageTitle()}
 					</Typography>
-					{location.pathname === "/home" && 
+					{location.pathname === "/home" && (
 						<>
 							<Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
-								<SearchBar setNewMarker={setNewMarker} setSelectedMarker={setSelectedMarker} mapRef={mapRef} filters={filters} setFilters={setFilters}/>
+								<SearchBar
+									setNewMarker={setNewMarker}
+									setSelectedMarker={setSelectedMarker}
+									mapRef={mapRef}
+									filters={filters}
+									setFilters={setFilters}
+								/>
 							</Box>
 						</>
-					}
+					)}
 					<IconButton onClick={handleAvatarClick}>
 						<Avatar alt="User Avatar" src={user?.avatarUrl || ""} />
 					</IconButton>
@@ -164,7 +170,7 @@ const AppLayout = () => {
 					/>
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
-					<Route path="/spotdetail" element={<DetailInfo selectedMarker={selectedMarker} user={user} />} />
+					<Route path="/spotdetail/:spot_id" element={<DetailInfo/>} />
 					<Route path="*" element={<Navigate to="/home" />} />
 				</Routes>
 			</Box>

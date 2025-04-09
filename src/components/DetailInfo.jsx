@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -26,10 +25,9 @@ import { BACKEND_URL } from "../const";
 import { Booking } from "../pages/Booking";
 import { ReviewCard } from "./ReviewCard";
 
-const DetailInfo = ({ selectedMarker, user }) => {
+const DetailInfo = ({ selectedMarker }) => {
 	const [reviews, setReviews] = useState([]);
 	const [ownerDetail, setOwnerDetail] = useState({});
-	const [reviewImages, setReviewImages] = useState([]);
 	const [spotImages, setSpotImages] = useState([]);
 	const [selectedImage, setSelectedImage] = useState(null);
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
@@ -38,20 +36,16 @@ const DetailInfo = ({ selectedMarker, user }) => {
 	useEffect(() => {
 		const fetchDetails = async () => {
 			try {
-				const [reviewsRes, ownerRes, spotRes] = await Promise.all([
+				const [reviewsRes, ownerRes] = await Promise.all([
 					axios.get(`${BACKEND_URL}/review/spot/${selectedMarker.spot_id}`),
 					axios.get(`${BACKEND_URL}/users/owner/${selectedMarker.owner_id}`),
-					axios.get(`${BACKEND_URL}/spotdetails/get-images/${selectedMarker.spot_id}`),
 				]);
 				setReviews(reviewsRes.data);
 
 				// Extract images from reviews where image is not null
-				const images = spotRes.data.filter((img) => img !== null && img !== ""); // Remove null/empty values
-				setReviewImages(images);
 				setOwnerDetail(ownerRes.data);
 				console.log("recie review ", reviewsRes.data);
 				console.log("ll", ownerRes.data);
-				console.log("Review iamges ", reviewImages.data);
 			} catch (error) {
 				console.error("Error fetching data", error);
 			}
@@ -73,7 +67,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
 			fetchDetails();
 			getImages();
 		}
-	}, [selectedMarker.spot_id, selectedMarker.owner_id, reviewImages.data]);
+	}, [selectedMarker.spot_id, selectedMarker.owner_id]);
 
 	const averageRating =
 		reviews.length > 0 ? reviews.reduce((acc, review) => acc + review.rating_score, 0) / reviews.length : 0;
