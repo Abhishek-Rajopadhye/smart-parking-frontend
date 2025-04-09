@@ -438,7 +438,6 @@ const Booking = ({ spot_information, open, set_dialog }) => {
             start_time,
             end_time,
           });
-          alert("Payment Successful");
           try {
             const check_payment = await axios.post(`${BACKEND_URL}/bookings/update-payment-status`, {
               start_time: indianStartTime,
