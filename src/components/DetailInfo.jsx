@@ -39,7 +39,7 @@ const DetailInfo = ({ selectedMarker }) => {
 		const fetchDetails = async () => {
 			try {
 				const [reviewsRes, ownerRes] = await Promise.all([
-					axios.get(`${BACKEND_URL}/review/spot/${selectedMarker.spot_id}`),
+					axios.get(`${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`),
 					axios.get(`${BACKEND_URL}/users/owner/${selectedMarker.owner_id}`),
 				]);
 				setReviews(reviewsRes.data);
@@ -151,24 +151,25 @@ const DetailInfo = ({ selectedMarker }) => {
 
 				{/* Right Section */}
 				<Grid item xs={12} md={6}>
-					<Paper elevation={6} sx={{ padding: 3, height: "500px", overflow: "hidden" }}>
-						<Box sx={{ display: "flex", alignItems: "center" }}>
-							<Rating name="read-only" value={averageRating} precision={0.5} readOnly />
-							<Typography>({reviews.length})</Typography>
-						</Box>
+					<Paper elevation={6} sx={{ padding: 3, height: "500px", overflow: "hidden"}} variant="outlined">
+						
 
 						<Typography
 							variant="h5"
 							fontWeight="bold"
-							sx={{ mt: 2, display: "flex", alignItems: "center", justifyContent: "space-between" }}
+							sx={{ mt: 2, display: "flex", alignItems: "center" }}
 						>
 							Reviews
+							<Box sx={{ display: "flex", justifyContent:"space-between" }}>
+								<Rating name="read-only" value={averageRating} precision={0.5} readOnly />
+								<Typography>({reviews.length})</Typography>
+							</Box>
 							<Button
 								variant="outlined"
 								color="primary"
 								size="small"
 								onClick={() => setAddReviewDialogOpen(true)} // Placeholder action
-								sx={{ ml: 2 }}
+								sx={{ ml: 2, justifyContent:"space-between" }}
 							>
 								Add Review
 							</Button>
