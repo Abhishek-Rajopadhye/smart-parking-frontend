@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -24,11 +23,11 @@ import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import axios from "axios";
 import { BACKEND_URL } from "../const";
 import { Booking } from "../pages/Booking";
+import { ReviewCard } from "./ReviewCard";
 
-const DetailInfo = ({ selectedMarker, user }) => {
+const DetailInfo = ({ selectedMarker }) => {
 	const [reviews, setReviews] = useState([]);
 	const [ownerDetail, setOwnerDetail] = useState({});
-	const [reviewImages, setReviewImages] = useState([]);
 	const [spotImages, setSpotImages] = useState([]);
 	const [selectedImage, setSelectedImage] = useState(null);
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
@@ -44,12 +43,9 @@ const DetailInfo = ({ selectedMarker, user }) => {
 				setReviews(reviewsRes.data);
 
 				// Extract images from reviews where image is not null
-				const images = reviewsRes.data.map((review) => review.image).filter((img) => img !== null && img !== ""); // Remove null/empty values
-				setReviewImages(images);
 				setOwnerDetail(ownerRes.data);
 				console.log("recie review ", reviewsRes.data);
 				console.log("ll", ownerRes.data);
-				console.log("Review iamges ", reviewImages.data);
 			} catch (error) {
 				console.error("Error fetching data", error);
 			}
@@ -71,7 +67,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
 			fetchDetails();
 			getImages();
 		}
-	}, [selectedMarker.spot_id, selectedMarker.owner_id, reviewImages.data]);
+	}, [selectedMarker.spot_id, selectedMarker.owner_id]);
 
 	const averageRating =
 		reviews.length > 0 ? reviews.reduce((acc, review) => acc + review.rating_score, 0) / reviews.length : 0;
@@ -81,7 +77,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
 	};
 	console.log("ownerrimages ", ownerDetail.profile_picture);
 	return (
-		<Box sx={{ position: "relative", width: "95%", margin: "auto", padding: 3, top: 350 }}>
+		<Box sx={{ position: "relative", width: "95%", margin: "auto", padding: 3}}>
 			<Paper sx={{ padding: 2, textAlign: "left" }}>
 				<CardMedia
 					component="img"
@@ -100,7 +96,6 @@ const DetailInfo = ({ selectedMarker, user }) => {
 					<Paper elevation={6} sx={{ padding: 3, height: "500px", overflow: "hidden" }}>
 						<Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
 							<Avatar alt="Owner" src={ownerDetail.profile_picture} sx={{ mr: 2, width: 56, height: 56 }} />
-
 							<Typography variant="h5">{ownerDetail.name || "Unknown Owner"}</Typography>
 						</Box>
 
@@ -176,44 +171,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
 								<Grid container direction="column" spacing={2}>
 									{reviews.map((review, index) => (
 										<Grid item key={index} sx={{ bgcolor: "skyblue", borderRadius: 2, mt: 2, padding: 3 }}>
-											<Box
-												sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
-											>
-												<Box sx={{ display: "flex", alignItems: "center" }}>
-													<Avatar sx={{ bgcolor: "red", mr: 2 }}>
-														{review.reviewer_name?.charAt(0) || "A"}
-													</Avatar>
-													<Typography variant="body1" fontWeight="bold">
-														{review.reviewer_name || "Anonymous"}
-													</Typography>
-												</Box>
-												<Typography variant="body1" fontWeight="bold" sx={{ mr: 1 }}>
-													{review.created_at.slice(0, 10)}
-												</Typography>
-											</Box>
-											<Box bgcolor="gray" sx={{ padding: 2, borderRadius: 4, mt: 1 }}>
-												<Rating name="read-only" value={review.rating_score} readOnly />
-												<Typography fontWeight="bold">{review.review_description}</Typography>
-												<Box
-													sx={{
-														display: "flex",
-														justifyContent: "flex-end",
-														alignItems: "center",
-														mt: 2,
-													}}
-												>
-													<Avatar
-														alt="Owner"
-														src={ownerDetail.profile_picture}
-														sx={{ width: 24, height: 24, mr: 1 }}
-													>
-														{ownerDetail.name.slice(0, 1)}
-													</Avatar>
-													<Typography color="white" variant="subtitle2">
-														{review.owner_reply ? review.owner_reply : "No reply from owner"}
-													</Typography>
-												</Box>
-											</Box>
+											<ReviewCard review={review} />
 										</Grid>
 									))}
 								</Grid>
