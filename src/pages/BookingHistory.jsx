@@ -78,7 +78,7 @@ const BookingHistory = () => {
     };
 
     return (
-        <Container sx={{ position: "relative", width: "100vw", alignContent: "center" }}>
+        <Container sx={{ position: "relative", width: "100vw", alignContent: "center", mt:5 }}>
             <UserBookingView
                 bookingDetails={userBookings}
                 cancelBooking={handleCancelBooking}

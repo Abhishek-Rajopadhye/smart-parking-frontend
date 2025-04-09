@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { Box, Typography, TextField, Button, Grid, Snackbar, Alert, IconButton } from "@mui/material";
@@ -28,7 +29,6 @@ const Spot = () => {
 	const [availableSlots, setAvailableSlots] = useState("");
 	const [images, setImages] = useState([]);
 	const [imagePreviews, setImagePreviews] = useState([]);
-	// eslint-disable-next-line no-unused-vars
 	const [loading, setLoading] = useState(false);
 	const [openSnackbar, setOpenSnackbar] = useState({
 		open: false,

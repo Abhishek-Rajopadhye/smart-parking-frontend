@@ -40,7 +40,7 @@ const OwnerBookingView = ({ bookingDetails }) => {
 		<TableContainer component={Paper}>
 			<Table>
 				<TableHead>
-					<TableRow>
+					<TableRow sx={{ backgroundColor: "#f5f5f5" }}>
 						<TableCell />
 						<TableCell>Name</TableCell>
 						<TableCell>Revenue</TableCell>
@@ -70,7 +70,19 @@ const OwnerBookingView = ({ bookingDetails }) => {
 									<TableCell>
 										<CurrencyRupee fontSize="tiny" /> {booking.payment_amount}
 									</TableCell>
-									<TableCell>{booking.status}</TableCell>
+									<TableCell
+										variant="body1"
+										sx={{
+											color:
+												booking.status === "Pending"
+													? "orange"
+													: booking.status === "Checked In"
+													? "green"
+													: "gray",
+										}}
+									>
+										{booking.status}
+									</TableCell>
 								</TableRow>
 								<TableRow key="expanded_row">
 									<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
