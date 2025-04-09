@@ -24,6 +24,7 @@ import axios from "axios";
 import { BACKEND_URL } from "../const";
 import { Booking } from "../pages/Booking";
 import { ReviewCard } from "./ReviewCard";
+import { AddReview } from "./AddReview";
 
 const DetailInfo = ({ selectedMarker }) => {
 	const [reviews, setReviews] = useState([]);
@@ -31,6 +32,7 @@ const DetailInfo = ({ selectedMarker }) => {
 	const [spotImages, setSpotImages] = useState([]);
 	const [selectedImage, setSelectedImage] = useState(null);
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
+	const [addReviewDialogOpen, setAddReviewDialogOpen] = useState(false);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -44,8 +46,6 @@ const DetailInfo = ({ selectedMarker }) => {
 
 				// Extract images from reviews where image is not null
 				setOwnerDetail(ownerRes.data);
-				console.log("recie review ", reviewsRes.data);
-				console.log("ll", ownerRes.data);
 			} catch (error) {
 				console.error("Error fetching data", error);
 			}
@@ -75,7 +75,7 @@ const DetailInfo = ({ selectedMarker }) => {
 	const toggleDialogBooking = () => {
 		setDialogBookingOpen(!dialogBookingOpen);
 	};
-	console.log("ownerrimages ", ownerDetail.profile_picture);
+
 	return (
 		<Box sx={{ position: "absolute", width: "95%", margin: "auto", padding: 3, top: "50px" }}>
 			<Paper sx={{ padding: 2, textAlign: "left" }}>
@@ -157,10 +157,22 @@ const DetailInfo = ({ selectedMarker }) => {
 							<Typography>({reviews.length})</Typography>
 						</Box>
 
-						<Typography variant="h5" fontWeight="bold" sx={{ mt: 2 }}>
+						<Typography
+							variant="h5"
+							fontWeight="bold"
+							sx={{ mt: 2, display: "flex", alignItems: "center", justifyContent: "space-between" }}
+						>
 							Reviews
+							<Button
+								variant="outlined"
+								color="primary"
+								size="small"
+								onClick={() => setAddReviewDialogOpen(true)} // Placeholder action
+								sx={{ ml: 2 }}
+							>
+								Add Review
+							</Button>
 						</Typography>
-
 						{/*Scroble review*/}
 						{reviews.length === 0 ? (
 							<Typography variant="h6" sx={{ mt: 2, color: "gray", textAlign: "center" }}>
@@ -220,7 +232,7 @@ const DetailInfo = ({ selectedMarker }) => {
 					variant="contained"
 					color="primary"
 					onClick={() => {
-						navigate("/home");
+						navigate("/homepage");
 					}}
 					sx={{ borderRadius: 2, mt: 2, fontSize: "large" }}
 				>
@@ -228,6 +240,11 @@ const DetailInfo = ({ selectedMarker }) => {
 				</Button>
 			</Box>
 			<Booking open={dialogBookingOpen} spot_information={selectedMarker} set_dialog={toggleDialogBooking} />
+			<AddReview
+				openDialog={addReviewDialogOpen}
+				onClose={() => setAddReviewDialogOpen(false)}
+				spot_id={selectedMarker.spot_id}
+			/>
 		</Box>
 	);
 };

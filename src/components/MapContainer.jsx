@@ -11,7 +11,7 @@ import { BACKEND_URL } from "../const";
 import { MapContext } from "../context/MapContext";
 
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef, filteredMarkers }) {
-	const {isLoaded,loadError} = useContext(MapContext);
+	const { isLoaded, loadError } = useContext(MapContext);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const navigate = useNavigate();
@@ -218,7 +218,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 						{newMarker && (
 							<MarkerComponent marker={newMarker} setSelectedMarker={setSelectedMarker} isSearchMarker={true} />
 						)}
-				
+
 						{selectedMarker && (
 							<InfoWindowComponent
 								selectedMarker={selectedMarker}
@@ -231,7 +231,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 
 					{/* Navigation button to add new parking spot */}
 					<Button
-						sx={{bottom: 20, left:-200, position:"relative"}}
+						sx={{ bottom: 20, left: -200, position: "relative" }}
 						onClick={() => navigate("/spot")}
 						variant="contained"
 						disableElevation

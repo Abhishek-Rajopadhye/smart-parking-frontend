@@ -1,5 +1,18 @@
 import { useContext, useEffect, useState } from "react";
-import { Container, Typography, Avatar, Button, Box, Card, CardActions, Divider, List, ListItem, ListItemText, Dialog } from "@mui/material";
+import {
+	Container,
+	Typography,
+	Avatar,
+	Button,
+	Box,
+	Card,
+	CardActions,
+	Divider,
+	List,
+	ListItem,
+	ListItemText,
+	Dialog,
+} from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import { EditProfileModal } from "../components/EditProfileModal";
 import axios from "axios";
@@ -19,7 +32,7 @@ import { OwnerBookingView } from "../components/OwnerBookingView";
 const Profile = () => {
 	const { user, setUser } = useContext(AuthContext);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-    const [userSpots, setUserSpots] = useState([]); // State to store user's spots
+	const [userSpots, setUserSpots] = useState([]); // State to store user's spots
 	const [dialogBoxOpen, setDialogBoxOpen] = useState(false);
 	const [bookingDetails, setBookingDetails] = useState(null);
 
@@ -42,8 +55,7 @@ const Profile = () => {
 		}
 	};
 
-
-    useEffect(() => {
+	useEffect(() => {
 		// Fetch user's spots
 		const fetchUserSpots = async () => {
 			const token = localStorage.getItem("token");
@@ -59,8 +71,8 @@ const Profile = () => {
 				console.error("Error fetching user spots:", error);
 			}
 		};
-    	fetchUserSpots();
-    }, []);
+		fetchUserSpots();
+	}, []);
 
 	/**
 	 * Opens the modal for editing the profile.
@@ -100,40 +112,38 @@ const Profile = () => {
 		}
 	};
 
-    // Open the dialog with the OwnerBookingView component
-    const handleViewBookingHistory = async (spotId) => {
-		try{
+	// Open the dialog with the OwnerBookingView component
+	const handleViewBookingHistory = async (spotId) => {
+		try {
 			const response = await axios.get(`${BACKEND_URL}/bookings/spot/${spotId}`);
 			if (response.status === 200) {
 				setBookingDetails(response.data);
 			}
-		}
-		catch (error) {
+		} catch (error) {
 			console.error("Error fetching booking history:", error);
 		}
 		setDialogBoxOpen(true);
-    };
+	};
 
-    // Close the dialog
-    const handleCloseDialog = () => {
-        setDialogBoxOpen(false);
-    };
+	// Close the dialog
+	const handleCloseDialog = () => {
+		setDialogBoxOpen(false);
+	};
 
+	// Placeholder for editing a spot
+	const handleEditSpot = (spotId) => {
+		console.log(`Edit spot with ID: ${spotId}`);
+	};
 
-    // Placeholder for editing a spot
-    const handleEditSpot = (spotId) => {
-        console.log(`Edit spot with ID: ${spotId}`);
-    };
-
-    // Placeholder for deleting a spot
-    const handleDeleteSpot = (spotId) => {
-        console.log(`Delete spot with ID: ${spotId}`);
-    };
+	// Placeholder for deleting a spot
+	const handleDeleteSpot = (spotId) => {
+		console.log(`Delete spot with ID: ${spotId}`);
+	};
 
 	if (!user) return <Typography variant="h5">Loading profile...</Typography>;
 
 	return (
-		<Container maxWidth="lg" sx={{mt:10}}>
+		<Container maxWidth="lg" sx={{ mt: 10 }}>
 			{/* Profile Section */}
 			<Card
 				elevation={3}
@@ -164,7 +174,7 @@ const Profile = () => {
 					<Typography variant="h6" fontWeight="bold">
 						Total Earnings:
 					</Typography>
-					<Typography variant="h5" color="primary" display="flex" alignItems="center">
+					<Typography variant="h5" color="success" display="flex" alignItems="center">
 						<CurrencyRupee fontSize="small" />
 						{user.total_earnings}
 					</Typography>
@@ -175,67 +185,55 @@ const Profile = () => {
 			</Card>
 
 			{/* My Spots Section */}
-            <Box sx={{ overflowY: "scroll", borderRadius: 2, p: 4, backgroundColor:"lightgray" }}>
-                <Typography variant="h5" fontWeight="bold" sx={{ mb: 2, color:"black" }}>
-                    My Spots
-                </Typography>
-                <Divider sx={{ mb: 3 }} />
-                <List>
-                    {userSpots.length > 0 ? (
-                        userSpots.map((spot) => (
-                            <ListItem key={spot.spot_id} sx={{ mb: 2 }}>
-                                <Card
-                                    elevation={2}
-                                    sx={{
-                                        width: "100%",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        padding: 2,
-                                        borderRadius: 2,
-                                    }}
-                                >
-                                    <ListItemText
-                                        primary={spot.title}
-                                        secondary={`Location: ${spot.address}`}
-                                        sx={{ mb: 1 }}
-                                    />
-                                    <CardActions sx={{ justifyContent: "flex-end" }}>
-                                        <Button
-                                            variant="outlined"
-                                            color="primary"
-                                            onClick={() => handleEditSpot(spot.spot_id)}
-                                        >
-                                            Edit
-                                        </Button>
-                                        <Button
-                                            variant="outlined"
-                                            color="error"
-                                            onClick={() => handleDeleteSpot(spot.spot_id)}
-                                        >
-                                            Delete
-                                        </Button>
-                                        <Button
-                                            variant="contained"
-                                            color="secondary"
-                                            onClick={() => handleViewBookingHistory(spot.spot_id)}
-                                        >
-                                            View Booking History
-                                        </Button>
-                                    </CardActions>
-                                </Card>
-                            </ListItem>
-                        ))
-                    ) : (
-                        <Typography variant="body1" align="center" color="text.secondary">
-                            No spots found.
-                        </Typography>
-                    )}
-                </List>
-				{ /* Booking History Dialog */ }
+			<Box sx={{ overflowY: "scroll", borderRadius: 2, p: 4, backgroundColor: "lightgray" }}>
+				<Typography variant="h5" fontWeight="bold" sx={{ mb: 2, color: "black" }}>
+					My Spots
+				</Typography>
+				<Divider sx={{ mb: 3 }} />
+				<List>
+					{userSpots.length > 0 ? (
+						userSpots.map((spot) => (
+							<ListItem key={spot.spot_id} sx={{ mb: 2 }}>
+								<Card
+									elevation={2}
+									sx={{
+										width: "100%",
+										display: "flex",
+										flexDirection: "column",
+										padding: 2,
+										borderRadius: 2,
+									}}
+								>
+									<ListItemText primary={spot.title} secondary={`Location: ${spot.address}`} sx={{ mb: 1 }} />
+									<CardActions sx={{ justifyContent: "flex-end" }}>
+										<Button variant="outlined" color="primary" onClick={() => handleEditSpot(spot.spot_id)}>
+											Edit
+										</Button>
+										<Button variant="outlined" color="error" onClick={() => handleDeleteSpot(spot.spot_id)}>
+											Delete
+										</Button>
+										<Button
+											variant="contained"
+											color="secondary"
+											onClick={() => handleViewBookingHistory(spot.spot_id)}
+										>
+											View Booking History
+										</Button>
+									</CardActions>
+								</Card>
+							</ListItem>
+						))
+					) : (
+						<Typography variant="body1" align="center" color="text.secondary">
+							No spots found.
+						</Typography>
+					)}
+				</List>
+				{/* Booking History Dialog */}
 				<Dialog open={dialogBoxOpen} onClose={handleCloseDialog}>
-					<OwnerBookingView bookingDetails={bookingDetails}/>
+					<OwnerBookingView bookingDetails={bookingDetails} />
 				</Dialog>
-            </Box>
+			</Box>
 
 			{/* Edit Profile Modal */}
 			<EditProfileModal open={isModalOpen} handleClose={handleCloseModal} user={user} handleSave={handleSave} />

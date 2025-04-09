@@ -31,7 +31,7 @@ import axios from "axios";
  * @component
  * @returns {JSX.Element} The AddReview component.
  */
-const AddReview = ({ openDialog = true, onClose, spot_id = -1 }) => {
+const AddReview = ({ openDialog, onClose, spot_id }) => {
 	const [formData, setFormData] = useState({
 		id: null,
 		user_id: -1,
