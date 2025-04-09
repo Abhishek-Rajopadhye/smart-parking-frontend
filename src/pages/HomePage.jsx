@@ -114,7 +114,7 @@ const HomePage = () => {
             <Container maxWidth="lg" sx={{ py: 8 }}>
                 <Grid container spacing={4} alignItems="center">
                     <Grid item xs={12} md={6}>
-                        <Typography variant="h4" fontWeight="bold" gutterBottom>
+                        <Typography variant="h4" fontWeight="bold" gutterBottom color="black">
                             Parking made easy,<br /> wherever you go
                         </Typography>
 
@@ -236,7 +236,7 @@ const HomePage = () => {
                                     When do you need to park?
                                 </InputLabel>
 
-                                <Box sx={{ position: 'relative' }}>
+                                <Box sx={{ position: 'relative' }} color="white">
                                     <Box sx={{
                                         position: 'absolute',
                                         left: '10px',
@@ -258,6 +258,7 @@ const HomePage = () => {
                                             py: 2,
                                             pl: 5,
                                             textTransform: 'none',
+                                            bgcolor: 'white',
                                             color: 'rgba(0, 0, 0, 0.87)',
                                             fontWeight: 400,
                                             fontSize: '1rem',
@@ -310,8 +311,6 @@ const HomePage = () => {
                                 textTransform: "none",
                                 fontWeight: "bold",
                                 fontSize: "1rem",
-                                backgroundColor: "#1976d2",
-                                ":hover": { backgroundColor: "#115293" },
                             }}
                         >
                             Find Parking Spots

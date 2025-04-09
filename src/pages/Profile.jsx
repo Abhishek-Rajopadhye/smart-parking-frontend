@@ -175,8 +175,8 @@ const Profile = () => {
 			</Card>
 
 			{/* My Spots Section */}
-            <Box sx={{ overflowY: "scroll", borderRadius: 2, p: 4 }}>
-                <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
+            <Box sx={{ overflowY: "scroll", borderRadius: 2, p: 4, backgroundColor:"lightgray" }}>
+                <Typography variant="h5" fontWeight="bold" sx={{ mb: 2, color:"black" }}>
                     My Spots
                 </Typography>
                 <Divider sx={{ mb: 3 }} />
