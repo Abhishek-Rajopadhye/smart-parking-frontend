@@ -15,7 +15,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 	const {isLoaded,loadError} = useContext(MapContext);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-	// const navigate = useNavigate();
+	const navigate = useNavigate();
 	const [currentPosition, setCurrentPosition] = useState(null);
 	const [snackbar, setSnackbar] = useState({
 		open: false,
