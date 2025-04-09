@@ -170,7 +170,7 @@ const AppLayout = () => {
 					/>
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
-					<Route path="/spotdetail/:spot_id" element={<DetailInfo/>} />
+					<Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker}/>} />
 					<Route path="*" element={<Navigate to="/home" />} />
 				</Routes>
 			</Box>
