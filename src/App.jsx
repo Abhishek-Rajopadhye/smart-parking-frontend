@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate, useLocation } from "react-router-dom";
-import { Box, CircularProgress, Drawer, IconButton, AppBar, Toolbar, Typography } from "@mui/material";
+import { Box, CircularProgress, Drawer, IconButton, AppBar, Toolbar, Typography,Container } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
@@ -18,6 +18,9 @@ import { AddReview } from "./components/AddReview";
 import DetailInfo from "./components/DetailInfo";
 import { FilterPanel } from "./components/FilterPanel";
 import { MapProvider } from "./context/MapContext";
+import HomePage from "./pages/HomePage";
+import { LoadScript } from "@react-google-maps/api";
+
 
 /**
  * A Routing Layout for the Application
@@ -115,7 +118,8 @@ const AppLayout = () => {
 	}
 
 	return (
-		<Box sx={{ display: "flex", width: "100%" }}>
+		
+		<Box sx={{ display: "flex",flexDirection:"column", width: "100%" }}>
 			<Box sx={{ flexGrow: 1 }}>
 				<AppBar position="fixed" sx={{ zIndex: "3" }}>
 					<Toolbar>
@@ -139,33 +143,18 @@ const AppLayout = () => {
 						)}
 					</Toolbar>
 				</AppBar>
-				<Toolbar />
-			</Box>
-			<Box sx={{ flexGrow: 1 }}>
-				<Drawer
-					anchor="left"
-					open={isDrawerOpen}
-					sx={{
-						// Help of auto generate for styling was used
-						width: 350,
-						boxSizing: "border-box",
-					}}
-				>
-					<Box sx={{ display: "flex", alignItems: "center", padding: 1 }}>
-						<IconButton onClick={handleDrawerToggle}>
-							<ChevronLeftIcon />
-						</IconButton>
-					</Box>
-					<NavBar user={user} logout={logout} />
-				</Drawer>
-			</Box>
-			<Box sx={{ flexGrow: 1, p: 3, top: 15, width: "100vw" }} variant="main">
+			</Box>			
+			
+			{/* <Box sx={{ flexGrow: 1, p: 3, top: 20, width: "100vw" ,bgcolor:"yellow" }} variant="main"> */}
+			<Box variant="main">
+				
 				<Routes>
 					<Route path="/spot" element={<Spot />}></Route>
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
 					<Route path="/my-spots" element={<MySpots />} />
 					<Route path="/add-review" element={<AddReview />} />
+					<Route path="/HomePage" element={<HomePage/>}/>
 					<Route
 						path="/home"
 						element={

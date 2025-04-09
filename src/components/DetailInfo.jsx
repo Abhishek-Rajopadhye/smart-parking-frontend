@@ -81,7 +81,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
 	};
 	console.log("ownerrimages ", ownerDetail.profile_picture);
 	return (
-		<Box sx={{ position: "relative", width: "95%", margin: "auto", padding: 3, top: 350 }}>
+		<Box sx={{ position: "absolute", width: "95%", margin: "auto", padding: 3, top: "50px" }}>
 			<Paper sx={{ padding: 2, textAlign: "left" }}>
 				<CardMedia
 					component="img"

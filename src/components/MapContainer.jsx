@@ -12,12 +12,11 @@ import { BACKEND_URL } from "../const";
 import { MapContext } from "../context/MapContext";
 
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef, filteredMarkers }) {
-	const { isLoaded, loadError } = useContext(MapContext);
+	const {isLoaded,loadError} = useContext(MapContext);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 	const [currentPosition, setCurrentPosition] = useState(null);
-	const [draggableMarker, setDraggableMarker] = useState(null);
 	const [snackbar, setSnackbar] = useState({
 		open: false,
 		message: "",
@@ -29,10 +28,8 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 		display: "flex",
 		featureType: "all",
 		elementType: "all",
-		width: "90vw",
 		height: "85vh",
 		top: 50,
-		left: -150,
 	};
 
 	const defaultCenter = {
@@ -223,13 +220,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 						{newMarker && (
 							<MarkerComponent marker={newMarker} setSelectedMarker={setSelectedMarker} isSearchMarker={true} />
 						)}
-
-						{/* <Marker
-                            position={draggableMarker}
-                            draggable={true}
-                            onDragEnd={onMarkerDragEnd}
-                        /> */}
-
+				
 						{selectedMarker && (
 							<InfoWindowComponent
 								selectedMarker={selectedMarker}
