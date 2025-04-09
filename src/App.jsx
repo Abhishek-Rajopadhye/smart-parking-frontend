@@ -150,6 +150,7 @@ const AppLayout = () => {
 					</Menu>
 				</Toolbar>
 			</AppBar>
+
 			<Box variant="main>
 				<Routes>
 					<Route path="/spot" element={<Spot />} />
