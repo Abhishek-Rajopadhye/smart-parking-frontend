@@ -43,6 +43,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
   const [totalAmount, setTotalAmount] = useState(null);
   const [ratePerHour] = useState(spot_information.hourly_rate);
   const [openDialog, setOpenDialog] = useState(false);
+  const [prevTotalSlots, setPrevTotalSlots] = useState(0);
   const [openSnackbar, setOpenSnackbar] = useState({
     open: false,
     message: "",
@@ -321,7 +322,8 @@ const Booking = ({ spot_information, open, set_dialog }) => {
       downloadPDF();
       setEndTime("");
       setStartTime("");
-      setTotalSlots(1);
+      setTotalSlots(0);
+      setFlag(false);
       setPaymentStatus(false);
       // navigate("/booking");
     }
@@ -406,12 +408,22 @@ const Booking = ({ spot_information, open, set_dialog }) => {
         return;
       }
       console.log(startTime);
+      if(flag){
+        console.log("Cancel booking start check");
+        const response = await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
+          spot_id: spot_information.spot_id,
+          total_slots: prevTotalSlots,
+        })
+        setPrevTotalSlots(0);
+        setFlag(false);
+      }
       const start_time = dateTimeToString(startTime);
       const end_time = dateTimeToString(endTime);
       console.log(startTime, start_time);
       console.log(endTime, end_time);
       setRazorpaySignature(null);
       setRazorpayOrderId(null);
+      setPrevTotalSlots(totalSlots);
       orderResponse = await axios.post(`${BACKEND_URL}/bookings/book-spot`, {
         user_id: user.id.toString(),
         spot_id: spot_information.spot_id,
@@ -432,6 +444,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
         return;
       }
       setRazorpayOrderId(orderData.order_id);
+      setFlag(true);
       const options = {
         key: "rzp_test_82K1eUDvrHocUu",
         amount: orderData.amount,
@@ -506,11 +519,18 @@ const Booking = ({ spot_information, open, set_dialog }) => {
 
   const handleCancel = async () => {
     try {
-      if(razorpay_signature == null){
+      console.log("Cancel booking");
+      console.log(razorpay_order_id);
+      if(flag && totalSlots != 0 && razorpay_order_id != null){
+        console.log("Cancel booking start");
         const response = await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
           spot_id: spot_information.spot_id,
           total_slots: totalSlots,
         })
+        setTotalSlots(0);
+        setStartTime(null);
+        setEndTime(null);
+        setFlag(false);
       } 
       set_dialog();
     } catch(error) {
@@ -668,7 +688,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
           color="error"
           // fullWidth
           onClick={() => handleCancel()}
-          disabled={flag}
+          // disabled={flag}
         >
           Cancel
         </Button>
