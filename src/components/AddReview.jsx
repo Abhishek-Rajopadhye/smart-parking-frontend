@@ -31,7 +31,7 @@ import axios from "axios";
  * @component
  * @returns {JSX.Element} The AddReview component.
  */
-const AddReview = ({ openDialog = true, onClose, spot_id = -1 }) => {
+const AddReview = ({ openDialog, onClose, spot_id }) => {
 	const [formData, setFormData] = useState({
 		id: null,
 		user_id: -1,
@@ -56,14 +56,14 @@ const AddReview = ({ openDialog = true, onClose, spot_id = -1 }) => {
 		setFormData({
 			id: null,
 			user_id: user.id,
-			spot_id: 3,
+			spot_id: spot_id,
 			review_description: "",
 			rating_score: 0,
 			images: [],
 			owner_reply: null,
 			created_at: null,
 		});
-	}, [setFormData, user]);
+	}, [setFormData, spot_id, user]);
 
 	/**
 	 * Handles the submission of the review form.

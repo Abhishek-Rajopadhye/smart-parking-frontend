@@ -4,17 +4,17 @@ import { useNavigate } from "react-router-dom";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import {
-  Box,
-  Grid,
-  Button,
-  Typography,
-  TextField,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Snackbar,
-  Alert,
+	Box,
+	Grid,
+	Button,
+	Typography,
+	TextField,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+	Snackbar,
+	Alert,
 } from "@mui/material";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import HomeIcon from "@mui/icons-material/Home";
@@ -31,7 +31,6 @@ import { set } from "date-fns";
 //spot_information is object which hold the all information
 const Booking = ({ spot_information, open, set_dialog }) => {
   console.log(spot_information.available_days);
-
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   console.log(user.email);
