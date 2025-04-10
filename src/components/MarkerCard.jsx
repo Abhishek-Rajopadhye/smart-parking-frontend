@@ -67,7 +67,7 @@ const MarkerCard = ({ markers, origin ,latlng}) => {
         }
       }
     );
-  }, [markers, origin]);
+  }, [markers, origin, sortType]);
   
 
 
