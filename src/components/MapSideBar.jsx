@@ -2,19 +2,11 @@ import React, { useState, useContext, useEffect, useRef } from "react";
 import { Box, Paper, Typography, TextField, Button, InputAdornment, IconButton } from "@mui/material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useLocation } from "react-router-dom";
-import {
-	Search as SearchIcon,
-	CalendarToday as CalendarIcon,
-	Clear as ClearIcon,
-	KeyboardArrowDown as KeyboardArrowDownIcon,
-	MyLocation as MyLocationIcon,
-} from "@mui/icons-material";
-import { Autocomplete } from "@react-google-maps/api";
+import { Search as SearchIcon } from "@mui/icons-material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
-
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import { MapContext } from "../context/MapContext";
 import { getLatLng } from "react-places-autocomplete";
 import MarkerCard from "./MarkerCard";

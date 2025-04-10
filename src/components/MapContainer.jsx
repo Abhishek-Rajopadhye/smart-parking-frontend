@@ -1,20 +1,20 @@
+/* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState } from "react";
-import { Box, Button, Alert, Snackbar } from "@mui/material";
+import { Box, Button, Alert, Snackbar, Dialog } from "@mui/material";
 import { GoogleMap } from "@react-google-maps/api";
-import axios from "axios";
 import { MarkerComponent } from "./MarkerComponent";
 import { InfoWindowComponent } from "./InfoWindowComponent";
 import { IoLocationSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
-import { BACKEND_URL } from "../const";
 import { MapContext } from "../context/MapContext";
+import { Spot } from "../pages/Spot";
 
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef, filteredMarkers }) {
-	
-    const {isLoaded,loadError} = useContext(MapContext);
+	const { isLoaded, loadError } = useContext(MapContext);
 	const navigate = useNavigate();
 	const [currentPosition, setCurrentPosition] = useState(null);
+	const [openAddSpotDialogBox, setOpenAddSpotDialogBox] = useState(false);
 	const [snackbar, setSnackbar] = useState({
 		open: false,
 		message: "",
@@ -27,7 +27,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 		featureType: "all",
 		elementType: "all",
 		height: "100vh",
-		width:"100%",
+		width: "100%",
 	};
 
 	const defaultCenter = {
@@ -38,9 +38,8 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 	/**
 	 * Fetch parking spot markers from the API
 	 */
-	
 
-	console.log("Marker fetched ",markers)
+	console.log("Marker fetched ", markers);
 	useEffect(() => {
 		if ("geolocation" in navigator) {
 			navigator.geolocation.getCurrentPosition(
@@ -175,7 +174,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 					<CircularProgress />
 					<Box ml={2}>Loading parking spots...</Box>
 				</Box>
-			) :  (
+			) : (
 				<>
 					<GoogleMap
 						mapContainerStyle={mapStyles}
@@ -211,7 +210,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 					{/* Navigation button to add new parking spot */}
 					<Button
 						sx={{ bottom: 20, left: -200, position: "relative" }}
-						onClick={() => navigate("/spot")}
+						onClick={() => setOpenAddSpotDialogBox(true)}
 						variant="contained"
 						disableElevation
 						startIcon={<IoLocationSharp size={20} />}
@@ -247,6 +246,12 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 					</Snackbar>
 				</>
 			)}
+			<Dialog
+				open={openAddSpotDialogBox}
+				onClose={() => setOpenAddSpotDialogBox(false)}
+			>
+				<Spot onCancel={() => { setOpenAddSpotDialogBox(false); }} />
+			</Dialog>
 		</Box>
 	);
 }

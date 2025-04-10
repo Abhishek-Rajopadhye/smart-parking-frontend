@@ -46,16 +46,21 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 				if (status === "OK" && response?.rows?.length > 0) {
 					console.log("Distance Matrix Response:", response);
 
-					const updated = markers.map((marker, index) => {
-						const element = response.rows[0]?.elements?.[index];
+					const updated = markers
+						.map((marker, index) => {
+							const element = response.rows[0]?.elements?.[index];
 
-						return {
-							...marker,
-							walkingDistance: element?.distance?.text || "N/A",
-							walkingDuration: element?.duration?.text || "N/A",
-							rawDistance: element?.distance?.value || Infinity,
-						};
-					}).map((marker) => {marker.image = marker.image.map((imagem) => `data:image/*;base64,${imagem}`); return marker;});
+							return {
+								...marker,
+								walkingDistance: element?.distance?.text || "N/A",
+								walkingDuration: element?.duration?.text || "N/A",
+								rawDistance: element?.distance?.value || Infinity,
+							};
+						})
+						.map((marker) => {
+							marker.image = marker.image.map((imagem) => `data:image/*;base64,${imagem}`);
+							return marker;
+						});
 
 					setSortedMarkers(sortMarkers(updated, sortType));
 				} else {

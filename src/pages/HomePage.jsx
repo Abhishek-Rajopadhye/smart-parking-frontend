@@ -2,14 +2,11 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import {
 	Box,
-	Container,
 	Grid,
 	Typography,
 	TextField,
 	Button,
 	InputAdornment,
-	Tabs,
-	Tab,
 	FormControl,
 	InputLabel,
 	IconButton,
@@ -21,7 +18,6 @@ import {
 	CalendarToday as CalendarIcon,
 	Clear as ClearIcon,
 	KeyboardArrowDown as KeyboardArrowDownIcon,
-	MyLocation as MyLocationIcon,
 } from "@mui/icons-material";
 import DateTimePicker from "../components/DateTimePicker";
 import parking from "../assets/Images/parkingSpace.jpeg";
@@ -263,7 +259,7 @@ const HomePage = () => {
 										py: 2,
 										pl: 5,
 										textTransform: "none",
-										backgroundColor:"white",
+										backgroundColor: "white",
 										color: "rgba(0, 0, 0, 0.87)",
 										fontWeight: 400,
 										fontSize: "1rem",

@@ -1,4 +1,3 @@
-
 *,
 *::before,
 *::after {
@@ -13,11 +12,9 @@
     max-width: 600px;
     min-height: 80vh;
     margin: auto;
-    padding: 0 10px;
 }
 
 .form-box {
-    margin-top: 15%;
     max-height: 90vh;
     overflow-y: auto;
     width: 100%;
@@ -29,11 +26,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 15%;
 }
 
 /* Media queries remain mostly unchanged */
-@media screen and (max-width: 1024px) {
+/* @media screen and (max-width: 1024px) {
     .form-container {
         width: 90vw;
     }
@@ -62,7 +58,7 @@
     body {
         overflow-x: auto;
     }
-}
+} */
 
 .pac-container {
     z-index: 2000 !important;

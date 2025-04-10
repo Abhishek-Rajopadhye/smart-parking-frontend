@@ -4,15 +4,13 @@ import axios from "axios";
 import { Box, Typography, TextField, Button, Grid, Snackbar, Alert, IconButton } from "@mui/material";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import DeleteIcon from "@mui/icons-material/Delete";
-
 import { useNavigate } from "react-router-dom";
-
 import "../style/spot.css";
 import { AuthContext } from "../context/AuthContext";
 import { BACKEND_URL } from "../const";
 import MapDialog from "../components/MapDialog";
 
-const Spot = () => {
+const Spot = ({ onCancel }) => {
 	const [mapOpen, setMapOpen] = useState(false);
 	const [location, setLocation] = useState(null);
 	const navigate = useNavigate();
@@ -432,7 +430,7 @@ const Spot = () => {
 							color="primary"
 							fullWidth
 							onClick={() => {
-								navigate(-1);
+								onCancel();
 							}}
 						>
 							Go Back
