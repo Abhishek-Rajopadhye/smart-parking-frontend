@@ -4,13 +4,12 @@ import { LocalizationProvider, DateCalendar, TimePicker } from "@mui/x-date-pick
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { isBefore, addMinutes, setHours, setMinutes } from "date-fns";
 
-const DateTimePicker = () => {
-	const [selectedDate, setSelectedDate] = useState(new Date());
-	// eslint-disable-next-line no-unused-vars
-	const [bookingType, setBookingType] = useState("single");
-	const [startTime, setStartTime] = useState(null);
-	const [endTime, setEndTime] = useState(null);
-	const [minEndTime, setMinEndTime] = useState(null);
+const DateTimePicker = ({selectedDate,setSelectedDate,startTime,setStartTime,endTime,setEndTime,onClose}) => {
+  // const [selectedDate, setSelectedDate] = useState(new Date());
+  const [bookingType, setBookingType] = useState("single");
+  // const [startTime, setStartTime] = useState(null);
+  // const [endTime, setEndTime] = useState(null);
+  const [minEndTime, setMinEndTime] = useState(null);
 
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -39,94 +38,96 @@ const DateTimePicker = () => {
 		setEndTime((prevEnd) => (isBefore(prevEnd, newMinEnd) ? newMinEnd : prevEnd));
 	};
 
-	const handleSubmit = () => {
-		console.log("Selected Date:", selectedDate.toDateString());
-		console.log("Enter After:", startTime?.toLocaleTimeString());
-		console.log("Exit Before:", endTime?.toLocaleTimeString());
-	};
+  const handleSubmit = () => {
+    console.log("Selected Date:", selectedDate.toDateString());
+    console.log("Enter After:", startTime?.toLocaleTimeString());
+    console.log("Exit Before:", endTime?.toLocaleTimeString());
+    if(onClose) onClose();
+  };
 
-	return (
-		<LocalizationProvider dateAdapter={AdapterDateFns}>
-			<Box clasSName="container-date-time" sx={{ p: 4, borderRadius: 2, boxShadow: 3, bgcolor: "#fff", mx: "auto" }}>
-				<Typography fontWeight="bold" gutterBottom>
-					When do you need to park?
-				</Typography>
+  return (
+    <LocalizationProvider dateAdapter={AdapterDateFns}>  
+      <Box clasName="container-date-time" sx={{ p: 4, borderRadius: 2, boxShadow: 3, bgcolor: "#fff", mx: "auto" }}>
+            <Typography fontWeight="bold" gutterBottom>
+                When do you need to park?
+            </Typography>
 
-				<Typography variant="body2" mb={2}>
-					Select a single date or a range of several days— however long you need a spot!
-				</Typography>
+            <Typography variant="body2" mb={2}>
+                Select a single date or a range of several days— however long you need a spot!
+            </Typography>
 
-				<Box
-					sx={{
-						p: 2,
-						borderRadius: 3,
-						boxShadow: 3,
-						bgcolor: "#fff",
-						maxWidth: "100%",
-						mx: "auto",
-						display: "flex",
-						flexDirection: isMobile ? "column" : "row",
-						gap: 3,
-						overflow: "hidden",
-					}}
-				>
-					{/* Left: Calendar and Booking Type */}
-					<Box sx={{ flex: 1 }}>
-						<DateCalendar
-							value={selectedDate}
-							onChange={setSelectedDate}
-							disablePast
-							sx={{
-								width: "100%",
-								maxWidth: "100%",
-								".MuiPickersCalendarHeader-root": { justifyContent: "space-between" },
-							}}
-						/>
-					</Box>
+            <Box
+                sx={{
+                    p: 2,
+                    borderRadius: 3,
+                    boxShadow: 3,
+                    bgcolor: "#fff",
+                    maxWidth: "100%",
+                    mx: "auto",
+                    display: "flex",
+                    flexDirection: isMobile ? "column" : "row",
+                    gap: 3,
+                    overflow: "hidden",
+                }}
+            >
+                {/* Left: Calendar and Booking Type */}
+                <Box sx={{ flex: 1 }}>
+                    <DateCalendar
+                        value={selectedDate}
+                        onChange={setSelectedDate}
+                        disablePast
+                        sx={{
+                            width: "100%",
+                            maxWidth: "100%",
+                            ".MuiPickersCalendarHeader-root": { justifyContent: "space-between" },
+                        }}
+                    />
+                </Box>
 
-					{/* Right: Time Pickers and Submit */}
-					<Box
-						sx={{
-							flex: 1,
-							display: "flex",
-							flexDirection: "column",
-							justifyContent: "space-between",
-							gap: 2,
-						}}
-					>
-						<Box>
-							<Typography fontWeight="bold">Starting</Typography>
-							<Typography variant="caption" gutterBottom>
-								{selectedDate.toDateString()}
-							</Typography>
-							<TimePicker
-								label="Enter After"
-								value={startTime}
-								onChange={handleStartTimeChange}
-								minutesStep={30}
-								ampm
-								minTime={getInitialStartTime(selectedDate)}
-								maxTime={setHours(setMinutes(selectedDate, 30), 23)}
-								sx={{ mt: 1, width: "100%" }}
-							/>
-						</Box>
+                    {/* Right: Time Pickers and Submit */}
+                    <Box
+                      sx={{
+                        flex: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        gap: 2,
+                      }}
+                    >
+                      <Box>
+                        <Typography fontWeight="bold">Starting</Typography>
+                        <Typography variant="caption" gutterBottom>
+                          {selectedDate.toDateString()}
+                        </Typography>
+                        <TimePicker
+                          label="Enter After"
+                          value={startTime}
+                          onChange={handleStartTimeChange}
+                          minutesStep={30}
+                          ampm
+                          minTime={getInitialStartTime(selectedDate)}
+                          maxTime={setHours(setMinutes(selectedDate, 30), 23)}
+                          sx={{ mt: 1, width: "100%" }}
 
-						<Box>
-							<Typography fontWeight="bold">Ending</Typography>
-							<Typography variant="caption" gutterBottom>
-								{selectedDate.toDateString()}
-							</Typography>
-							<TimePicker
-								label="Exit Before"
-								value={endTime}
-								onChange={(newTime) => setEndTime(newTime)}
-								minutesStep={30}
-								ampm
-								minTime={minEndTime}
-								maxTime={setHours(setMinutes(selectedDate, 30), 23)}
-								sx={{ mt: 1, width: "100%" }}
-							/>
-						</Box>
+                        />
+                      </Box>
+
+                        <Box>
+                            <Typography fontWeight="bold">Ending</Typography>
+                            <Typography variant="caption" gutterBottom>
+                                {selectedDate.toDateString()}
+                            </Typography>
+                            <TimePicker
+                                label="Exit Before"
+                                value={endTime}
+                                onChange={(newTime) => setEndTime(newTime)}
+                                minutesStep={30}
+                                ampm
+                                minTime={minEndTime}
+                                maxTime={setHours(setMinutes(selectedDate, 30), 23)}
+                                sx={{ mt: 1, width: "100%" }}
+                            />
+                        </Box>
 
 						<Button
 							variant="contained"
