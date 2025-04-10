@@ -1,27 +1,28 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useRef, useEffect, useContext } from "react";
 import {
-    Box,
-    Container,
-    Grid,
-    Typography,
-    TextField,
-    Button,
-    InputAdornment,
-    Tabs,
-    Tab,
-    FormControl,
-    InputLabel,
-    IconButton,
-    Paper,
-    Popover,
+	Box,
+	Container,
+	Grid,
+	Typography,
+	TextField,
+	Button,
+	InputAdornment,
+	Tabs,
+	Tab,
+	FormControl,
+	InputLabel,
+	IconButton,
+	Paper,
+	Popover,
 } from "@mui/material";
 import {
-    Search as SearchIcon,
-    CalendarToday as CalendarIcon,
-    Clear as ClearIcon,
-    KeyboardArrowDown as KeyboardArrowDownIcon,
-    MyLocation as MyLocationIcon
-} from '@mui/icons-material';
+	Search as SearchIcon,
+	CalendarToday as CalendarIcon,
+	Clear as ClearIcon,
+	KeyboardArrowDown as KeyboardArrowDownIcon,
+	MyLocation as MyLocationIcon,
+} from "@mui/icons-material";
 import DateTimePicker from "../components/DateTimePicker";
 import parking from "../assets/Images/parkingSpace.jpeg";
 import { useNavigate } from "react-router-dom";
@@ -40,25 +41,24 @@ const HomePage = () => {
     const autocompleteServiceRef = useRef(null);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (isLoaded && window.google && !autocompleteServiceRef.current) {
-            autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
-        }
-    }, [isLoaded]);
+	useEffect(() => {
+		if (isLoaded && window.google && !autocompleteServiceRef.current) {
+			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+		}
+	}, [isLoaded]);
 
+	if (loadError) return <div>Error loading Google Maps</div>;
+	if (!isLoaded) return <div>Loading Google Maps...</div>;
 
-    if (loadError) return <div>Error loading Google Maps</div>;
-    if (!isLoaded) return <div>Loading Google Maps...</div>;
+	const handleSearchChange = (event) => {
+		const value = event.target.value;
+		setSearchAddress(value);
 
-    const handleSearchChange = (event) => {
-        const value = event.target.value;
-        setSearchAddress(value);
-
-        if (!value || !autocompleteServiceRef.current) {
-            setPredictions([]);
-            setSuggestions(false);
-            return;
-        }
+		if (!value || !autocompleteServiceRef.current) {
+			setPredictions([]);
+			setSuggestions(false);
+			return;
+		}
 
         autocompleteServiceRef.current.getPlacePredictions(
             { input: value ,componentRestrictions: { country: "IN" }},
@@ -74,42 +74,42 @@ const HomePage = () => {
         );
     };
 
-    const handleSuggestionClick = (description) => {
-        setSearchAddress(description);
-        setSuggestions(false);
-        setPredictions([]);
 
-        // Optional: Get lat/lng using Geocoder
-        const geocoder = new window.google.maps.Geocoder();
-        geocoder.geocode({ address: description }, (results, status) => {
-            if (status === 'OK' && results[0]) {
-                const location = results[0].geometry.location;
-                console.log("Lat:", location.lat(), "Lng:", location.lng());
-            }
-        });
-    };
+	const handleSuggestionClick = (description) => {
+		setSearchAddress(description);
+		setSuggestions(false);
+		setPredictions([]);
+		// Optional: Get lat lng using Geocoder
+		const geocoder = new window.google.maps.Geocoder();
+		geocoder.geocode({ address: description }, (results, status) => {
+			if (status === "OK" && results[0]) {
+				const location = results[0].geometry.location;
+				console.log("Lat:", location.lat(), "Lng:", location.lng());
+			}
+		});
+	};
 
-    const handleClearSearch = () => {
-        setSearchAddress('');
-        setSuggestions(false);
-        setPredictions([]);
-    };
+	const handleClearSearch = () => {
+		setSearchAddress("");
+		setSuggestions(false);
+		setPredictions([]);
+	};
 
-    const handleTabChange = (event, newValue) => {
-        setTabValue(newValue);
-    };
+	const handleTabChange = (event, newValue) => {
+		setTabValue(newValue);
+	};
 
-    const handleDateTimeClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+	const handleDateTimeClick = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
 
-    const handleDateTimeClose = () => {
-        setAnchorEl(null);
-    };
+	const handleDateTimeClose = () => {
+		setAnchorEl(null);
+	};
 
-    const open = Boolean(anchorEl);
-    const id = open ? 'date-time-popover' : undefined;
-
+	const open = Boolean(anchorEl);
+	const id = open ? "date-time-popover" : undefined;
+    
     return (
         <Box sx={{ bgcolor: "#fff" ,p:8}}>
                 <Grid  container spacing={4} alignItems="center">
@@ -135,119 +135,124 @@ const HomePage = () => {
                             </Tabs>
                         </Box> */}
 
-                        {/* Search Field */}
-                        <Box sx={{ position: 'relative', width: '100%', my: 2 }}>
-                            <FormControl fullWidth variant="outlined">
-                                <InputLabel
-                                    shrink
-                                    sx={{
-                                        backgroundColor: 'white',
-                                        px: 0.5,
-                                        transform: 'translate(14px, -9px) scale(0.75)',
-                                        transformOrigin: 'top left'
-                                    }}
-                                >
-                                    Where are you going?
-                                </InputLabel>
+						{/* Search Field */}
+						<Box sx={{ position: "relative", width: "100%", my: 2 }}>
+							<FormControl fullWidth variant="outlined">
+								<InputLabel
+									shrink
+									sx={{
+										backgroundColor: "white",
+										px: 0.5,
+										transform: "translate(14px, -9px) scale(0.75)",
+										transformOrigin: "top left",
+									}}
+								>
+									Where are you going?
+								</InputLabel>
 
-                                <TextField
-                                    fullWidth
-                                    placeholder=" "
-                                    value={searchAddress}
-                                    onChange={handleSearchChange}
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start" sx={{ position: 'absolute', left: '10px' }}>
-                                                <SearchIcon color="action" />
-                                            </InputAdornment>
-                                        ),
-                                        endAdornment: searchAddress && (
-                                            <InputAdornment position="end">
-                                                <IconButton size="small" onClick={handleClearSearch}>
-                                                    <ClearIcon />
-                                                </IconButton>
-                                            </InputAdornment>
-                                        ),
-                                        sx: { pl: 4 }
-                                    }}
-                                    sx={{
-                                        '& .MuiOutlinedInput-input': {
-                                            py: 2
-                                        }
-                                    }}
-                                    autoComplete="off"
-                                />
-                            </FormControl>
+								<TextField
+									fullWidth
+									placeholder=" "
+									value={searchAddress}
+									onChange={handleSearchChange}
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position="start" sx={{ position: "absolute", left: "10px" }}>
+												<SearchIcon color="action" />
+											</InputAdornment>
+										),
+										endAdornment: searchAddress && (
+											<InputAdornment position="end">
+												<IconButton size="small" onClick={handleClearSearch}>
+													<ClearIcon />
+												</IconButton>
+											</InputAdornment>
+										),
+										sx: { pl: 4 },
+									}}
+									sx={{
+										"& .MuiOutlinedInput-input": {
+											py: 2,
+										},
+									}}
+									autoComplete="off"
+								/>
+							</FormControl>
 
-                            {suggestions && predictions.length > 0 && (
-                                <Paper sx={{
-                                    position: 'absolute',
-                                    width: '100%',
-                                    zIndex: 1100,
-                                    mt: 0.5,
-                                    borderRadius: '4px',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                                    bgcolor: "background.paper"
-                                }}>
-                                    {predictions.map((prediction, index) => (
-                                        <Box
-                                            key={index}
-                                            onClick={() => handleSuggestionClick(prediction.description)}
-                                            sx={{
-                                                p: 1.5,
-                                                cursor: 'pointer',
-                                                '&:hover': { backgroundColor: '#f5f5f5' }
-                                            }}
-                                        >
-                                            <Typography variant="body2">
-                                                {prediction.description}
-                                            </Typography>
-                                        </Box>
-                                    ))}
+							{suggestions && predictions.length > 0 && (
+								<Paper
+									sx={{
+										position: "absolute",
+										width: "100%",
+										zIndex: 1100,
+										mt: 0.5,
+										borderRadius: "4px",
+										boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+										bgcolor: "background.paper",
+									}}
+								>
+									{predictions.map((prediction, index) => (
+										<Box
+											key={index}
+											onClick={() => handleSuggestionClick(prediction.description)}
+											sx={{
+												p: 1.5,
+												cursor: "pointer",
+												"&:hover": { backgroundColor: "#f5f5f5" },
+											}}
+										>
+											<Typography variant="body2">{prediction.description}</Typography>
+										</Box>
+									))}
 
-                                    <Box sx={{
-                                        borderTop: '1px solid rgba(0,0,0,0.1)',
-                                        p: 1,
-                                        display: 'flex',
-                                        justifyContent: 'center'
-                                    }}>
-                                        <Box component="img"
-                                            src="/api/placeholder/144/18"
-                                            alt="Powered by Google"
-                                            sx={{ height: '18px' }}
-                                        />
-                                    </Box>
-                                </Paper>
-                            )}
-                        </Box>
+									<Box
+										sx={{
+											borderTop: "1px solid rgba(0,0,0,0.1)",
+											p: 1,
+											display: "flex",
+											justifyContent: "center",
+										}}
+									>
+										<Box
+											component="img"
+											src="/api/placeholder/144/18"
+											alt="Powered by Google"
+											sx={{ height: "18px" }}
+										/>
+									</Box>
+								</Paper>
+							)}
+						</Box>
 
-                        {/* Date Time Picker */}
-                        <Box sx={{ position: 'relative', width: '100%', my: 2 }}>
-                            <FormControl fullWidth variant="outlined">
-                                <InputLabel
-                                    shrink
-                                    sx={{
-                                        backgroundColor: 'white',
-                                        px: 0.5,
-                                        transform: 'translate(14px, -9px) scale(0.75)',
-                                        transformOrigin: 'top left'
-                                    }}
-                                >
-                                    When do you need to park?
-                                </InputLabel>
+						{/* Date Time Picker */}
+						<Box sx={{ position: "relative", width: "100%", my: 2 }}>
+							<FormControl fullWidth variant="outlined">
+								<InputLabel
+									shrink
+									sx={{
+										backgroundColor: "white",
+										px: 0.5,
+										transform: "translate(14px, -9px) scale(0.75)",
+										transformOrigin: "top left",
+									}}
+								>
+									When do you need to park?
+								</InputLabel>
 
-                                <Box sx={{ position: 'relative' }}>
-                                    <Box sx={{
-                                        position: 'absolute',
-                                        left: '10px',
-                                        top: '50%',
-                                        transform: 'translateY(-50%)',
-                                        zIndex: 1
-                                    }}>
-                                        <CalendarIcon color="action" />
-                                    </Box>
+								<Box sx={{ position: "relative" }} color="white">
+									<Box
+										sx={{
+											position: "absolute",
+											left: "10px",
+											top: "50%",
+											transform: "translateY(-50%)",
+											zIndex: 1,
+										}}
+									>
+										<CalendarIcon color="action" />
+									</Box>
 
-                                    <Button
+									<Button
                                         fullWidth
                                         aria-describedby={id}
                                         onClick={handleDateTimeClick}
@@ -271,18 +276,21 @@ const HomePage = () => {
                                         {selectedDate ? selectedDate.toDateString() : "Select date & time"}
                                     </Button>
 
-                                    <Box sx={{
-                                        position: 'absolute',
-                                        right: '10px',
-                                        top: '50%',
-                                        transform: 'translateY(-50%)'
-                                    }}>
-                                        <KeyboardArrowDownIcon color="action" />
-                                    </Box>
-                                </Box>
-                            </FormControl>
 
-                            <Popover
+									<Box
+										sx={{
+											position: "absolute",
+											right: "10px",
+											top: "50%",
+											transform: "translateY(-50%)",
+										}}
+									>
+										<KeyboardArrowDownIcon color="action" />
+									</Box>
+								</Box>
+							</FormControl>
+
+							<Popover
                                 id={id}
                                 open={open}
                                 anchorEl={anchorEl}
@@ -309,7 +317,7 @@ const HomePage = () => {
                             </Popover>
                         </Box>
 
-                        <Button
+						<Button
                             fullWidth
                             variant="contained"
                             onClick={() => {

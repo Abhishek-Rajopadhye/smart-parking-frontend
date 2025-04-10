@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState } from "react";
 import { Box, Button, Alert, Snackbar } from "@mui/material";
 import { GoogleMap } from "@react-google-maps/api";
@@ -12,8 +11,8 @@ import { BACKEND_URL } from "../const";
 import { MapContext } from "../context/MapContext";
 
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef, filteredMarkers }) {
-	const {isLoaded,loadError} = useContext(MapContext);
-
+	
+    const {isLoaded,loadError} = useContext(MapContext);
 	const navigate = useNavigate();
 	const [currentPosition, setCurrentPosition] = useState(null);
 	const [snackbar, setSnackbar] = useState({
@@ -198,7 +197,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 						{newMarker && (
 							<MarkerComponent marker={newMarker} setSelectedMarker={setSelectedMarker} isSearchMarker={true} />
 						)}
-				
+
 						{selectedMarker && (
 							<InfoWindowComponent
 								selectedMarker={selectedMarker}
@@ -211,7 +210,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 
 					{/* Navigation button to add new parking spot */}
 					<Button
-						sx={{bottom: 20, left:-200, position:"relative"}}
+						sx={{ bottom: 20, left: -200, position: "relative" }}
 						onClick={() => navigate("/spot")}
 						variant="contained"
 						disableElevation
