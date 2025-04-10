@@ -23,7 +23,7 @@ import {
 } from "@mui/icons-material";
 import DateTimePicker from "../components/DateTimePicker";
 import { IoLocationSharp } from "react-icons/io5";
-import parking from "../assets/Images/parkingSpace.jpeg";
+import parking from "../assets/Images/parkingSpace.jpg";
 import { useNavigate } from "react-router-dom";
 import { MapContext } from "../context/MapContext";
 import { Spot } from "./Spot";
