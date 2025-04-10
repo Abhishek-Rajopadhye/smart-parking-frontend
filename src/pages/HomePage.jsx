@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import {
 	Box,
+	Dialog,
 	Grid,
 	Typography,
 	TextField,
@@ -12,6 +13,7 @@ import {
 	IconButton,
 	Paper,
 	Popover,
+	Divider,
 } from "@mui/material";
 import {
 	Search as SearchIcon,
@@ -20,12 +22,15 @@ import {
 	KeyboardArrowDown as KeyboardArrowDownIcon,
 } from "@mui/icons-material";
 import DateTimePicker from "../components/DateTimePicker";
+import { IoLocationSharp } from "react-icons/io5";
 import parking from "../assets/Images/parkingSpace.jpeg";
 import { useNavigate } from "react-router-dom";
 import { MapContext } from "../context/MapContext";
+import { Spot } from "./Spot";
 
 const HomePage = () => {
 	const { isLoaded, loadError } = useContext(MapContext);
+	const [openAddSpotDialogBox, setOpenAddSpotDialogBox] = useState(false);
 	const [tabValue, setTabValue] = useState(0);
 	const [searchAddress, setSearchAddress] = useState("");
 	const [suggestions, setSuggestions] = useState(false);
@@ -109,7 +114,7 @@ const HomePage = () => {
 		<Box sx={{ bgcolor: "#fff", p: 8 }}>
 			<Grid container spacing={4} alignItems="center">
 				<Grid item xs={12} md={6}>
-					<Typography variant="h4" fontWeight="bold" gutterBottom>
+					<Typography variant="h4" fontWeight="bold" gutterBottom color="text.primary">
 						Parking made easy,
 						<br /> wherever you go
 					</Typography>
@@ -327,16 +332,30 @@ const HomePage = () => {
 							});
 						}}
 						sx={{
-							borderRadius: 8,
+							borderRadius: 2,
 							py: 1.5,
 							textTransform: "none",
 							fontWeight: "bold",
 							fontSize: "1rem",
-							backgroundColor: "#1976d2",
-							":hover": { backgroundColor: "#115293" },
 						}}
 					>
 						Find Parking Spots
+					</Button>
+					<Divider sx={{ my: 4 }} >
+						<Typography variant="body2" color="text.secondary">
+							Or	
+						</Typography>
+					</Divider>
+					{/* Button to add new parking spot */}
+					<Button
+						sx={{ bottom: 20, position: "relative" }}
+						onClick={() => setOpenAddSpotDialogBox(true)}
+						variant="contained"
+						fullWidth
+						disableElevation
+						startIcon={<IoLocationSharp size={20} />}
+					>
+						Add Parking Spot
 					</Button>
 				</Grid>
 
@@ -357,7 +376,7 @@ const HomePage = () => {
 
 			{/* How it works */}
 			<Box sx={{ bgcolor: "#fff", py: 10 }}>
-				<Typography variant="h5" fontWeight="bold" textAlign="center" mb={6}>
+				<Typography variant="h5" fontWeight="bold" textAlign="center" mb={6} color="text.primary">
 					How Smart Parking Works
 				</Typography>
 
@@ -391,6 +410,13 @@ const HomePage = () => {
 					))}
 				</Grid>
 			</Box>
+			<Dialog open={openAddSpotDialogBox} onClose={() => setOpenAddSpotDialogBox(false)}>
+				<Spot
+					onCancel={() => {
+						setOpenAddSpotDialogBox(false);
+					}}
+				/>
+			</Dialog>
 		</Box>
 	);
 };
