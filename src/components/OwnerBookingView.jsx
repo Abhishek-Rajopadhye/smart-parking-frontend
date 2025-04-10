@@ -43,6 +43,7 @@ const OwnerBookingView = ({ bookingDetails }) => {
 					<TableRow sx={{ backgroundColor: "#f5f5f5" }}>
 						<TableCell />
 						<TableCell>Name</TableCell>
+						<TableCell>Slots Booked</TableCell>
 						<TableCell>Revenue</TableCell>
 						<TableCell>Status</TableCell>
 					</TableRow>
@@ -67,6 +68,9 @@ const OwnerBookingView = ({ bookingDetails }) => {
 											{`From: ${booking.start_date_time} - ${booking.end_date_time}`}
 										</Collapse>
 									</TableCell>
+									<TableCell variant="body1" fontWeight="500">
+										{booking.total_slots}
+									</TableCell>
 									<TableCell>
 										<CurrencyRupee fontSize="tiny" /> {booking.payment_amount}
 									</TableCell>
@@ -77,8 +81,10 @@ const OwnerBookingView = ({ bookingDetails }) => {
 												booking.status === "Pending"
 													? "orange"
 													: booking.status === "Checked In"
-													? "green"
-													: "gray",
+													? "blue"
+													: booking.status === "Cancelled"
+													? "red"
+													: "green",
 										}}
 									>
 										{booking.status}
