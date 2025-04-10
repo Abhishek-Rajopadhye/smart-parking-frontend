@@ -5,10 +5,11 @@ import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import InfoIcon from "@mui/icons-material/Info";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, calculateDistance }) => {
 	const navigate = useNavigate();
+	const {spot_id}=useParams();
 
 	if (!selectedMarker) {
 		console.error("InfoWindowComponent received null or undefined selectedMarker");
@@ -34,7 +35,7 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
 		try {
 			if (selectedMarker) {
 				console.log("Before navigating  ", selectedMarker); // Ensure selectedMarker is not null
-				navigate("/spotdetail");
+				navigate(`/spotdetail/${selectedMarker.spot_id}`);
 			} else {
 				throw new Error("No marker selected to navigate!");
 			}
@@ -70,8 +71,6 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
 						{!isSearchLocation && (
 							<IconButton
 								size="small"
-								component={Link}
-								to="/spotdetail"
 								onClick={showDetails}
 								sx={{ marginRight: 1 }}
 							>

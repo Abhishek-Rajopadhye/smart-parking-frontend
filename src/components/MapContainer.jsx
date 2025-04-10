@@ -209,15 +209,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 					</GoogleMap>
 
 					{/* Navigation button to add new parking spot */}
-					<Button
-						sx={{ bottom: 20, left: -200, position: "relative" }}
-						onClick={() => navigate("/spot")}
-						variant="contained"
-						disableElevation
-						startIcon={<IoLocationSharp size={20} />}
-					>
-						Add Parking Spot
-					</Button>
+					
 					<Snackbar
 						open={snackbar.open}
 						autoHideDuration={4000}

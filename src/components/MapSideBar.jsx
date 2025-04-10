@@ -28,13 +28,13 @@ import {
 
 } from "@mui/x-date-pickers";
 import { MapContext } from "../context/MapContext";
-import {  getLatLng } from "react-places-autocomplete";
+import { getLatLng } from "react-places-autocomplete";
 import MarkerCard from "./MarkerCard";
 
-const MapSidebar = ( {mapRef, setNewMarker,setSelectedMarker,markers }) => {
+const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers }) => {
   const location = useLocation();
   const [searchLocation, setSearchLocation] = useState("");
-  const [latlng ,setLatLng]=useState("null")
+  const [latlng, setLatLng] = useState("null")
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -43,7 +43,7 @@ const MapSidebar = ( {mapRef, setNewMarker,setSelectedMarker,markers }) => {
   const [predictions, setPredictions] = useState([]);
   const autocompleteServiceRef = useRef(null);
 
-  console.log("searched loatino ",searchLocation);
+  console.log("searched loatino ", searchLocation);
   useEffect(() => {
     if (isLoaded && window.google && !autocompleteServiceRef.current) {
       autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
@@ -73,7 +73,7 @@ const MapSidebar = ( {mapRef, setNewMarker,setSelectedMarker,markers }) => {
     }
 
     autocompleteServiceRef.current.getPlacePredictions(
-      { input: value ,componentRestrictions: { country: "IN" }},
+      { input: value, componentRestrictions: { country: "IN" } },
       (results) => {
         if (results) {
           setPredictions(results);
@@ -97,17 +97,17 @@ const MapSidebar = ( {mapRef, setNewMarker,setSelectedMarker,markers }) => {
       if (status === 'OK' && results[0]) {
         const latLng = await getLatLng(results[0]);
         setLatLng(latLng);
-        
+
         const newSearchMarker = { name: description, location: latLng };
         setNewMarker(newSearchMarker);
-		  setSelectedMarker(newSearchMarker);
+        setSelectedMarker(newSearchMarker);
 
-		if (mapRef.current) {
-			mapRef.current.panTo(latLng);
-			mapRef.current.setZoom(14);
-		}
+        if (mapRef.current) {
+          mapRef.current.panTo(latLng);
+          mapRef.current.setZoom(14);
+        }
 
-       
+
       }
     });
   };
@@ -120,7 +120,7 @@ const MapSidebar = ( {mapRef, setNewMarker,setSelectedMarker,markers }) => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Paper elevation={3} sx={{ width: 350, p: 2, height: "100vh", borderRadius: 0, overflowY: "auto" }}>
+      <Paper elevation={3} sx={{ p: 2, height: "100vh", borderRadius: 0, overflowY: "auto" }}>
         {/* Book Parking Near */}
         <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
           Book Parking Near
@@ -211,7 +211,7 @@ const MapSidebar = ( {mapRef, setNewMarker,setSelectedMarker,markers }) => {
           }}
         />
         {/* Enter After */}
-        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 ,mt:1}}>
+        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1, mt: 1 }}>
           Enter After
         </Typography>
         <Box display="flex" gap={1} mb={3}>
@@ -235,7 +235,7 @@ const MapSidebar = ( {mapRef, setNewMarker,setSelectedMarker,markers }) => {
         </Box>
 
         {/* Exit Before */}
-        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 ,mt:1}}>
+        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1, mt: 1 }}>
           Exit Before
         </Typography>
         <Box display="flex" gap={1} mb={3}>
@@ -262,12 +262,12 @@ const MapSidebar = ( {mapRef, setNewMarker,setSelectedMarker,markers }) => {
           Update Search
         </Button>
 
-        <Box sx={{bgcolor:"red" ,mt:2}}>
-<MarkerCard
-markers={markers}
-origin={searchLocation}
-latlng={latlng}
-/>
+        <Box sx={{ bgcolor: "red", mt: 2 }}>
+          <MarkerCard
+            markers={markers}
+            origin={searchLocation}
+            latlng={latlng}
+          />
         </Box>
       </Paper>
     </LocalizationProvider>

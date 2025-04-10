@@ -81,7 +81,7 @@ const AppLayout = () => {
 				return "Booking";
 			case "/spotdetail":
 				return "Detailed Info";
-				
+
 			default:
 				return "Home";
 		}
@@ -111,7 +111,7 @@ const AppLayout = () => {
 
 	return (
 		<Box className="outermost-container" sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
-        <AppBar position="fixed" sx={{ zIndex: 3 }}>
+			<AppBar position="fixed" sx={{ zIndex: 3 }}>
 				<Toolbar>
 					<Typography variant="h6" sx={{ flexGrow: 1, justifyContent: "center", textAlign: "center" }}>
 						{getPageTitle()}
@@ -154,8 +154,8 @@ const AppLayout = () => {
 					<Route path="/spot" element={<Spot />} />
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
-					<Route path="/homepage" element={<HomePage/>}/>
-          <Route
+					<Route path="/homepage" element={<HomePage />} />
+					<Route
 						path="/mapscreen"
 						element={
 							<Home
@@ -172,19 +172,18 @@ const AppLayout = () => {
 					/>
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
-					<Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker} />} />
-					<Route path="/MapSearch" element={<MapSearch  
-            selectedMarker={selectedMarker}
-            setSelectedMarker={setSelectedMarker}
-            newMarker={newMarker}
-            setNewMarker={setNewMarker}
-            markers={markers}
-            setMarkers={setMarkers}
-            mapRef={mapRef}
-            filteredMarkers={filteredMarkers}
-            />}
-          />
-					<Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker}/>} />
+					<Route path="/MapSearch" element={<MapSearch
+						selectedMarker={selectedMarker}
+						setSelectedMarker={setSelectedMarker}
+						newMarker={newMarker}
+						setNewMarker={setNewMarker}
+						markers={markers}
+						setMarkers={setMarkers}
+						mapRef={mapRef}
+						filteredMarkers={filteredMarkers}
+					/>}
+					/>
+					<Route path="/spotdetail/:spot_id" element={<DetailInfo />} />
 					<Route path="*" element={<Navigate to="/homepage" />} />
 				</Routes>
 			</Box>
