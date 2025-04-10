@@ -206,6 +206,34 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 							/>
 						)}
 					</GoogleMap>
+					
+					<Snackbar
+						open={snackbar.open}
+						autoHideDuration={4000}
+						onClose={handleCloseSnackbar}
+						anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+					>
+						<Alert
+							onClose={handleCloseSnackbar}
+							severity={snackbar.severity}
+							sx={{ width: "100%" }}
+							action={
+								snackbar.severity === "error" && (
+									<Button
+										color="inherit"
+										size="small"
+										onClick={handleRetryLocation}
+										disabled={isRetrying}
+										startIcon={isRetrying ? <CircularProgress size={16} color="inherit" /> : null}
+									>
+										{isRetrying ? "Retrying..." : "Retry"}
+									</Button>
+								)
+							}
+						>
+							{snackbar.message}
+						</Alert>
+					</Snackbar>
 
 				</>
 			)}
