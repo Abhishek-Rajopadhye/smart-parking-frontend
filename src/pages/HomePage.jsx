@@ -321,7 +321,7 @@ const HomePage = () => {
 						fullWidth
 						variant="contained"
 						onClick={() => {
-							navigate("/MapSearch", {
+							navigate("/mapsearch", {
 								state: {
 									locationName: searchAddress,
 									selectedDate,

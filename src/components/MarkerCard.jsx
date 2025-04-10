@@ -55,7 +55,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 							walkingDuration: element?.duration?.text || "N/A",
 							rawDistance: element?.distance?.value || Infinity,
 						};
-					});
+					}).map((marker) => {marker.image = marker.image.map((imagem) => `data:image/*;base64,${imagem}`); return marker;});
 
 					setSortedMarkers(sortMarkers(updated, sortType));
 				} else {
@@ -127,7 +127,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 
 					<Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
 						<CardContent sx={{ pb: 0 }}>
-							<Typography fontWeight="bold" noWrap>
+							<Typography fontWeight="bold" noWrap sx={{ m: 2 }}>
 								{spot.spot_title}
 							</Typography>
 

@@ -181,7 +181,7 @@ const AppLayout = () => {
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
 					<Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker} />} />
 					<Route
-						path="/MapSearch"
+						path="/mapsearch"
 						element={
 							<MapSearch
 								selectedMarker={selectedMarker}
