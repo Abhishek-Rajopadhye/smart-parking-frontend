@@ -332,11 +332,8 @@ const HomePage = () => {
 							});
 						}}
 						sx={{
-							borderRadius: 2,
+							borderRadius: 1,
 							py: 1.5,
-							textTransform: "none",
-							fontWeight: "bold",
-							fontSize: "1rem",
 						}}
 					>
 						Find Parking Spots
@@ -348,7 +345,7 @@ const HomePage = () => {
 					</Divider>
 					{/* Button to add new parking spot */}
 					<Button
-						sx={{ bottom: 20, position: "relative" }}
+						sx={{ position: "relative" }}
 						onClick={() => setOpenAddSpotDialogBox(true)}
 						variant="contained"
 						fullWidth
