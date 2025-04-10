@@ -6,6 +6,7 @@ import { Search as SearchIcon } from "@mui/icons-material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import ClearIcon from '@mui/icons-material/Clear';
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { MapContext } from "../context/MapContext";
 import { getLatLng } from "react-places-autocomplete";
