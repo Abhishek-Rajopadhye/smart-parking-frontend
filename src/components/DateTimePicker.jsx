@@ -14,11 +14,11 @@ import {
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { isBefore, addMinutes, setHours, setMinutes } from "date-fns";
 
-const DateTimePicker = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
+const DateTimePicker = ({selectedDate,setSelectedDate,startTime,setStartTime,endTime,setEndTime,onClose}) => {
+  // const [selectedDate, setSelectedDate] = useState(new Date());
   const [bookingType, setBookingType] = useState("single");
-  const [startTime, setStartTime] = useState(null);
-  const [endTime, setEndTime] = useState(null);
+  // const [startTime, setStartTime] = useState(null);
+  // const [endTime, setEndTime] = useState(null);
   const [minEndTime, setMinEndTime] = useState(null);
 
   const theme = useTheme();
@@ -57,12 +57,11 @@ const DateTimePicker = () => {
     console.log("Selected Date:", selectedDate.toDateString());
     console.log("Enter After:", startTime?.toLocaleTimeString());
     console.log("Exit Before:", endTime?.toLocaleTimeString());
+    if(onClose) onClose();
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-      
-      
+    <LocalizationProvider dateAdapter={AdapterDateFns}>  
       <Box clasName="container-date-time" sx={{ p: 4, borderRadius: 2, boxShadow: 3, bgcolor: "#fff", mx: "auto" }}>
                 <Typography fontWeight="bold" gutterBottom>
                     When do you need to park?
@@ -125,6 +124,7 @@ const DateTimePicker = () => {
               minTime={getInitialStartTime(selectedDate)}
               maxTime={setHours(setMinutes(selectedDate, 30), 23)}
               sx={{ mt: 1, width: "100%" }}
+    
             />
           </Box>
 

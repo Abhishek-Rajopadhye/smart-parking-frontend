@@ -33,7 +33,9 @@ const HomePage = () => {
     const [searchAddress, setSearchAddress] = useState('');
     const [suggestions, setSuggestions] = useState(false);
     const [predictions, setPredictions] = useState([]);
-    const [dateTime, setDateTime] = useState('Today, 10:00 AM - 1:00 PM');
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [startTime, setStartTime] = useState(null);
+    const [endTime, setEndTime] = useState(null);
     const [anchorEl, setAnchorEl] = useState(null);
     const autocompleteServiceRef = useRef(null);
     const navigate = useNavigate();
@@ -59,7 +61,7 @@ const HomePage = () => {
         }
 
         autocompleteServiceRef.current.getPlacePredictions(
-            { input: value },
+            { input: value ,componentRestrictions: { country: "IN" }},
             (results) => {
                 if (results) {
                     setPredictions(results);
@@ -109,15 +111,14 @@ const HomePage = () => {
     const id = open ? 'date-time-popover' : undefined;
 
     return (
-        <Box sx={{ bgcolor: "#fff" }}>
-            <Container maxWidth="lg" sx={{ py: 8 }}>
-                <Grid container spacing={4} alignItems="center">
+        <Box sx={{ bgcolor: "#fff" ,p:8}}>
+                <Grid  container spacing={4} alignItems="center">
                     <Grid item xs={12} md={6}>
                         <Typography variant="h4" fontWeight="bold" gutterBottom>
                             Parking made easy,<br /> wherever you go
                         </Typography>
 
-                        <Box sx={{ mb: 2, mt: 4 }}>
+                        {/* <Box sx={{ mb: 2, mt: 4 }}>
                             <Tabs
                                 value={tabValue}
                                 onChange={handleTabChange}
@@ -132,7 +133,7 @@ const HomePage = () => {
                                 <Tab label="Hourly/Daily" />
                                 <Tab label="Monthly" />
                             </Tabs>
-                        </Box>
+                        </Box> */}
 
                         {/* Search Field */}
                         <Box sx={{ position: 'relative', width: '100%', my: 2 }}>
@@ -267,7 +268,7 @@ const HomePage = () => {
                                             }
                                         }}
                                     >
-                                        {dateTime}
+                                        {selectedDate ? selectedDate.toDateString() : "Select date & time"}
                                     </Button>
 
                                     <Box sx={{
@@ -292,7 +293,18 @@ const HomePage = () => {
                                 }}
                             >
                                 <Box className="date-time-picker">
-                                    <DateTimePicker />
+                                    <DateTimePicker 
+                                    suggestions={suggestions}
+                                    setSuggestions={setSuggestions}
+                                    handleSearchChange={handleSearchChange}
+                                    selectedDate={selectedDate}
+                                    setSelectedDate={setSelectedDate}
+                                    startTime={startTime}
+                                    setStartTime={setStartTime}
+                                    endTime={endTime}
+                                    setEndTime={setEndTime}
+                                    onClose={handleDateTimeClose}
+                                    />
                                 </Box>
                             </Popover>
                         </Box>
@@ -301,7 +313,14 @@ const HomePage = () => {
                             fullWidth
                             variant="contained"
                             onClick={() => {
-                              navigate("/home");
+                              navigate("/MapSearch", {
+                                state: {
+                                  locationName: searchAddress,
+                                  selectedDate,
+                                  startTime,
+                                  endTime,
+                                },
+                              });
                             }}
                             sx={{
                                 borderRadius: 8,
@@ -318,7 +337,7 @@ const HomePage = () => {
                     </Grid>
 
                     {/* Right Image */}
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={6} >
                         <Box
                             component="img"
                             src={parking}
@@ -331,11 +350,10 @@ const HomePage = () => {
                         />
                     </Grid>
                 </Grid>
-            </Container>
-
+            
             {/* How it works */}
             <Box sx={{ bgcolor: "#fff", py: 10 }}>
-                <Container maxWidth="lg">
+                
                     <Typography variant="h5" fontWeight="bold" textAlign="center" mb={6}>
                         How Smart Parking Works
                     </Typography>
@@ -365,7 +383,7 @@ const HomePage = () => {
                             </Grid>
                         ))}
                     </Grid>
-                </Container>
+               
             </Box>
         </Box>
     );

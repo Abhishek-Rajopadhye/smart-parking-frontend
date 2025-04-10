@@ -14,6 +14,8 @@ import DetailInfo from "./components/DetailInfo";
 import { MapProvider } from "./context/MapContext";
 import HomePage from "./pages/HomePage";
 import { LoadScript } from "@react-google-maps/api";
+import Check from "./pages/MapSearch";
+import MapSearch from "./pages/MapSearch";
 
 
 const AppLayout = () => {
@@ -35,7 +37,7 @@ const AppLayout = () => {
 		if (token) {
 			localStorage.setItem("token", String(token));
 			localStorage.setItem("user_id", String(user_id));
-			navigate("/home");
+			navigate("/HomePage");
 		}
 	}, [navigate]);
 
@@ -74,6 +76,7 @@ const AppLayout = () => {
 				return "Booking";
 			case "/spotdetail":
 				return "Detailed Info";
+				
 			default:
 				return "Home";
 		}
@@ -102,65 +105,67 @@ const AppLayout = () => {
 	}
 
 	return (
-		<Box sx={{ display: "flex",flexDirection:"column", width: "100%" }}>
-			<AppBar position="fixed" sx={{ zIndex: 3 }}>
-				<Toolbar>
-					<Typography variant="h6" sx={{ flexGrow: 1 }}>
-						{getPageTitle()}
-					</Typography>
-					{location.pathname === "/home" && (
-						<>
-							<Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
-								<SearchBar
-									setNewMarker={setNewMarker}
-									setSelectedMarker={setSelectedMarker}
-									mapRef={mapRef}
-									filters={filters}
-									setFilters={setFilters}
-								/>
-							</Box>
-						</>
-					)}
-					<IconButton onClick={handleAvatarClick}>
-						<Avatar alt="User Avatar" src={user?.avatarUrl || ""} />
-					</IconButton>
-					<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-						{routes
-							.filter((r) => r.path !== location.pathname)
-							.map((r) => (
-								<MenuItem
-									key={r.path}
-									onClick={() => {
-										handleMenuClose();
-										navigate(r.path);
-									}}
-								>
-									{r.label}
-								</MenuItem>
-							))}
-						<MenuItem
-							onClick={() => {
-								handleMenuClose();
-								logout();
-							}}
-							sx={{ color: "red" }}
-						>
-							Logout
-						</MenuItem>
-					</Menu>
-				</Toolbar>
-			</AppBar>
+		<Box className="outermost-container" sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
+			
+				<AppBar position="fixed" sx={{ zIndex: 3 }}>
+					<Toolbar>
+						<Typography variant="h6" sx={{ flexGrow: 1 }}>
+							{getPageTitle()}
+						</Typography>
+						{location.pathname === "/home" && (
+							<>
+								<Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
+									<SearchBar
+										setNewMarker={setNewMarker}
+										setSelectedMarker={setSelectedMarker}
+										mapRef={mapRef}
+										filters={filters}
+										setFilters={setFilters}
+									/>
+								</Box>
+							</>
+						)}
+						<IconButton onClick={handleAvatarClick}>
+							<Avatar alt="User Avatar" src={user?.avatarUrl || ""} />
+						</IconButton>
+						<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+							{routes
+								.filter((r) => r.path !== location.pathname)
+								.map((r) => (
+									<MenuItem
+										key={r.path}
+										onClick={() => {
+											handleMenuClose();
+											navigate(r.path);
+										}}
+									>
+										{r.label}
+									</MenuItem>
+								))}
+							<MenuItem
+								onClick={() => {
+									handleMenuClose();
+									logout();
+								}}
+								sx={{ color: "red" }}
+							>
+								Logout
+							</MenuItem>
+						</Menu>
+					</Toolbar>
+				</AppBar>
+			
 
-			<Box variant="main">
+			<Box variant="main" sx={{ flex: 1, mt: 8 }}>
 				<Routes>
 					<Route path="/spot" element={<Spot />} />
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
-					<Route path="/my-spots" element={<MySpots />} />
-					<Route path="/add-review" element={<AddReview />} />
-					<Route path="/HomePage" element={<HomePage/>}/>
 
-            <Route
+
+					<Route path="/HomePage" element={<HomePage />} />
+
+					<Route
 						path="/home"
 						element={
 							<Home
@@ -177,8 +182,19 @@ const AppLayout = () => {
 					/>
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
-					<Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker}/>} />
-					<Route path="*" element={<Navigate to="/home" />} />
+					<Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker} />} />
+					<Route path="*" element={<Navigate to="/HomePage" />} />
+					<Route path="/MapSearch" element={<MapSearch  
+				selectedMarker={selectedMarker}
+				setSelectedMarker={setSelectedMarker}
+				newMarker={newMarker}
+				setNewMarker={setNewMarker}
+				markers={markers}
+				setMarkers={setMarkers}
+				mapRef={mapRef}
+				filteredMarkers={filteredMarkers}
+				/>}
+				/>
 				</Routes>
 			</Box>
 		</Box>

@@ -13,9 +13,8 @@ import { MapContext } from "../context/MapContext";
 
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef, filteredMarkers }) {
 	const {isLoaded,loadError} = useContext(MapContext);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
-	// const navigate = useNavigate();
+
+	const navigate = useNavigate();
 	const [currentPosition, setCurrentPosition] = useState(null);
 	const [snackbar, setSnackbar] = useState({
 		open: false,
@@ -28,8 +27,8 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 		display: "flex",
 		featureType: "all",
 		elementType: "all",
-		height: "85vh",
-		top: 50,
+		height: "100vh",
+		width:"100%",
 	};
 
 	const defaultCenter = {
@@ -40,27 +39,9 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 	/**
 	 * Fetch parking spot markers from the API
 	 */
-	useEffect(() => {
-		const fetchMarkers = async () => {
-			try {
-				const response = await axios.get(`${BACKEND_URL}/spotdetails/getparkingspot`);
-				if (!response.data) {
-					throw new Error("No data received from the server");
-				}
+	
 
-				setMarkers(response.data);
-				setError(null);
-			} catch (error) {
-				console.error("Error fetching markers", error);
-				setError("Failed to load parking spots. Please try again later.");
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchMarkers();
-	}, [setMarkers]);
-
+	console.log("Marker fetched ",markers)
 	useEffect(() => {
 		if ("geolocation" in navigator) {
 			navigator.geolocation.getCurrentPosition(
@@ -107,7 +88,6 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 			navigator.geolocation.getCurrentPosition(
 				(position) => {
 					const { latitude, longitude } = position.coords;
-					setDraggableMarker({ lat: latitude, lng: longitude });
 					setCurrentPosition({ lat: latitude, lng: longitude });
 
 					setSnackbar({
@@ -191,14 +171,12 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 
 	return (
 		<Box className="map-container">
-			{loading ? (
+			{!isLoaded ? (
 				<Box display="flex" justifyContent="center" alignItems="center" height="100vh">
 					<CircularProgress />
 					<Box ml={2}>Loading parking spots...</Box>
 				</Box>
-			) : error ? (
-				<Alert severity="error">{error}</Alert>
-			) : (
+			) :  (
 				<>
 					<GoogleMap
 						mapContainerStyle={mapStyles}
