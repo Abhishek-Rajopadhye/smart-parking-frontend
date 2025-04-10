@@ -12,6 +12,7 @@ import {
 	ListItem,
 	ListItemText,
 	Dialog,
+	CardContent
 } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import { EditProfileModal } from "../components/EditProfileModal";
@@ -35,7 +36,7 @@ const Profile = () => {
 	const [userSpots, setUserSpots] = useState([]); // State to store user's spots
 	const [dialogBoxOpen, setDialogBoxOpen] = useState(false);
 	const [bookingDetails, setBookingDetails] = useState(null);
-
+	const [totalEarning, setTotalEarning] = useState(0); // State to store total earnings
 	/**
 	 * Fetches the user's profile data from the server and updates the user state.
 	 */
@@ -64,8 +65,11 @@ const Profile = () => {
 				const response = await axios.get(`${BACKEND_URL}/spots/owner/${user_id}`, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
+				console.log(response.data);
 				if (response.status === 200) {
 					setUserSpots(response.data);
+					const total = response.data.reduce((acc, spot) => acc + spot.totalEarning, 0);
+					setTotalEarning(total);
 				}
 			} catch (error) {
 				console.error("Error fetching user spots:", error);
@@ -176,7 +180,7 @@ const Profile = () => {
 					</Typography>
 					<Typography variant="h5" color="success" display="flex" alignItems="center">
 						<CurrencyRupee fontSize="small" />
-						{user.total_earnings}
+						{totalEarning}
 					</Typography>
 					<Button variant="contained" color="primary" onClick={handleOpenModal} sx={{ mt: 2 }}>
 						Edit Profile
@@ -204,7 +208,22 @@ const Profile = () => {
 										borderRadius: 2,
 									}}
 								>
-									<ListItemText primary={spot.title} secondary={`Location: ${spot.address}`} sx={{ mb: 1 }} />
+									<Box>
+									<CardContent>
+										<Typography variant="h6"><strong>Title: </strong>{spot.title}</Typography>
+										<Typography variant="h6"><strong>Address: </strong>{spot.address}</Typography>
+										<Typography variant="h6"><strong>Description: </strong>{spot.description}</Typography>
+										<Typography variant="h6"><strong>Open Time: </strong>{spot.openTime}</Typography>
+										<Typography variant="h6"><strong>Close Time: </strong>{spot.closeTime}</Typography>
+										<Typography variant="h6"><strong>Hourly Rate: </strong>{spot.hourlyRate} Rs.</Typography>
+										<Typography variant="h6"><strong>Open Days: </strong>{spot.openDays}</Typography>
+										<Typography variant="h6" fontWeight="bold" color="success">
+											Earnings: <CurrencyRupee fontSize="small" />
+											{spot.totalEarning}
+										</Typography>
+									</CardContent>
+									</Box>
+									
 									<CardActions sx={{ justifyContent: "flex-end" }}>
 										<Button variant="outlined" color="primary" onClick={() => handleEditSpot(spot.spot_id)}>
 											Edit
