@@ -15,78 +15,78 @@ import "../style/booking_history.css";
  * @returns {JSX.Element} The BookingHistory page component.
  */
 const BookingHistory = () => {
-    const { user } = useContext(AuthContext);
-    const [userBookings, setUserBookings] = useState([]);
+	const { user } = useContext(AuthContext);
+	const [userBookings, setUserBookings] = useState([]);
 
-    /**
-     * Fetches booking details for the logged-in user.
-     */
-    useEffect(() => {
-        const fetchDetailsUserBookings = async () => {
-            const response = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
-            if (response.status === 200) {
-                setUserBookings(response.data);
-            }
-        };
+	/**
+	 * Fetches booking details for the logged-in user.
+	 */
+	useEffect(() => {
+		const fetchDetailsUserBookings = async () => {
+			const response = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
+			if (response.status === 200) {
+				setUserBookings(response.data);
+			}
+		};
 
-        fetchDetailsUserBookings();
-    }, [user.id]);
+		fetchDetailsUserBookings();
+	}, [user.id]);
 
-    /**
-     * Handles the cancellation of a booking.
-     *
-     * @param {number} bookingId - The ID of the booking to cancel.
-     */
-    const handleCancelBooking = async (bookingId) => {
-        const response = await axios.delete(`${BACKEND_URL}/bookings/${bookingId}`);
-        if (response.status === 200) {
-            const userDetailsResponse = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
-            if (userDetailsResponse.status === 200) {
-                setUserBookings(userDetailsResponse.data);
-            }
-        }
-    };
+	/**
+	 * Handles the cancellation of a booking.
+	 *
+	 * @param {number} bookingId - The ID of the booking to cancel.
+	 */
+	const handleCancelBooking = async (bookingId) => {
+		const response = await axios.delete(`${BACKEND_URL}/bookings/${bookingId}`);
+		if (response.status === 200) {
+			const userDetailsResponse = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
+			if (userDetailsResponse.status === 200) {
+				setUserBookings(userDetailsResponse.data);
+			}
+		}
+	};
 
-    /**
-     * Handles the check-in of a booking.
-     *
-     * @param {number} bookingId - The ID of the booking to check in.
-     */
-    const handleCheckIn = async (bookingId) => {
-        const response = await axios.put(`${BACKEND_URL}/bookings/checkin/${bookingId}`);
-        if (response.status === 200) {
-            const userDetailsResponse = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
-            if (userDetailsResponse.status === 200) {
-                setUserBookings(userDetailsResponse.data);
-            }
-        }
-    };
+	/**
+	 * Handles the check-in of a booking.
+	 *
+	 * @param {number} bookingId - The ID of the booking to check in.
+	 */
+	const handleCheckIn = async (bookingId) => {
+		const response = await axios.put(`${BACKEND_URL}/bookings/checkin/${bookingId}`);
+		if (response.status === 200) {
+			const userDetailsResponse = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
+			if (userDetailsResponse.status === 200) {
+				setUserBookings(userDetailsResponse.data);
+			}
+		}
+	};
 
-    /**
-     * Handles the check-out of a booking.
-     *
-     * @param {number} bookingId - The ID of the booking to check out.
-     */
-    const handleCheckOut = async (bookingId) => {
-        const response = await axios.put(`${BACKEND_URL}/bookings/checkout/${bookingId}`);
-        if (response.status === 200) {
-            const userDetailsResponse = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
-            if (userDetailsResponse.status === 200) {
-                setUserBookings(userDetailsResponse.data);
-            }
-        }
-    };
+	/**
+	 * Handles the check-out of a booking.
+	 *
+	 * @param {number} bookingId - The ID of the booking to check out.
+	 */
+	const handleCheckOut = async (bookingId) => {
+		const response = await axios.put(`${BACKEND_URL}/bookings/checkout/${bookingId}`);
+		if (response.status === 200) {
+			const userDetailsResponse = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
+			if (userDetailsResponse.status === 200) {
+				setUserBookings(userDetailsResponse.data);
+			}
+		}
+	};
 
-    return (
-        <Container sx={{ position: "relative", width: "100vw", alignContent: "center", mt:5 }}>
-            <UserBookingView
-                bookingDetails={userBookings}
-                cancelBooking={handleCancelBooking}
-                checkIn={handleCheckIn}
-                checkOut={handleCheckOut}
-            />
-        </Container>
-    );
+	return (
+		<Container sx={{ position: "relative", width: "100vw", alignContent: "center", mt: 5 }}>
+			<UserBookingView
+				bookingDetails={userBookings}
+				cancelBooking={handleCancelBooking}
+				checkIn={handleCheckIn}
+				checkOut={handleCheckOut}
+			/>
+		</Container>
+	);
 };
 
 export { BookingHistory };
