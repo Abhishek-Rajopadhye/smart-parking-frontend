@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import { Box } from "@mui/material";
 import { MapContainer } from "../components/MapContainer";
-import MapSidebar from "../components/MapSideBAr";
+import MapSidebar from "../components/MapSideBar";
 import { BACKEND_URL } from "../const";
 
 const MapSearch = ({
