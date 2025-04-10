@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
 	Grid,
 	Paper,
@@ -26,7 +26,24 @@ import { Booking } from "../pages/Booking";
 import { ReviewCard } from "./ReviewCard";
 import { AddReview } from "./AddReview";
 
-const DetailInfo = ({ selectedMarker }) => {
+const DetailInfo = ({  }) => {
+
+	const {spot_id}=useParams();
+	const [selectedMarker,setSelectedMarker]=useState([]);
+	console.log("dpot",spot_id);
+	
+
+	useEffect(() => {
+		// Fetch the spot details from your API
+		fetch(`${BACKEND_URL}/spotdetails/get-spot/${spot_id}`)
+		  .then(response => response.json())
+		  .then(data => {
+			setSelectedMarker(data);
+			
+		  })
+		  .catch(error => console.error('Error fetching spot details:', error));
+	  }, [spot_id])
+	
 	const [reviews, setReviews] = useState([]);
 	const [ownerDetail, setOwnerDetail] = useState({});
 	const [spotImages, setSpotImages] = useState([]);
@@ -34,7 +51,7 @@ const DetailInfo = ({ selectedMarker }) => {
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
 	const [addReviewDialogOpen, setAddReviewDialogOpen] = useState(false);
 	const navigate = useNavigate();
-
+	console.log("slected amrker",ownerDetail );
 	useEffect(() => {
 		const fetchDetails = async () => {
 			try {
@@ -49,6 +66,7 @@ const DetailInfo = ({ selectedMarker }) => {
 			} catch (error) {
 				console.error("Error fetching data", error);
 			}
+			
 		};
 
 		const getImages = async () => {
@@ -77,23 +95,62 @@ const DetailInfo = ({ selectedMarker }) => {
 	};
 
 	return (
-		<Box sx={{ position: "absolute", width: "95%", margin: "auto", padding: 3, top: "50px" }}>
-			<Paper sx={{ padding: 2, textAlign: "left" }}>
-				<CardMedia
-					component="img"
-					height="300"
-					image={spotImages[0] || "https://cdn.pixabay.com/photo/2020/05/31/09/12/park-5241887_1280.jpg"}
-					alt="Parking Spot"
-				/>
-				<Typography variant="h4" fontWeight="bold" sx={{ mt: 2, ml: 1 }}>
-					{selectedMarker.spot_title}
+<Box
+		sx={{
+			width: "100%",
+			padding: { xs: 2, sm: 3, md: 4 },
+			boxSizing: "border-box",
+			overflowX: "hidden", // 🚫 Disable horizontal scrolling
+		}}
+	>
+			<Paper
+			sx={{
+				textAlign: "center",
+				py: { xs: 2, sm: 3 },
+				px: { xs: 1, sm: 2 },
+				mb: 3,
+				backgroundColor: "#f5f5f5",
+				borderRadius: 3,
+			}}
+		>
+			<Typography
+				variant="h4"
+				fontWeight="bold"
+				sx={{ fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" } }}
+			>
+				{selectedMarker.spot_title}
+			</Typography>
+		</Paper>
+			{/* Image Section */}
+			<Box>
+					{spotImages.length > 0 && (
+						<Box sx={{ mt: 4 }}>
+							<Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
+					Spot Images
 				</Typography>
-			</Paper>
+							<ImageList cols={3} gap={8} sx={{ width: "100%", height: 170 }}>
+								{spotImages.map((img, index) => (
+									<ImageListItem key={index} onClick={() => setSelectedImage(img)}>
+										<img src={img} alt={`Spot ${index}`} loading="lazy" style={{ cursor: "pointer" }} />
+									</ImageListItem>
+								))}
+							</ImageList>
+						</Box>
+					)}
+					{/* Image Enlargement Dialog */}
+					<Dialog open={!!selectedImage} onClose={() => setSelectedImage(null)}>
+						<img
+							src={selectedImage}
+							alt="Enlarged"
+							style={{ maxWidth: "90vw", maxHeight: "90vh", objectFit: "contain" }}
+						/>
+					</Dialog>
+				</Box>
 
-			<Grid container spacing={2} sx={{ marginTop: 1 }}>
+			<Grid container spacing={3} sx={{ marginTop: 1 }}>
 				{/* Left Section */}
 				<Grid item xs={12} md={6}>
-					<Paper elevation={6} sx={{ padding: 3, height: "500px", overflow: "hidden" }}>
+					<Paper elevation={6} sx={{ padding: 3, height: "100%", overflow: "hidden" }}>
 						<Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
 							<Avatar alt="Owner" src={ownerDetail.profile_picture} sx={{ mr: 2, width: 56, height: 56 }} />
 							<Typography variant="h5">{ownerDetail.name || "Unknown Owner"}</Typography>
@@ -192,31 +249,6 @@ const DetailInfo = ({ selectedMarker }) => {
 					</Paper>
 				</Grid>
 
-				{/* Image Section */}
-				<Box>
-					{spotImages.length > 0 && (
-						<Box sx={{ mt: 3, padding: 3 }}>
-							<Typography variant="h4" fontWeight="bold">
-								User Uploaded Images
-							</Typography>
-							<ImageList cols={3} gap={8} sx={{ width: "100%", height: 170 }}>
-								{spotImages.map((img, index) => (
-									<ImageListItem key={index} onClick={() => setSelectedImage(img)}>
-										<img src={img} alt={`Review ${index}`} loading="lazy" style={{ cursor: "pointer" }} />
-									</ImageListItem>
-								))}
-							</ImageList>
-						</Box>
-					)}
-					{/* Image Enlargement Dialog */}
-					<Dialog open={!!selectedImage} onClose={() => setSelectedImage(null)}>
-						<img
-							src={selectedImage}
-							alt="Enlarged"
-							style={{ maxWidth: "90vw", maxHeight: "90vh", objectFit: "contain" }}
-						/>
-					</Dialog>
-				</Box>
 			</Grid>
 			<Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
 				<Button

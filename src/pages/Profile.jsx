@@ -135,13 +135,30 @@ const Profile = () => {
 	};
 
 	// Placeholder for editing a spot
-	const handleEditSpot = (spotId) => {
+	const handleEditSpot = async (spotId, updatedSpot) => {
+		try {
+			const response = await axios.put(`${BACKEND_URL}/bookings/spot/${spotId}`, updatedSpot);
+			if (response.status === 200) {
+				setBookingDetails(response.data);
+			}
+		} catch (error) {
+			console.error("Error fetching booking history:", error);
+		}
+		setDialogBoxOpen(true);
 		console.log(`Edit spot with ID: ${spotId}`);
 	};
 
 	// Placeholder for deleting a spot
-	const handleDeleteSpot = (spotId) => {
+	const handleDeleteSpot = async (spotId) => {
 		console.log(`Delete spot with ID: ${spotId}`);
+		try {
+			const response = await axios.delete(`${BACKEND_URL}/bookings/spot/${spotId}`);
+			if (response.status === 200) {
+				setBookingDetails(response.data);
+			}
+		} catch (error) {
+			console.error("Error fetching booking history:", error);
+		}
 	};
 
 	if (!user) return <Typography variant="h5">Loading profile...</Typography>;
@@ -253,7 +270,6 @@ const Profile = () => {
 					<OwnerBookingView bookingDetails={bookingDetails} />
 				</Dialog>
 			</Box>
-
 			{/* Edit Profile Modal */}
 			<EditProfileModal open={isModalOpen} handleClose={handleCloseModal} user={user} handleSave={handleSave} />
 		</Container>

@@ -36,7 +36,7 @@ const AppLayout = () => {
 		if (token) {
 			localStorage.setItem("token", String(token));
 			localStorage.setItem("user_id", String(user_id));
-			navigate("/HomePage");
+			navigate("/homepage");
 		}
 	}, [navigate]);
 
@@ -159,9 +159,12 @@ const AppLayout = () => {
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
 					<Route path="/homepage" element={<HomePage />} />
+
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
 					<Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker} />} />
+					<Route path="/auth" element={<Auth />} />
+					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
 					<Route
 						path="/mapsearch"
 						element={
@@ -177,7 +180,7 @@ const AppLayout = () => {
 							/>
 						}
 					/>
-					<Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker} />} />
+					<Route path="/spotdetail/:spot_id" element={<DetailInfo />} />
 					<Route path="*" element={<Navigate to="/homepage" />} />
 				</Routes>
 			</Box>

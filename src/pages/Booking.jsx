@@ -26,10 +26,10 @@ import { AuthContext } from "../context/AuthContext";
 
 //spot_information is object which hold the all information
 const Booking = ({ spot_information, open, set_dialog }) => {
-  console.log(spot_information.available_days);
+ 
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-  console.log(user.email);
+
   const [razorpay_signature, setRazorpaySignature] = useState(null);
   const [razorpay_order_id, setRazorpayOrderId] = useState(null);
   const [totalSlots, setTotalSlots] = useState(1);
