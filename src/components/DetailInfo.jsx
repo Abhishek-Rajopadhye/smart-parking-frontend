@@ -24,6 +24,7 @@ import axios from "axios";
 import { BACKEND_URL } from "../const";
 import { Booking } from "../pages/Booking";
 import { ReviewCard } from "./ReviewCard";
+import { AddReview } from "./AddReview";
 
 const DetailInfo = ({ selectedMarker }) => {
 	const [reviews, setReviews] = useState([]);
@@ -31,21 +32,20 @@ const DetailInfo = ({ selectedMarker }) => {
 	const [spotImages, setSpotImages] = useState([]);
 	const [selectedImage, setSelectedImage] = useState(null);
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
+	const [addReviewDialogOpen, setAddReviewDialogOpen] = useState(false);
 	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchDetails = async () => {
 			try {
 				const [reviewsRes, ownerRes] = await Promise.all([
-					axios.get(`${BACKEND_URL}/review/spot/${selectedMarker.spot_id}`),
+					axios.get(`${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`),
 					axios.get(`${BACKEND_URL}/users/owner/${selectedMarker.owner_id}`),
 				]);
 				setReviews(reviewsRes.data);
 
 				// Extract images from reviews where image is not null
 				setOwnerDetail(ownerRes.data);
-				console.log("recie review ", reviewsRes.data);
-				console.log("ll", ownerRes.data);
 			} catch (error) {
 				console.error("Error fetching data", error);
 			}
@@ -75,7 +75,7 @@ const DetailInfo = ({ selectedMarker }) => {
 	const toggleDialogBooking = () => {
 		setDialogBookingOpen(!dialogBookingOpen);
 	};
-	console.log("ownerrimages ", ownerDetail.profile_picture);
+
 	return (
 		<Box sx={{ position: "absolute", width: "95%", margin: "auto", padding: 3, top: "50px" }}>
 			<Paper sx={{ padding: 2, textAlign: "left" }}>
@@ -151,16 +151,28 @@ const DetailInfo = ({ selectedMarker }) => {
 
 				{/* Right Section */}
 				<Grid item xs={12} md={6}>
-					<Paper elevation={6} sx={{ padding: 3, height: "500px", overflow: "hidden" }}>
-						<Box sx={{ display: "flex", alignItems: "center" }}>
-							<Rating name="read-only" value={averageRating} precision={0.5} readOnly />
-							<Typography>({reviews.length})</Typography>
-						</Box>
+					<Paper elevation={6} sx={{ padding: 3, height: "500px", overflow: "visible"}} variant="outlined">
 
-						<Typography variant="h5" fontWeight="bold" sx={{ mt: 2 }}>
+						<Typography
+							variant="h5"
+							fontWeight="bold"
+							sx={{ m: 2, display: "flex", alignItems: "center" }}
+						>
 							Reviews
+							<Box sx={{ display: "flex", justifyContent:"space-between" }}>
+								<Rating name="read-only" value={averageRating} precision={0.5} readOnly />
+								<Typography>({reviews.length})</Typography>
+							</Box>
+							<Button
+								variant="outlined"
+								color="primary"
+								size="small"
+								onClick={() => setAddReviewDialogOpen(true)} // Placeholder action
+								sx={{ ml: 2, justifyContent:"space-between" }}
+							>
+								Add Review
+							</Button>
 						</Typography>
-
 						{/*Scroble review*/}
 						{reviews.length === 0 ? (
 							<Typography variant="h6" sx={{ mt: 2, color: "gray", textAlign: "center" }}>
@@ -170,7 +182,7 @@ const DetailInfo = ({ selectedMarker }) => {
 							<Box sx={{ height: "400px", overflowY: "auto", padding: 2 }}>
 								<Grid container direction="column" spacing={2}>
 									{reviews.map((review, index) => (
-										<Grid item key={index} sx={{ bgcolor: "skyblue", borderRadius: 2, mt: 2, padding: 3 }}>
+										<Grid item key={index} sx={{ bgcolor: "skyblue", borderRadius: 2, padding: 2, m:1 }}>
 											<ReviewCard review={review} />
 										</Grid>
 									))}
@@ -220,7 +232,7 @@ const DetailInfo = ({ selectedMarker }) => {
 					variant="contained"
 					color="primary"
 					onClick={() => {
-						navigate("/home");
+						navigate("/homepage");
 					}}
 					sx={{ borderRadius: 2, mt: 2, fontSize: "large" }}
 				>
@@ -228,6 +240,11 @@ const DetailInfo = ({ selectedMarker }) => {
 				</Button>
 			</Box>
 			<Booking open={dialogBookingOpen} spot_information={selectedMarker} set_dialog={toggleDialogBooking} />
+			<AddReview
+				openDialog={addReviewDialogOpen}
+				onClose={() => setAddReviewDialogOpen(false)}
+				spot_id={selectedMarker.spot_id}
+			/>
 		</Box>
 	);
 };

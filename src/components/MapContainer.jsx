@@ -1,22 +1,20 @@
 /* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState } from "react";
-import { Box, Button, Alert, Snackbar } from "@mui/material";
+import { Box, Button, Alert, Snackbar, Dialog } from "@mui/material";
 import { GoogleMap } from "@react-google-maps/api";
-import axios from "axios";
 import { MarkerComponent } from "./MarkerComponent";
 import { InfoWindowComponent } from "./InfoWindowComponent";
 import { IoLocationSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
-import { BACKEND_URL } from "../const";
 import { MapContext } from "../context/MapContext";
+import { Spot } from "../pages/Spot";
 
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef, filteredMarkers }) {
-	const {isLoaded,loadError} = useContext(MapContext);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
+	const { isLoaded, loadError } = useContext(MapContext);
 	const navigate = useNavigate();
 	const [currentPosition, setCurrentPosition] = useState(null);
+	const [openAddSpotDialogBox, setOpenAddSpotDialogBox] = useState(false);
 	const [snackbar, setSnackbar] = useState({
 		open: false,
 		message: "",
@@ -28,8 +26,8 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 		display: "flex",
 		featureType: "all",
 		elementType: "all",
-		height: "85vh",
-		top: 50,
+		height: "100vh",
+		width: "100%",
 	};
 
 	const defaultCenter = {
@@ -40,27 +38,8 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 	/**
 	 * Fetch parking spot markers from the API
 	 */
-	useEffect(() => {
-		const fetchMarkers = async () => {
-			try {
-				const response = await axios.get(`${BACKEND_URL}/spotdetails/getparkingspot`);
-				if (!response.data) {
-					throw new Error("No data received from the server");
-				}
 
-				setMarkers(response.data);
-				setError(null);
-			} catch (error) {
-				console.error("Error fetching markers", error);
-				setError("Failed to load parking spots. Please try again later.");
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchMarkers();
-	}, [setMarkers]);
-
+	console.log("Marker fetched ", markers);
 	useEffect(() => {
 		if ("geolocation" in navigator) {
 			navigator.geolocation.getCurrentPosition(
@@ -107,7 +86,6 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 			navigator.geolocation.getCurrentPosition(
 				(position) => {
 					const { latitude, longitude } = position.coords;
-					setDraggableMarker({ lat: latitude, lng: longitude });
 					setCurrentPosition({ lat: latitude, lng: longitude });
 
 					setSnackbar({
@@ -191,13 +169,11 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 
 	return (
 		<Box className="map-container">
-			{loading ? (
+			{!isLoaded ? (
 				<Box display="flex" justifyContent="center" alignItems="center" height="100vh">
 					<CircularProgress />
 					<Box ml={2}>Loading parking spots...</Box>
 				</Box>
-			) : error ? (
-				<Alert severity="error">{error}</Alert>
 			) : (
 				<>
 					<GoogleMap
@@ -220,7 +196,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 						{newMarker && (
 							<MarkerComponent marker={newMarker} setSelectedMarker={setSelectedMarker} isSearchMarker={true} />
 						)}
-				
+
 						{selectedMarker && (
 							<InfoWindowComponent
 								selectedMarker={selectedMarker}
@@ -231,43 +207,6 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 						)}
 					</GoogleMap>
 
-					{/* Navigation button to add new parking spot */}
-					<Button
-						sx={{bottom: 20, left:-200, position:"relative"}}
-						onClick={() => navigate("/spot")}
-						variant="contained"
-						disableElevation
-						startIcon={<IoLocationSharp size={20} />}
-					>
-						Add Parking Spot
-					</Button>
-					<Snackbar
-						open={snackbar.open}
-						autoHideDuration={4000}
-						onClose={handleCloseSnackbar}
-						anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-					>
-						<Alert
-							onClose={handleCloseSnackbar}
-							severity={snackbar.severity}
-							sx={{ width: "100%" }}
-							action={
-								snackbar.severity === "error" && (
-									<Button
-										color="inherit"
-										size="small"
-										onClick={handleRetryLocation}
-										disabled={isRetrying}
-										startIcon={isRetrying ? <CircularProgress size={16} color="inherit" /> : null}
-									>
-										{isRetrying ? "Retrying..." : "Retry"}
-									</Button>
-								)
-							}
-						>
-							{snackbar.message}
-						</Alert>
-					</Snackbar>
 				</>
 			)}
 		</Box>

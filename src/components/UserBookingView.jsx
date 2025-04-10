@@ -109,23 +109,23 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 	};
 
 	return (
-		<>
-			<TableContainer component={Paper}>
+		<Box sx={{ padding: 3 }}>
+			<TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2 }}>
 				<Table>
 					<TableHead>
-						<TableRow>
+						<TableRow sx={{ backgroundColor: "#f5f5f5" }}>
 							<TableCell />
-							<TableCell>Name</TableCell>
-							<TableCell>Cost</TableCell>
-							<TableCell>Status</TableCell>
-							<TableCell>Actions</TableCell>
+							<TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+							<TableCell sx={{ fontWeight: "bold" }}>Cost</TableCell>
+							<TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
+							<TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{sortedBookings.length > 0 ? (
 							sortedBookings.map((booking) => (
 								<Fragment key={booking.id}>
-									<TableRow>
+									<TableRow hover>
 										<TableCell>
 											<IconButton
 												aria-label="expand row"
@@ -136,18 +136,37 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 											</IconButton>
 										</TableCell>
 										<TableCell>
-											<Typography>{booking.spot_title}</Typography>
+											<Typography variant="body1" fontWeight="500">
+												{booking.spot_title}
+											</Typography>
 											<Collapse in={true} unmountOnExit>
-												{`From: ${booking.start_date_time} - ${booking.end_date_time}`}
+												<Typography variant="caption" color="text.secondary">
+													{`From: ${booking.start_date_time} - ${booking.end_date_time}`}
+												</Typography>
 											</Collapse>
 										</TableCell>
 										<TableCell>
-											<CurrencyRupee fontSize="tiny" /> {booking.payment_amount}
+											<Typography variant="body1" fontWeight="500">
+												<CurrencyRupee fontSize="small" /> {booking.payment_amount}
+											</Typography>
 										</TableCell>
-										<TableCell>{booking.status}</TableCell>
+										<TableCell>
+											<Typography
+												variant="body1"
+												sx={{
+													color:
+														booking.status === "Pending"
+															? "orange"
+															: booking.status === "Checked In"
+															? "green"
+															: "gray",
+												}}
+											>
+												{booking.status}
+											</Typography>
+										</TableCell>
 										<TableCell>
 											<Box display="flex" gap={1}>
-												{/* Show Cancel button only if status is Pending */}
 												{booking.status === "Pending" && (
 													<Button
 														onClick={() => handleOpenDialog(booking.id, "cancel")}
@@ -158,8 +177,6 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 														Cancel
 													</Button>
 												)}
-
-												{/* Show Check-In button if status is Pending and within 15 minutes of start time */}
 												{booking.status === "Pending" && canCheckIn(booking.start_date_time) && (
 													<Button
 														onClick={() => handleOpenDialog(booking.id, "checkIn")}
@@ -170,8 +187,6 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 														Check In
 													</Button>
 												)}
-
-												{/* Show Check-Out button if status is Checked In */}
 												{booking.status === "Checked In" && (
 													<Button
 														onClick={() => handleOpenDialog(booking.id, "checkOut")}
@@ -182,22 +197,19 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 														Check Out
 													</Button>
 												)}
-
-												{/* Placeholder space for actions when status is Cancelled or Completed */}
-												{(booking.status === "Cancelled" || booking.status === "Completed") && (
-													<Box width="100px" />
-												)}
 											</Box>
 										</TableCell>
 									</TableRow>
-									<TableRow key="expanded_row">
+									<TableRow>
 										<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
 											<Collapse in={expandedRow === booking.id} timeout="auto" unmountOnExit>
-												<Box margin={1}>
+												<Box margin={2}>
 													<Typography variant="subtitle1" gutterBottom>
 														Address:
 													</Typography>
-													<Typography>{booking.spot_address}</Typography>
+													<Typography variant="body2" color="text.secondary">
+														{booking.spot_address}
+													</Typography>
 												</Box>
 											</Collapse>
 										</TableCell>
@@ -205,13 +217,18 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 								</Fragment>
 							))
 						) : (
-							<Typography>No bookings found.</Typography>
+							<TableRow>
+								<TableCell colSpan={5}>
+									<Typography variant="body1" align="center" color="text.secondary">
+										No bookings found.
+									</Typography>
+								</TableCell>
+							</TableRow>
 						)}
 					</TableBody>
 				</Table>
 			</TableContainer>
 
-			{/* Confirmation Dialog */}
 			<ConfirmationDialogBox
 				open={openDialog}
 				message={dialogMessage}
@@ -221,7 +238,7 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 				}}
 				onCancel={handleCloseDialog}
 			/>
-		</>
+		</Box>
 	);
 };
 

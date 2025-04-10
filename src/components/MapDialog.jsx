@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useRef, useContext } from "react";
 import { GoogleMap, Marker, Autocomplete, InfoWindow } from "@react-google-maps/api";
-
 import {
 	Alert,
 	Snackbar,

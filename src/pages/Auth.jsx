@@ -23,7 +23,7 @@ const Auth = () => {
 		if (token) {
 			localStorage.setItem("token", String(token));
 			localStorage.setItem("user_id", String(user_id));
-			navigate("/home");
+			navigate("/homepage");
 		}
 	}, [navigate]);
 

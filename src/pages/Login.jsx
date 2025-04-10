@@ -13,7 +13,7 @@ const Login = () => {
 	const { login } = useContext(AuthContext);
 
 	return (
-		<Container maxWidth="sm" sx={{ textAlign: "center", marginTop: "50px" }}>
+		<Container maxWidth="sm" sx={{ textAlign: "center", marginTop: "50px", justifyContent: "center" }}>
 			<Typography variant="h4" gutterBottom>
 				Login to Smart Parking
 			</Typography>

@@ -1,17 +1,16 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { Box, Typography, TextField, Button, Grid, Snackbar, Alert, IconButton } from "@mui/material";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import DeleteIcon from "@mui/icons-material/Delete";
-
 import { useNavigate } from "react-router-dom";
-
 import "../style/spot.css";
 import { AuthContext } from "../context/AuthContext";
 import { BACKEND_URL } from "../const";
 import MapDialog from "../components/MapDialog";
 
-const Spot = () => {
+const Spot = ({ onCancel }) => {
 	const [mapOpen, setMapOpen] = useState(false);
 	const [location, setLocation] = useState(null);
 	const navigate = useNavigate();
@@ -28,7 +27,6 @@ const Spot = () => {
 	const [availableSlots, setAvailableSlots] = useState("");
 	const [images, setImages] = useState([]);
 	const [imagePreviews, setImagePreviews] = useState([]);
-	// eslint-disable-next-line no-unused-vars
 	const [loading, setLoading] = useState(false);
 	const [openSnackbar, setOpenSnackbar] = useState({
 		open: false,
@@ -134,14 +132,16 @@ const Spot = () => {
 	const handleAddSpot = async () => {
 		console.log("Location:", location);
 		const error = validateForm();
-		if(error )
-		if (error && typeof error === "string") {
-			setOpenSnackbar({ open: true, message: error, severity: "error" });
-			return;
-		}
+		if (error)
+			if (error && typeof error === "string") {
+				setOpenSnackbar({ open: true, message: error, severity: "error" });
+				return;
+			}
 		setTotalSlots(error);
 		//console.log(openTime);
-		if (!(location.lat >= 6.554607 && location.lat <= 35.674545 && location.lng >= 68.162385 && location.lng <= 97.395561)) {
+		if (
+			!(location.lat >= 6.554607 && location.lat <= 35.674545 && location.lng >= 68.162385 && location.lng <= 97.395561)
+		) {
 			setOpenSnackbar({
 				open: true,
 				message: "Please select a location within India",
@@ -355,7 +355,7 @@ const Spot = () => {
 							<Button variant="outlined" color="primary" component="span" sx={{ mt: 2 }}>
 								Upload Images
 							</Button>
-							<Button variant="outlined" onClick={() => setMapOpen(true)} sx={{ ml: 2, mt: 2}}>
+							<Button variant="outlined" onClick={() => setMapOpen(true)} sx={{ ml: 2, mt: 2 }}>
 								Set Location
 							</Button>
 
@@ -376,7 +376,7 @@ const Spot = () => {
 							/>
 						</label>
 						{images ? (
-							<Grid container spacing={1} sx={{mt:2}}>
+							<Grid container spacing={1} sx={{ mt: 2 }}>
 								{imagePreviews.map((preview, index) => (
 									<Grid item xs={3} key={index} style={{ position: "relative" }}>
 										<img
@@ -430,7 +430,7 @@ const Spot = () => {
 							color="primary"
 							fullWidth
 							onClick={() => {
-								navigate(-1);
+								onCancel();
 							}}
 						>
 							Go Back
