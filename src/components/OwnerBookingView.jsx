@@ -99,7 +99,9 @@ const OwnerBookingView = ({ bookingDetails }) => {
 							</Fragment>
 						))
 					) : (
-						<Typography>No bookings found.</Typography>
+						<TableRow>
+							<Typography>No bookings found.</Typography>
+						</TableRow>
 					)}
 				</TableBody>
 			</Table>

@@ -36,7 +36,7 @@ const AppLayout = () => {
 		if (token) {
 			localStorage.setItem("token", String(token));
 			localStorage.setItem("user_id", String(user_id));
-			navigate("/HomePage");
+			navigate("/homepage");
 		}
 	}, [navigate]);
 

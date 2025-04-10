@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import { Search as SearchIcon } from "@mui/icons-material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import { ClearIcon } from "@mui/x-date-pickers";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { MapContext } from "../context/MapContext";
