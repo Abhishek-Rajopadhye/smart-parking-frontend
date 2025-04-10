@@ -17,16 +17,12 @@ import {
 	Alert,
 } from "@mui/material";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import HomeIcon from "@mui/icons-material/Home";
 import CancelIcon from "@mui/icons-material/Cancel";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import "../style/booking.css";
 import { BACKEND_URL } from "../const";
 import { AuthContext } from "../context/AuthContext";
-import { set } from "date-fns";
 
 //spot_information is object which hold the all information
 const Booking = ({ spot_information, open, set_dialog }) => {

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { Box, Button, Typography, useTheme, useMediaQuery } from "@mui/material";
 import { LocalizationProvider, DateCalendar, TimePicker } from "@mui/x-date-pickers";
@@ -29,7 +30,7 @@ const DateTimePicker = ({selectedDate,setSelectedDate,startTime,setStartTime,end
 		setStartTime(initialStart);
 		setEndTime(defaultEnd);
 		setMinEndTime(defaultEnd);
-	}, [selectedDate]);
+	}, [selectedDate, setEndTime, setStartTime]);
 
 	const handleStartTimeChange = (newTime) => {
 		setStartTime(newTime);
