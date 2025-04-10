@@ -29,15 +29,17 @@ import { useNavigate } from "react-router-dom";
 import { MapContext } from "../context/MapContext";
 
 const HomePage = () => {
-	const { isLoaded, loadError } = useContext(MapContext);
-	const [tabValue, setTabValue] = useState(0);
-	const [searchAddress, setSearchAddress] = useState("");
-	const [suggestions, setSuggestions] = useState(false);
-	const [predictions, setPredictions] = useState([]);
-	const [dateTime, setDateTime] = useState("Today, 10:00 AM - 1:00 PM");
-	const [anchorEl, setAnchorEl] = useState(null);
-	const autocompleteServiceRef = useRef(null);
-	const navigate = useNavigate();
+    const { isLoaded, loadError } = useContext(MapContext);
+    const [tabValue, setTabValue] = useState(0);
+    const [searchAddress, setSearchAddress] = useState('');
+    const [suggestions, setSuggestions] = useState(false);
+    const [predictions, setPredictions] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [startTime, setStartTime] = useState(null);
+    const [endTime, setEndTime] = useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const autocompleteServiceRef = useRef(null);
+    const navigate = useNavigate();
 
 	useEffect(() => {
 		if (isLoaded && window.google && !autocompleteServiceRef.current) {
@@ -58,23 +60,26 @@ const HomePage = () => {
 			return;
 		}
 
-		autocompleteServiceRef.current.getPlacePredictions({ input: value }, (results) => {
-			if (results) {
-				setPredictions(results);
-				setSuggestions(true);
-			} else {
-				setPredictions([]);
-				setSuggestions(false);
-			}
-		});
-	};
+        autocompleteServiceRef.current.getPlacePredictions(
+            { input: value ,componentRestrictions: { country: "IN" }},
+            (results) => {
+                if (results) {
+                    setPredictions(results);
+                    setSuggestions(true);
+                } else {
+                    setPredictions([]);
+                    setSuggestions(false);
+                }
+            }
+        );
+    };
+
 
 	const handleSuggestionClick = (description) => {
 		setSearchAddress(description);
 		setSuggestions(false);
 		setPredictions([]);
-
-		// Optional: Get lat/lng using Geocoder
+		// Optional: Get lat lng using Geocoder
 		const geocoder = new window.google.maps.Geocoder();
 		geocoder.geocode({ address: description }, (results, status) => {
 			if (status === "OK" && results[0]) {
@@ -104,33 +109,31 @@ const HomePage = () => {
 
 	const open = Boolean(anchorEl);
 	const id = open ? "date-time-popover" : undefined;
+    
+    return (
+        <Box sx={{ bgcolor: "#fff" ,p:8}}>
+                <Grid  container spacing={4} alignItems="center">
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h4" fontWeight="bold" gutterBottom>
+                            Parking made easy,<br /> wherever you go
+                        </Typography>
 
-	return (
-		<Box sx={{ bgcolor: "#fff" }}>
-			<Container maxWidth="lg" sx={{ py: 8 }}>
-				<Grid container spacing={4} alignItems="center">
-					<Grid item xs={12} md={6}>
-						<Typography variant="h4" fontWeight="bold" gutterBottom color="black">
-							Parking made easy,
-							<br /> wherever you go
-						</Typography>
-
-						<Box sx={{ mb: 2, mt: 4 }}>
-							<Tabs
-								value={tabValue}
-								onChange={handleTabChange}
-								sx={{
-									"& .MuiTab-root": {
-										textTransform: "none",
-										fontWeight: "medium",
-										fontSize: "1rem",
-									},
-								}}
-							>
-								<Tab label="Hourly/Daily" />
-								<Tab label="Monthly" />
-							</Tabs>
-						</Box>
+                        {/* <Box sx={{ mb: 2, mt: 4 }}>
+                            <Tabs
+                                value={tabValue}
+                                onChange={handleTabChange}
+                                sx={{
+                                    '& .MuiTab-root': {
+                                        textTransform: 'none',
+                                        fontWeight: 'medium',
+                                        fontSize: '1rem',
+                                    }
+                                }}
+                            >
+                                <Tab label="Hourly/Daily" />
+                                <Tab label="Monthly" />
+                            </Tabs>
+                        </Box> */}
 
 						{/* Search Field */}
 						<Box sx={{ position: "relative", width: "100%", my: 2 }}>
@@ -250,29 +253,29 @@ const HomePage = () => {
 									</Box>
 
 									<Button
-										fullWidth
-										aria-describedby={id}
-										onClick={handleDateTimeClick}
-										sx={{
-											justifyContent: "flex-start",
-											borderRadius: "4px",
-											border: "1px solid rgba(0, 0, 0, 0.23)",
-											py: 2,
-											pl: 5,
-											textTransform: "none",
-											bgcolor: "white",
-											color: "rgba(0, 0, 0, 0.87)",
-											fontWeight: 400,
-											fontSize: "1rem",
-											textAlign: "left",
-											"&:hover": {
-												backgroundColor: "rgba(0, 0, 0, 0.04)",
-												border: "1px solid rgba(0, 0, 0, 0.23)",
-											},
-										}}
-									>
-										{dateTime}
-									</Button>
+                                        fullWidth
+                                        aria-describedby={id}
+                                        onClick={handleDateTimeClick}
+                                        sx={{
+                                            justifyContent: 'flex-start',
+                                            borderRadius: '4px',
+                                            border: '1px solid rgba(0, 0, 0, 0.23)',
+                                            py: 2,
+                                            pl: 5,
+                                            textTransform: 'none',
+                                            color: 'rgba(0, 0, 0, 0.87)',
+                                            fontWeight: 400,
+                                            fontSize: '1rem',
+                                            textAlign: 'left',
+                                            '&:hover': {
+                                                backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                                border: '1px solid rgba(0, 0, 0, 0.23)',
+                                            }
+                                        }}
+                                    >
+                                        {selectedDate ? selectedDate.toDateString() : "Select date & time"}
+                                    </Button>
+
 
 									<Box
 										sx={{
@@ -288,95 +291,110 @@ const HomePage = () => {
 							</FormControl>
 
 							<Popover
-								id={id}
-								open={open}
-								anchorEl={anchorEl}
-								onClose={handleDateTimeClose}
-								anchorOrigin={{
-									vertical: "bottom",
-									horizontal: "left",
-								}}
-							>
-								<Box className="date-time-picker">
-									<DateTimePicker />
-								</Box>
-							</Popover>
-						</Box>
+                                id={id}
+                                open={open}
+                                anchorEl={anchorEl}
+                                onClose={handleDateTimeClose}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'left',
+                                }}
+                            >
+                                <Box className="date-time-picker">
+                                    <DateTimePicker 
+                                    suggestions={suggestions}
+                                    setSuggestions={setSuggestions}
+                                    handleSearchChange={handleSearchChange}
+                                    selectedDate={selectedDate}
+                                    setSelectedDate={setSelectedDate}
+                                    startTime={startTime}
+                                    setStartTime={setStartTime}
+                                    endTime={endTime}
+                                    setEndTime={setEndTime}
+                                    onClose={handleDateTimeClose}
+                                    />
+                                </Box>
+                            </Popover>
+                        </Box>
 
 						<Button
-							fullWidth
-							variant="contained"
-							onClick={() => {
-								navigate("/mapscreen");
-							}}
-							sx={{
-								borderRadius: 8,
-								py: 1.5,
-								textTransform: "none",
-								fontWeight: "bold",
-								fontSize: "1rem",
-							}}
-						>
-							Find Parking Spots
-						</Button>
-					</Grid>
+                            fullWidth
+                            variant="contained"
+                            onClick={() => {
+                              navigate("/MapSearch", {
+                                state: {
+                                  locationName: searchAddress,
+                                  selectedDate,
+                                  startTime,
+                                  endTime,
+                                },
+                              });
+                            }}
+                            sx={{
+                                borderRadius: 8,
+                                py: 1.5,
+                                textTransform: "none",
+                                fontWeight: "bold",
+                                fontSize: "1rem",
+                                backgroundColor: "#1976d2",
+                                ":hover": { backgroundColor: "#115293" },
+                            }}
+                        >
+                            Find Parking Spots
+                        </Button>
+                    </Grid>
 
-					{/* Right Image */}
-					<Grid item xs={12} md={6}>
-						<Box
-							component="img"
-							src={parking}
-							alt="Parking"
-							sx={{
-								width: "100%",
-								borderRadius: 4,
-								objectFit: "cover",
-							}}
-						/>
-					</Grid>
-				</Grid>
-			</Container>
+                    {/* Right Image */}
+                    <Grid item xs={12} md={6} >
+                        <Box
+                            component="img"
+                            src={parking}
+                            alt="Parking"
+                            sx={{
+                                width: "100%",
+                                borderRadius: 4,
+                                objectFit: "cover",
+                            }}
+                        />
+                    </Grid>
+                </Grid>
+            
+            {/* How it works */}
+            <Box sx={{ bgcolor: "#fff", py: 10 }}>
+                
+                    <Typography variant="h5" fontWeight="bold" textAlign="center" mb={6}>
+                        How Smart Parking Works
+                    </Typography>
 
-			{/* How it works */}
-			<Box sx={{ bgcolor: "#fff", py: 10 }}>
-				<Container maxWidth="lg">
-					<Typography variant="h5" fontWeight="bold" textAlign="center" mb={6}>
-						How Smart Parking Works
-					</Typography>
-
-					<Grid container spacing={6} justifyContent="center">
-						{[
-							{
-								title: "Look",
-								img: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-								desc: "Search and compare prices at thousands of parking facilities across India.",
-							},
-							{
-								title: "Book",
-								img: "https://cdn-icons-png.flaticon.com/512/2089/2089678.png",
-								desc: "Pay securely and receive a receipt instantly via email.",
-							},
-							{
-								title: "Park",
-								img: "https://cdn-icons-png.flaticon.com/512/3081/3081559.png",
-								desc: "When you arrive, follow the instructions in email receipt, park, and go!",
-							},
-						].map((item) => (
-							<Grid item xs={12} md={4} textAlign="center" key={item.title}>
-								<Box component="img" src={item.img} alt={item.title} sx={{ width: 80, height: 80, mb: 2 }} />
-								<Typography variant="h6" fontWeight="bold" gutterBottom>
-									{item.title}
-								</Typography>
-								<Typography variant="body2" color="text.secondary">
-									{item.desc}
-								</Typography>
-							</Grid>
-						))}
-					</Grid>
-				</Container>
-			</Box>
-		</Box>
-	);
+                    <Grid container spacing={6} justifyContent="center">
+                        {[
+                            {
+                                title: "Look",
+                                img: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+                                desc: "Search and compare prices at thousands of parking facilities across India.",
+                            },
+                            {
+                                title: "Book",
+                                img: "https://cdn-icons-png.flaticon.com/512/2089/2089678.png",
+                                desc: "Pay securely and receive a receipt instantly via email.",
+                            },
+                            {
+                                title: "Park",
+                                img: "https://cdn-icons-png.flaticon.com/512/3081/3081559.png",
+                                desc: "When you arrive, follow the instructions in email receipt, park, and go!",
+                            },
+                        ].map((item) => (
+                            <Grid item xs={12} md={4} textAlign="center" key={item.title}>
+                                <Box component="img" src={item.img} alt={item.title} sx={{ width: 80, height: 80, mb: 2 }} />
+                                <Typography variant="h6" fontWeight="bold" gutterBottom>{item.title}</Typography>
+                                <Typography variant="body2" color="text.secondary">{item.desc}</Typography>
+                            </Grid>
+                        ))}
+                    </Grid>
+               
+            </Box>
+        </Box>
+    );
 };
 
 export default HomePage;
