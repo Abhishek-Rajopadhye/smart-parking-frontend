@@ -148,7 +148,7 @@ const AppLayout = () => {
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
 					<Route path="/homepage" element={<HomePage/>}/>
-            		<Route
+          <Route
 						path="/mapscreen"
 						element={
 							<Home
