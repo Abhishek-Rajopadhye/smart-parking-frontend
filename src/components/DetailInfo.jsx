@@ -208,13 +208,12 @@ const DetailInfo = ({  }) => {
 
 				{/* Right Section */}
 				<Grid item xs={12} md={6}>
-					<Paper elevation={6} sx={{ padding: 3, height: "500px", overflow: "hidden"}} variant="outlined">
-						
+					<Paper elevation={6} sx={{ padding: 3, height: "500px", overflow: "visible"}} variant="outlined">
 
 						<Typography
 							variant="h5"
 							fontWeight="bold"
-							sx={{ mt: 2, display: "flex", alignItems: "center" }}
+							sx={{ m: 2, display: "flex", alignItems: "center" }}
 						>
 							Reviews
 							<Box sx={{ display: "flex", justifyContent:"space-between" }}>
@@ -240,7 +239,7 @@ const DetailInfo = ({  }) => {
 							<Box sx={{ height: "400px", overflowY: "auto", padding: 2 }}>
 								<Grid container direction="column" spacing={2}>
 									{reviews.map((review, index) => (
-										<Grid item key={index} sx={{ bgcolor: "skyblue", borderRadius: 2, mt: 2, padding: 3 }}>
+										<Grid item key={index} sx={{ bgcolor: "skyblue", borderRadius: 2, padding: 2, m:1 }}>
 											<ReviewCard review={review} />
 										</Grid>
 									))}

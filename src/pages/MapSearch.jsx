@@ -1,10 +1,8 @@
-import React, { useRef, useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
 import axios from "axios";
 
 import { MapContainer } from "../components/MapContainer";
 import MapSidebar from "../components/MapSideBAr";
-import { FilterPanel } from "../components/FilterPanel";
 import { BACKEND_URL } from "../const";
 import { Drawer, Box, Button, Grid, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -22,11 +20,9 @@ const MapSearch = ({ selectedMarker, setSelectedMarker, newMarker, setNewMarker,
 				}
 
 				setMarkers(response.data);
-			;
 			} catch (error) {
 				console.error("Error fetching markers", error);
-				
-			} 
+			}
 		};
 
 		fetchMarkers();

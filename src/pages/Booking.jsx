@@ -17,16 +17,12 @@ import {
 	Alert,
 } from "@mui/material";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import HomeIcon from "@mui/icons-material/Home";
 import CancelIcon from "@mui/icons-material/Cancel";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import "../style/booking.css";
 import { BACKEND_URL } from "../const";
 import { AuthContext } from "../context/AuthContext";
-import { set } from "date-fns";
 
 //spot_information is object which hold the all information
 const Booking = ({ spot_information, open, set_dialog }) => {
@@ -53,6 +49,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
   const [indianStartTime, setIndianStartTime] = useState(null);
   const [indianEndTime, setIndianEndTime] = useState(null);
   const [flag, setFlag] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   yesterday.setHours(0, 0, 0, 0);
@@ -309,11 +306,9 @@ const Booking = ({ spot_information, open, set_dialog }) => {
     } catch (err) {
       showSnackbar("Fail to Send Receipt to mail", "error");
     }
+    setButtonDisabled(true)
 
-    showSnackbar(
-      "Booking successfully and Receipt sent to your register email!",
-      "success"
-    );
+   
   };
 
   useEffect(() => {
@@ -324,7 +319,13 @@ const Booking = ({ spot_information, open, set_dialog }) => {
       setTotalSlots(0);
       setFlag(false);
       setPaymentStatus(false);
-      // navigate("/booking");
+      showSnackbar(
+        "Booking successfully and Receipt sent to your register email and redirect to booking history!",
+        "success"
+      );
+      setTimeout(() => {
+        navigate("/booking-history");
+      }, 3000);
     }
   }, [paymentStatus, navigate, downloadPDF]);
 
@@ -347,7 +348,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
     }
 
     if (totalSlots <= 0) {
-      showSnackbar("Total Slot should be greater than zero.", "warning");
+      showSnackbar("Total slot can not be negative", "warning");
       return false;
     }
     console.log(startTime, endTime);
@@ -364,7 +365,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
     let hours = Math.ceil(diffInMs / (1000 * 60 * 60));
 
     if (hours <= 0) {
-      showSnackbar("End time must be after start time.", "error");
+      showSnackbar("Enter a valid time.", "error");
       return false;
     }
 
@@ -399,6 +400,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
    * @returns
    */
   const processPayment = async () => {
+    if(buttonDisabled) return;
     let orderResponse;
     try {
       const razorpayLoaded = await loadRazorpay();
@@ -517,6 +519,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
   };
 
   const handleCancel = async () => {
+    if(buttonDisabled) return;
     try {
       console.log("Cancel booking");
       console.log(razorpay_order_id);
@@ -687,7 +690,6 @@ const Booking = ({ spot_information, open, set_dialog }) => {
           color="error"
           // fullWidth
           onClick={() => handleCancel()}
-          // disabled={flag}
         >
           Cancel
         </Button>

@@ -1,32 +1,12 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-import {
-  Box,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-  InputAdornment,
-  IconButton,
-} from "@mui/material";
+import { Box, Paper, Typography, TextField, Button, InputAdornment, IconButton } from "@mui/material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useLocation } from "react-router-dom";
-import {
-  Search as SearchIcon,
-  CalendarToday as CalendarIcon,
-  Clear as ClearIcon,
-  KeyboardArrowDown as KeyboardArrowDownIcon,
-  MyLocation as MyLocationIcon
-} from '@mui/icons-material';
-import { Autocomplete } from "@react-google-maps/api";
+import { Search as SearchIcon } from "@mui/icons-material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
-
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import {
-  LocalizationProvider,
-  DateCalendar,
-
-} from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import { MapContext } from "../context/MapContext";
 import { getLatLng } from "react-places-autocomplete";
 import MarkerCard from "./MarkerCard";
@@ -233,35 +213,32 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers }) => {
             }}
           />
         </Box>
-
         {/* Exit Before */}
         <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1, mt: 1 }}>
           Exit Before
         </Typography>
         <Box display="flex" gap={1} mb={3}>
+					<TimePicker
+						value={endTime}
+						onChange={setEndTime}
+						slotProps={{
+							textField: {
+								fullWidth: true,
+								InputProps: {
+									endAdornment: (
+										<InputAdornment position="end">
+											<AccessTimeIcon fontSize="small" />
+										</InputAdornment>
+									),
+								},
+							},
+						}}
+					/>
+				</Box>
 
-          <TimePicker
-            value={endTime}
-            onChange={setEndTime}
-            slotProps={{
-              textField: {
-                fullWidth: true,
-                InputProps: {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <AccessTimeIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                },
-              },
-            }}
-          />
-        </Box>
-
-        <Button variant="contained" fullWidth onClick={handleSearchChange}>
-          Update Search
-        </Button>
-
+				<Button variant="contained" fullWidth onClick={handleSearchChange}>
+					Update Search
+				</Button>
         <Box sx={{ bgcolor: "red", mt: 2 }}>
           <MarkerCard
             markers={markers}
