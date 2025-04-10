@@ -26,7 +26,7 @@ import { Booking } from "../pages/Booking";
 import { ReviewCard } from "./ReviewCard";
 import { AddReview } from "./AddReview";
 
-const DetailInfo = ({  }) => {
+const DetailInfo = () => {
 
 	const {spot_id}=useParams();
 	const [selectedMarker,setSelectedMarker]=useState([]);
@@ -39,6 +39,7 @@ const DetailInfo = ({  }) => {
 		  .then(response => response.json())
 		  .then(data => {
 			setSelectedMarker(data);
+			console.log(data);
 			
 		  })
 		  .catch(error => console.error('Error fetching spot details:', error));
