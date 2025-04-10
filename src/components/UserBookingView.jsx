@@ -116,6 +116,7 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 						<TableRow sx={{ backgroundColor: "#f5f5f5" }}>
 							<TableCell />
 							<TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+							<TableCell sx={{ fontWeight: "bold" }}>Slots Booked</TableCell>
 							<TableCell sx={{ fontWeight: "bold" }}>Cost</TableCell>
 							<TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
 							<TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
@@ -145,6 +146,9 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 												</Typography>
 											</Collapse>
 										</TableCell>
+										<TableCell variant="body1" fontWeight="500">
+											{booking.total_slots}
+										</TableCell>
 										<TableCell>
 											<Typography variant="body1" fontWeight="500">
 												<CurrencyRupee fontSize="small" /> {booking.payment_amount}
@@ -158,8 +162,10 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 														booking.status === "Pending"
 															? "orange"
 															: booking.status === "Checked In"
-															? "green"
-															: "gray",
+															? "blue"
+															: booking.status === "Cancelled"
+															? "red"
+															: "green",
 												}}
 											>
 												{booking.status}
