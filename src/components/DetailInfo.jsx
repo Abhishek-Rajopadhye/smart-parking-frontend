@@ -39,7 +39,6 @@ const DetailInfo = () => {
 		  .then(response => response.json())
 		  .then(data => {
 			setSelectedMarker(data);
-			console.log(data);
 			
 		  })
 		  .catch(error => console.error('Error fetching spot details:', error));
@@ -93,6 +92,14 @@ const DetailInfo = () => {
 
 	const toggleDialogBooking = () => {
 		setDialogBookingOpen(!dialogBookingOpen);
+	};
+
+	const handleAddReviewClose = async () =>{
+		const response = await axios.get(`${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`)
+		if(response.status == 200){
+			setReviews(response.data);
+		}
+		setAddReviewDialogOpen(false);
 	};
 
 	return (
@@ -275,7 +282,7 @@ const DetailInfo = () => {
 			<Booking open={dialogBookingOpen} spot_information={selectedMarker} set_dialog={toggleDialogBooking} />
 			<AddReview
 				openDialog={addReviewDialogOpen}
-				onClose={() => setAddReviewDialogOpen(false)}
+				onClose={() => handleAddReviewClose()}
 				spot_id={selectedMarker.spot_id}
 			/>
 		</Box>

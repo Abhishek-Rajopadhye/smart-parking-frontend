@@ -95,6 +95,7 @@ const AddReview = ({ openDialog, onClose, spot_id }) => {
 				message: "Review added successfully!",
 				severity: "success",
 			});
+			onClose();
 		} catch (error) {
 			console.error("Error adding review:", error);
 			setOpenSnackbar({
