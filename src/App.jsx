@@ -1,19 +1,19 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { Box, CircularProgress, AppBar, Toolbar, Typography, IconButton, Avatar, Menu, MenuItem, Container } from "@mui/material";
+import { ThemeProvider } from '@mui/material/styles';
+import appTheme from "./style/AppTheme";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import { Login } from "./pages/Login";
 import { Profile } from "./pages/Profile";
 import { Booking } from "./pages/Booking";
 import { BookingHistory } from "./pages/BookingHistory";
 import { Home } from "./pages/Home";
-import { SearchBar } from "./components/SearchBar2";
 import { Auth } from "./pages/Auth";
 import { Spot } from "./pages/Spot";
 import DetailInfo from "./components/DetailInfo";
 import { MapProvider } from "./context/MapContext";
 import HomePage from "./pages/HomePage";
-import { LoadScript } from "@react-google-maps/api";
 
 
 const AppLayout = () => {
@@ -25,6 +25,7 @@ const AppLayout = () => {
 	const [newMarker, setNewMarker] = useState(null);
 	const [markers, setMarkers] = useState([]);
 	const [filteredMarkers, setFilteredMarkers] = useState([]);
+	// eslint-disable-next-line no-unused-vars
 	const [filters, setFilters] = useState({});
 	const mapRef = useRef(null);
 
@@ -66,8 +67,10 @@ const AppLayout = () => {
 				return "Booking History";
 			case "/spot":
 				return "Add Spot";
-			case "/home":
+			case "/homepage":
 				return "Home";
+			case "/map-screen":
+				return "Map Screen";
 			case "/auth":
 				return "Auth";
 			case "/booking":
@@ -88,7 +91,7 @@ const AppLayout = () => {
 	};
 
 	const routes = [
-		{ label: "Home", path: "/home" },
+		{ label: "Home", path: "/homepage" },
 		{ label: "Profile", path: "/profile" },
 		{ label: "Booking History", path: "/booking-history" },
 	];
@@ -105,22 +108,9 @@ const AppLayout = () => {
 		<Box sx={{ display: "flex",flexDirection:"column", width: "100%" }}>
 			<AppBar position="fixed" sx={{ zIndex: 3 }}>
 				<Toolbar>
-					<Typography variant="h6" sx={{ flexGrow: 1 }}>
+					<Typography variant="h6" sx={{ flexGrow: 1, justifyContent: "center", textAlign: "center" }}>
 						{getPageTitle()}
 					</Typography>
-					{location.pathname === "/home" && (
-						<>
-							<Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
-								<SearchBar
-									setNewMarker={setNewMarker}
-									setSelectedMarker={setSelectedMarker}
-									mapRef={mapRef}
-									filters={filters}
-									setFilters={setFilters}
-								/>
-							</Box>
-						</>
-					)}
 					<IconButton onClick={handleAvatarClick}>
 						<Avatar alt="User Avatar" src={user?.avatarUrl || ""} />
 					</IconButton>
@@ -142,6 +132,7 @@ const AppLayout = () => {
 							onClick={() => {
 								handleMenuClose();
 								logout();
+								navigate("/");
 							}}
 							sx={{ color: "red" }}
 						>
@@ -156,12 +147,9 @@ const AppLayout = () => {
 					<Route path="/spot" element={<Spot />} />
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
-					<Route path="/my-spots" element={<MySpots />} />
-					<Route path="/add-review" element={<AddReview />} />
-					<Route path="/HomePage" element={<HomePage/>}/>
-
-            <Route
-						path="/home"
+					<Route path="/homepage" element={<HomePage/>}/>
+            		<Route
+						path="/mapscreen"
 						element={
 							<Home
 								selectedMarker={selectedMarker}
@@ -178,7 +166,7 @@ const AppLayout = () => {
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
 					<Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker}/>} />
-					<Route path="*" element={<Navigate to="/home" />} />
+					<Route path="*" element={<Navigate to="/homepage" />} />
 				</Routes>
 			</Box>
 		</Box>
@@ -186,17 +174,21 @@ const AppLayout = () => {
 };
 
 const App = () => {
+
+
 	return (
-		<MapProvider>
-			<AuthProvider>
-				<Router>
-					<Routes>
-						<Route path="/" element={<Login />} />
-						<Route path="/*" element={<AppLayout />} />
-					</Routes>
-				</Router>
-			</AuthProvider>
-		</MapProvider>
+		<ThemeProvider theme={appTheme}>
+			<MapProvider>
+				<AuthProvider>
+					<Router>
+						<Routes>
+							<Route path="/" element={<Login />} />
+							<Route path="/*" element={<AppLayout />} />
+						</Routes>
+					</Router>
+				</AuthProvider>
+			</MapProvider>
+		</ThemeProvider>
 	);
 };
 
