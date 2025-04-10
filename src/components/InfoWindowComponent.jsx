@@ -34,7 +34,7 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
 		try {
 			if (selectedMarker) {
 				console.log("Before navigating  ", selectedMarker); // Ensure selectedMarker is not null
-				navigate("/spotdetail");
+				navigate(`/spotdetail/${selectedMarker.spot_id}`);
 			} else {
 				throw new Error("No marker selected to navigate!");
 			}
@@ -70,8 +70,6 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
 						{!isSearchLocation && (
 							<IconButton
 								size="small"
-								component={Link}
-								to="/spotdetail"
 								onClick={showDetails}
 								sx={{ marginRight: 1 }}
 							>
