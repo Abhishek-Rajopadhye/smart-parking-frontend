@@ -36,7 +36,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
 	const [endTime, setEndTime] = useState(null);
 	const [totalAmount, setTotalAmount] = useState(null);
 	const [ratePerHour, setRatePerHour] = useState(spot_information.hourly_rate);
-
+  console.log(ratePerHour);
 	const [openDialog, setOpenDialog] = useState(false);
 	const [prevTotalSlots, setPrevTotalSlots] = useState(0);
 	const [openSnackbar, setOpenSnackbar] = useState({
@@ -323,6 +323,8 @@ const Booking = ({ spot_information, open, set_dialog }) => {
 		if (paymentStatus) {
 			return;
 		}
+    setRatePerHour(spot_information.hourly_rate);
+    console.log(ratePerHour);
 		if (!startTime || !endTime) {
 			showSnackbar("Please select start and end time.", "warning");
 			return false;
@@ -347,8 +349,11 @@ const Booking = ({ spot_information, open, set_dialog }) => {
 			return false;
 		}
 
-		setTotalAmount(hours * ratePerHour * totalSlots);
-		console.log(ratePerHour);
+		setTotalAmount(hours * spot_information.hourly_rate * totalSlots);
+    console.log("hours", hours);
+    console.log("totalslots", totalSlots);
+    console.log("rateper", ratePerHour)
+    console.log("totalamout", totalAmount);
 		setOpenDialog(true);
 		return true;
 	};

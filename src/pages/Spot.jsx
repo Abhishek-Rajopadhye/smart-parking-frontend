@@ -221,10 +221,9 @@ const Spot = ({ onCancel }) => {
 				setAvailableSlots("");
 				setImages([]);
 				setImagePreviews([]);
-
+				setLocation(null);
 				setLatitude("");
 				setLongitude("");
-
 				setOpenDays({
 					Sun: false,
 					Mon: false,
