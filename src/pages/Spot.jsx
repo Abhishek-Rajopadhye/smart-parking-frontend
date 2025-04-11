@@ -216,7 +216,7 @@ const Spot = ({ onCancel }) => {
 				setOpenTime("");
 				setCloseTime("");
 				setHourlyRate("");
-
+				setLocation(null);
 				setTotalSlots("");
 				setAvailableSlots("");
 				setImages([]);

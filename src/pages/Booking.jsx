@@ -347,8 +347,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
 			return false;
 		}
 
-		setTotalAmount(hours * ratePerHour * totalSlots);
-		console.log(ratePerHour);
+		setTotalAmount(hours * spot_information.hourly_rate * totalSlots);
 		setOpenDialog(true);
 		return true;
 	};

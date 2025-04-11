@@ -214,7 +214,7 @@ const Profile = () => {
 				<List>
 					{userSpots.length > 0 ? (
 						userSpots.map((spot) => (
-							<ListItem key={spot.spot_id} sx={{ mb: 2 }}>
+							<ListItem key={spot.id} sx={{ mb: 2 }}>
 								<Card
 									elevation={2}
 									sx={{
@@ -242,16 +242,16 @@ const Profile = () => {
 									</Box>
 									
 									<CardActions sx={{ justifyContent: "flex-end" }}>
-										<Button variant="outlined" color="primary" onClick={() => handleEditSpot(spot.spot_id)}>
+										<Button variant="outlined" color="primary" onClick={() => handleEditSpot(spot.id)}>
 											Edit
 										</Button>
-										<Button variant="outlined" color="error" onClick={() => handleDeleteSpot(spot.spot_id)}>
+										<Button variant="outlined" color="error" onClick={() => handleDeleteSpot(spot.id)}>
 											Delete
 										</Button>
 										<Button
 											variant="contained"
 											color="secondary"
-											onClick={() => handleViewBookingHistory(spot.spot_id)}
+											onClick={() => handleViewBookingHistory(spot.id)}
 										>
 											View Booking History
 										</Button>
