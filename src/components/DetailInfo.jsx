@@ -26,7 +26,7 @@ import { Booking } from "../pages/Booking";
 import { ReviewCard } from "./ReviewCard";
 import { AddReview } from "./AddReview";
 
-const DetailInfo = ({  }) => {
+const DetailInfo = () => {
 
 	const {spot_id}=useParams();
 	const [selectedMarker,setSelectedMarker]=useState([]);
@@ -92,6 +92,14 @@ const DetailInfo = ({  }) => {
 
 	const toggleDialogBooking = () => {
 		setDialogBookingOpen(!dialogBookingOpen);
+	};
+
+	const handleAddReviewClose = async () =>{
+		const response = await axios.get(`${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`)
+		if(response.status == 200){
+			setReviews(response.data);
+		}
+		setAddReviewDialogOpen(false);
 	};
 
 	return (
@@ -274,7 +282,7 @@ const DetailInfo = ({  }) => {
 			<Booking open={dialogBookingOpen} spot_information={selectedMarker} set_dialog={toggleDialogBooking} />
 			<AddReview
 				openDialog={addReviewDialogOpen}
-				onClose={() => setAddReviewDialogOpen(false)}
+				onClose={() => handleAddReviewClose()}
 				spot_id={selectedMarker.spot_id}
 			/>
 		</Box>
