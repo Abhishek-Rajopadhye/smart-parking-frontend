@@ -64,7 +64,7 @@ function MapDialog({ open, onClose, onSave, spotAddress, setLocation}) {
 						console.log('Latitude:', loc.lat);
 						console.log('Longitude:', loc.lng);
 					} else {
-						console.error("Geocode API Error:", data.status);
+						defaultCenter = {lat: 18.52059, lng: 73.85537};
 					}
 				})
 				.catch(err => {
