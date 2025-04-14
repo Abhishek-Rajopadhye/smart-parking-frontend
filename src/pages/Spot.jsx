@@ -274,6 +274,11 @@ const Spot = ({ onCancel }) => {
       <Box className="form-box">
         <Grid container spacing={2}>
           <Grid item xs={12}>
+            <Typography variant="h5" gutterBottom>
+              Add a Parking Spot
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
             <TextField
               fullWidth
               label="Spot Title"
@@ -318,7 +323,7 @@ const Spot = ({ onCancel }) => {
                       and select available days.
                     </li>
                     <li>Upload images under 2MB each.</li>
-                    <li>Click "Submit" to save your parking spot.</li>
+                    <li>Click "Add Spot" to save your parking spot.</li>
 									</Box>
 									<Box display="flex" justifyContent="center" mt={3}>
 										<img
@@ -342,7 +347,8 @@ const Spot = ({ onCancel }) => {
 
               <MapDialog
                 open={mapOpen}
-                onClose={() => setMapOpen(false)}
+                onClose={() => {setMapOpen(false)
+                }}
                 onSave={(coords, msg) => {
                   setLocation(coords);
                   console.log("Location:", coords);
@@ -354,6 +360,8 @@ const Spot = ({ onCancel }) => {
                     });
                   }
                 }}
+                spotAddress={spotAddress}
+                setLocation={setLocation}
               />
             </Stack>
           </Grid>
