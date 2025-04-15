@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import DeleteIcon from "@mui/icons-material/Delete";
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { useNavigate } from "react-router-dom";
 import "../style/spot.css";
 import { AuthContext } from "../context/AuthContext";
@@ -147,7 +148,6 @@ const Spot = ({ onCancel }) => {
    * @returns
    */
   const handleAddSpot = async () => {
-    console.log("Location:", location);
     const error = validateForm();
     if (error)
       if (error && typeof error === "string") {
@@ -155,7 +155,6 @@ const Spot = ({ onCancel }) => {
         return;
       }
     setTotalSlots(error);
-    //console.log(openTime);
     if (
       !(
         location.lat >= 6.554607 &&
@@ -205,7 +204,6 @@ const Spot = ({ onCancel }) => {
     let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
     let new_open_time = openTime + " " + open;
     let new_close_time = closeTime + " " + close;
-    console.log("Open Days:", open_days);
     setTotalSlots(parseInt(totalSlots));
     try {
       const response = await axios.post(`${BACKEND_URL}/spots/add-spot/`, {
@@ -257,7 +255,6 @@ const Spot = ({ onCancel }) => {
         });
       }
     } catch (error) {
-      console.log(error);
       setOpenSnackbar({
         open: true,
         message: "Error uploading data",
@@ -269,7 +266,6 @@ const Spot = ({ onCancel }) => {
   };
 
   return (
-    // <Box className="main">
     <Box className="form-container">
       <Box className="form-box">
         <Grid container spacing={2}>
@@ -300,9 +296,15 @@ const Spot = ({ onCancel }) => {
                 variant="outlined"
                 size="small"
                 onClick={() => setMapOpen(true)}
-                sx={{ ml: 2, mt: 2, width: "99%" }}
+                sx={{
+                  minWidth: 0,
+                  px: 2,
+                  mt: { xs: 0, sm: 2 },  
+                  ml: { xs: 0, sm: 2 },
+                  alignSelf: { xs: 'stretch', sm: 'center' },
+                }}
               >
-                Set Location
+                <LocationOnIcon/>
               </Button>
               <Dialog
                 open={showInstructions}
@@ -315,7 +317,7 @@ const Spot = ({ onCancel }) => {
                   </Typography>
 									<Box component="ul" pl={2}>
                     <li>
-                      Select a location using the "Set Location" button and
+                      Select a location using the "Location" button and
                       click on the map.
                     </li>
                     <li>
@@ -369,6 +371,7 @@ const Spot = ({ onCancel }) => {
           {location != null ? (
             <Grid item xs={12}>
               <TextField
+                disabled 
                 fullWidth
                 label="coordinates"
                 value={
@@ -470,25 +473,6 @@ const Spot = ({ onCancel }) => {
               >
                 Upload Images
               </Button>
-              {/* <Button variant="outlined" onClick={() => setMapOpen(true)} sx={{ ml: 2, mt: 2 }}>
-								Set Location
-							</Button>
-
-							<MapDialog
-								open={mapOpen}
-								onClose={() => setMapOpen(false)}
-								onSave={(coords, msg) => {
-									setLocation(coords);
-									console.log("Location:", coords);
-									if (msg == "success") {
-										setOpenSnackbar({
-											open: true,
-											message: "Location saved successfully!",
-											severity: "success",
-										});
-									}
-								}}
-							/> */}
             </label>
             {images ? (
               <Grid container spacing={1} sx={{ mt: 2 }}>
@@ -537,9 +521,7 @@ const Spot = ({ onCancel }) => {
               color="primary"
               fullWidth
               onClick={handleAddSpot}
-              // disabled={loading}
             >
-              {/* {loading ? <CircularProgress size={24} /> : "Add Spot"} */}
               Add Spot
             </Button>
           </Grid>
