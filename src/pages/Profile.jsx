@@ -304,7 +304,7 @@ const Profile = () => {
 			<EditProfileModal open={isModalOpen} handleClose={handleCloseModal} user={user} handleSave={handleSave} />
 			{/* Edit Spot Modal */}
 			{selectedSpot != null && (
-				<EditSpot open={editSpotOpen} handleClose={toggleEditSpot} spot={selectedSpot} handleSave={handleEditSpot} />
+				<EditSpot open={editSpotOpen} handleClose={toggleEditSpot} spot={selectedSpot} handleSave={handleEditSpot} spot_id={selectedSpot.id}/>
 			)}
 		</Container>
 	);

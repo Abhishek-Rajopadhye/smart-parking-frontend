@@ -64,7 +64,8 @@ const EditReview = ({ openDialog, onClose, review, handleSave }) => {
 	 *
 	 */
 	const handleSubmit = async () => {
-		handleSave(review.id, formData);
+		handleSave(formData);
+        onClose()
 	};
 
 	/**
@@ -133,7 +134,7 @@ const EditReview = ({ openDialog, onClose, review, handleSave }) => {
 
 	return (
 		<>
-			<Dialog component="form" open={openDialog} onSubmit={handleSubmit} onClose={() => onClose()}>
+			<Dialog component="form" open={openDialog} onClose={() => onClose()}>
 				<DialogTitle>Edit Review</DialogTitle>
 				<DialogContent>
 					<Box>
@@ -206,7 +207,15 @@ const EditReview = ({ openDialog, onClose, review, handleSave }) => {
 					<Button color="error" onClick={onClose}>
 						Cancel
 					</Button>
-					<Button type="submit" variant="contained" color="primary">
+					<Button
+						type="submit"
+						variant="contained"
+						color="primary"
+						onClick={(event) => {
+							event.preventDefault();
+							handleSubmit();
+						}}
+					>
 						Update Review
 					</Button>
 				</DialogActions>

@@ -18,8 +18,10 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ConfirmationDialogBox } from "./ConfirmationDialogBox";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import { BACKEND_URL } from "../const";
 
-const EditSpot = ({ open, handleClose, spot, handleSave }) => {
+const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 	const [confirmationOpen, setConfirmationOpen] = useState(false);
 	const [confirmationMessage, setConfirmationMessage] = useState(null);
 	const [action, setAction] = useState(null);
@@ -42,18 +44,37 @@ const EditSpot = ({ open, handleClose, spot, handleSave }) => {
 	});
 
 	useEffect(() => {
-		setFormData({
-			spot_title: spot.title,
-			spot_address: spot.address,
-			spot_description: spot.description,
-			open_time: spot.openTime,
-			close_time: spot.closeTime,
-			hourly_rate: spot.hourlyRate,
-			total_slots: spot.totalSlots,
-			available_days: spot.openDays.split(", ") || [],
-			image: spot.image || [],
-		});
-	}, [spot]);
+		const fetchImages = async () => {
+			const imageRes = await axios.get(`${BACKEND_URL}/spotdetails/get-images/${spot_id}`);
+			if (imageRes.status === 200) {
+				return imageRes.data.images;
+			}
+			return [];
+		};
+
+		const formatTime = (time) => {
+			if (!time) return "";
+			const [hours, minutes] = time.replace(" AM", "").replace(" PM", "").split(":");
+			return `${hours}:${minutes}`;
+		};
+
+		const initializeFormData = async () => {
+			const images = await fetchImages();
+			setFormData({
+				spot_title: spot.title,
+				spot_address: spot.address,
+				spot_description: spot.description,
+				open_time: formatTime(spot.openTime),
+				close_time: formatTime(spot.closeTime),
+				hourly_rate: spot.hourlyRate,
+				total_slots: spot.totalSlots,
+				available_days: spot.openDays.split(", ") || [],
+				image: images,
+			});
+		};
+
+		initializeFormData();
+	}, [spot, spot_id]);
 
 	/**
 	 * Handles input field changes.
@@ -285,7 +306,7 @@ const EditSpot = ({ open, handleClose, spot, handleSave }) => {
 							<Typography variant="subtitle1" sx={{ mb: 1 }}>
 								Select Open Days:
 							</Typography>
-							<Grid container spacing={1}>
+							<Grid container spacing={1} sx={{justifyContent:"center"}}>
 								{["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
 									<Grid item key={day}>
 										<Button

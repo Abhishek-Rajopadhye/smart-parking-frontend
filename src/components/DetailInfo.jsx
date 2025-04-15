@@ -108,7 +108,10 @@ const DetailInfo = () => {
 	const handleEditReview = async (review_id, updatedReview) => {
 		const response = await axios.put(`${BACKEND_URL}/reviews/${review_id}`, updatedReview);
 		if (response.status == 200) {
-			setReviews(response.data);
+			const reviewRes = await axios.get(`${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`)
+			if(reviewRes.status == 200){
+				setReviews(reviewRes.data);
+			}
 		}
 	};
 
@@ -254,9 +257,7 @@ const DetailInfo = () => {
 												handleDeleteReview={() => {
 													handleDeleteReview(review.id);
 												}}
-												handleEditReview={() => {
-													handleEditReview;
-												}}
+												handleEditReview={(editedReview) => handleEditReview(review.id, editedReview)}
 											/>
 										</Grid>
 									))}

@@ -141,9 +141,7 @@ const ReviewCard = ({ review, handleDeleteReview, handleEditReview }) => {
 					setEditReviewDialogOpen(false);
 				}}
 				review={review}
-				handleSave={() => {
-					handleEditReview;
-				}}
+				handleSave={(editedReview) => handleEditReview(editedReview)}
 			/>
 		</>
 	);
