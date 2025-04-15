@@ -27,30 +27,27 @@ import { ReviewCard } from "./ReviewCard";
 import { AddReview } from "./AddReview";
 
 const DetailInfo = () => {
-
-	const {spot_id}=useParams();
-	const [selectedMarker,setSelectedMarker]=useState([]);
-	console.log("dpot",spot_id);
-	
+	const { spot_id } = useParams();
+	const [selectedMarker, setSelectedMarker] = useState([]);
+	console.log("dpot", spot_id);
 
 	useEffect(() => {
 		// Fetch the spot details from your API
 		fetch(`${BACKEND_URL}/spotdetails/get-spot/${spot_id}`)
-		  .then(response => response.json())
-		  .then(data => {
-			setSelectedMarker(data);
-			
-		  })
-		  .catch(error => console.error('Error fetching spot details:', error));
-	  }, [spot_id])
-	
+			.then((response) => response.json())
+			.then((data) => {
+				setSelectedMarker(data);
+			})
+			.catch((error) => console.error("Error fetching spot details:", error));
+	}, [spot_id]);
+
 	const [reviews, setReviews] = useState([]);
 	const [ownerDetail, setOwnerDetail] = useState({});
 	const [spotImages, setSpotImages] = useState([]);
 	const [selectedImage, setSelectedImage] = useState(null);
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
 	const [addReviewDialogOpen, setAddReviewDialogOpen] = useState(false);
-	console.log("slected amrker",ownerDetail );
+	console.log("slected amrker", ownerDetail);
 	useEffect(() => {
 		const fetchDetails = async () => {
 			try {
@@ -65,7 +62,6 @@ const DetailInfo = () => {
 			} catch (error) {
 				console.error("Error fetching data", error);
 			}
-			
 		};
 
 		const getImages = async () => {
@@ -93,73 +89,73 @@ const DetailInfo = () => {
 		setDialogBookingOpen(!dialogBookingOpen);
 	};
 
-	const handleAddReviewClose = async () =>{
-		const response = await axios.get(`${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`)
-		if(response.status == 200){
+	const handleAddReviewClose = async () => {
+		const response = await axios.get(`${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`);
+		if (response.status == 200) {
 			setReviews(response.data);
 		}
 		setAddReviewDialogOpen(false);
 	};
 
-	const handleDeleteReview = async (review_id) =>{
-		const response = await axios.delete(`${BACKEND_URL}/reviews/${review_id}`)
-		if(response.status == 200){
-			setReviews(response.data);
+	const handleDeleteReview = async (review_id) => {
+		const response = await axios.delete(`${BACKEND_URL}/reviews/${review_id}`);
+		if (response.status == 200) {
+			setReviews(
+				reviews.filter((review) => {
+					review.id != review_id;
+				})
+			);
 		}
-	}
+	};
 
 	return (
-<Box
-		sx={{
-			width: "100%",
-			padding: { xs: 2, sm: 3, md: 4 },
-			boxSizing: "border-box",
-			overflowX: "hidden", // 🚫 Disable horizontal scrolling
-		}}
-	>
-			<Paper
+		<Box
 			sx={{
-				textAlign: "center",
-				py: { xs: 2, sm: 3 },
-				px: { xs: 1, sm: 2 },
-				mb: 3,
-				backgroundColor: "#f5f5f5",
-				borderRadius: 3,
+				width: "100%",
+				padding: { xs: 2, sm: 3, md: 4 },
+				boxSizing: "border-box",
+				overflowX: "hidden", // 🚫 Disable horizontal scrolling
 			}}
 		>
-			<Typography
-				variant="h4"
-				fontWeight="bold"
-				sx={{ fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" } }}
+			<Paper
+				sx={{
+					textAlign: "center",
+					py: { xs: 2, sm: 3 },
+					px: { xs: 1, sm: 2 },
+					mb: 3,
+					backgroundColor: "#f5f5f5",
+					borderRadius: 3,
+				}}
 			>
-				{selectedMarker.spot_title}
-			</Typography>
-		</Paper>
+				<Typography variant="h4" fontWeight="bold" sx={{ fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" } }}>
+					{selectedMarker.spot_title}
+				</Typography>
+			</Paper>
 			{/* Image Section */}
 			<Box>
-					{spotImages.length > 0 && (
-						<Box sx={{ mt: 4 }}>
-							<Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
-					Spot Images
-				</Typography>
-							<ImageList cols={3} gap={8} sx={{ width: "100%", height: 170 }}>
-								{spotImages.map((img, index) => (
-									<ImageListItem key={index} onClick={() => setSelectedImage(img)}>
-										<img src={img} alt={`Spot ${index}`} loading="lazy" style={{ cursor: "pointer" }} />
-									</ImageListItem>
-								))}
-							</ImageList>
-						</Box>
-					)}
-					{/* Image Enlargement Dialog */}
-					<Dialog open={!!selectedImage} onClose={() => setSelectedImage(null)}>
-						<img
-							src={selectedImage}
-							alt="Enlarged"
-							style={{ maxWidth: "90vw", maxHeight: "90vh", objectFit: "contain" }}
-						/>
-					</Dialog>
-				</Box>
+				{spotImages.length > 0 && (
+					<Box sx={{ mt: 4 }}>
+						<Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
+							Spot Images
+						</Typography>
+						<ImageList cols={3} gap={8} sx={{ width: "100%", height: 170 }}>
+							{spotImages.map((img, index) => (
+								<ImageListItem key={index} onClick={() => setSelectedImage(img)}>
+									<img src={img} alt={`Spot ${index}`} loading="lazy" style={{ cursor: "pointer" }} />
+								</ImageListItem>
+							))}
+						</ImageList>
+					</Box>
+				)}
+				{/* Image Enlargement Dialog */}
+				<Dialog open={!!selectedImage} onClose={() => setSelectedImage(null)}>
+					<img
+						src={selectedImage}
+						alt="Enlarged"
+						style={{ maxWidth: "90vw", maxHeight: "90vh", objectFit: "contain" }}
+					/>
+				</Dialog>
+			</Box>
 
 			<Grid container spacing={3} sx={{ marginTop: 1 }}>
 				{/* Left Section */}
@@ -222,15 +218,10 @@ const DetailInfo = () => {
 
 				{/* Right Section */}
 				<Grid item xs={12} md={6}>
-					<Paper elevation={6} sx={{ padding: 3, height: "500px", overflow: "visible"}} variant="outlined">
-
-						<Typography
-							variant="h5"
-							fontWeight="bold"
-							sx={{ m: 2, display: "flex", alignItems: "center" }}
-						>
+					<Paper elevation={6} sx={{ padding: 3, height: "500px", overflow: "visible" }} variant="outlined">
+						<Typography variant="h5" fontWeight="bold" sx={{ m: 2, display: "flex", alignItems: "center" }}>
 							Reviews
-							<Box sx={{ display: "flex", justifyContent:"space-between" }}>
+							<Box sx={{ display: "flex", justifyContent: "space-between" }}>
 								<Rating name="read-only" value={averageRating} precision={0.5} readOnly />
 								<Typography>({reviews.length})</Typography>
 							</Box>
@@ -239,7 +230,7 @@ const DetailInfo = () => {
 								color="primary"
 								size="small"
 								onClick={() => setAddReviewDialogOpen(true)} // Placeholder action
-								sx={{ ml: 2, justifyContent:"space-between" }}
+								sx={{ ml: 2, justifyContent: "space-between" }}
 							>
 								Add Review
 							</Button>
@@ -253,8 +244,8 @@ const DetailInfo = () => {
 							<Box sx={{ height: "400px", overflowY: "auto", padding: 2 }}>
 								<Grid container direction="column" spacing={2}>
 									{reviews.map((review, index) => (
-										<Grid item key={index} sx={{ bgcolor: "skyblue", borderRadius: 2, padding: 2, m:1 }}>
-											<ReviewCard review={review} handleDelete={handleDeleteReview}/>
+										<Grid item key={index} sx={{ bgcolor: "skyblue", borderRadius: 2, padding: 2, m: 1 }}>
+											<ReviewCard review={review} handleDelete={handleDeleteReview} />
 										</Grid>
 									))}
 								</Grid>
@@ -262,7 +253,6 @@ const DetailInfo = () => {
 						)}
 					</Paper>
 				</Grid>
-
 			</Grid>
 			<Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
 				<Button

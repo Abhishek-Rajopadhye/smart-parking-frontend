@@ -122,7 +122,7 @@ const AppLayout = () => {
 						{getPageTitle()}
 					</Typography>
 					<IconButton onClick={handleAvatarClick}>
-						<Avatar alt="User Avatar" src={user?.avatarUrl || ""} />
+						<Avatar alt="User Avatar" src={user.profile_picture || ""} />
 					</IconButton>
 					<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
 						{routes
