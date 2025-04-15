@@ -36,8 +36,8 @@ const Profile = () => {
 	const [selectedSpot, setSelectedSpot] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [userSpots, setUserSpots] = useState([]); // State to store user's spots
-	const [dialogBoxOpen, setDialogBoxOpen] = useState(false);
-	const [bookingDetails, setBookingDetails] = useState(null);
+	const [bookingHistoryDialogBoxOpen, setBookingHistoryDialogBoxOpen] = useState(false);
+	const [bookingDetails, setBookingDetails] = useState([]);
 	const [editSpotOpen, setEditSpotOpen] = useState(false);
 	const [totalEarning, setTotalEarning] = useState(0); // State to store total earnings
 	/**
@@ -128,24 +128,24 @@ const Profile = () => {
 		} catch (error) {
 			console.error("Error fetching booking history:", error);
 		}
-		setDialogBoxOpen(true);
+		setBookingHistoryDialogBoxOpen(true);
 	};
 
 	// Close the dialog
 	const handleCloseDialog = () => {
-		setDialogBoxOpen(false);
+		setBookingHistoryDialogBoxOpen(false);
 	};
 
-	const handleEditSpot = async (spotId, updatedSpot) => {
+	const handleEditSpot = async (spotId, updated_spot) => {
 		try {
-			const response = await axios.put(`${BACKEND_URL}/spots/${spotId}`, updatedSpot);
+			const response = await axios.put(`${BACKEND_URL}/spots/${spotId}`, updated_spot);
 			if (response.status === 200) {
 				setBookingDetails(response.data);
 			}
 		} catch (error) {
 			console.error("Error updating spot:", error);
 		}
-		setDialogBoxOpen(true);
+		setBookingHistoryDialogBoxOpen(false);
 	};
 
 	const handleDeleteSpot = async (spotId) => {
@@ -160,11 +160,7 @@ const Profile = () => {
 	};
 
 	const onEditSpotClick = async (spotID) => {
-		setSelectedSpot(
-			userSpots.filter((spot) => {
-				spot.id == spotID;
-			})
-		);
+		setSelectedSpot(userSpots.find((spot) => spot.id === spotID));
 		toggleEditSpot();
 	};
 
@@ -298,14 +294,18 @@ const Profile = () => {
 					)}
 				</List>
 				{/* Booking History Dialog */}
-				<Dialog open={dialogBoxOpen} onClose={handleCloseDialog}>
-					<SpotBookingView bookingDetails={bookingDetails} />
-				</Dialog>
+				{bookingHistoryDialogBoxOpen != false && (bookingDetails != null || bookingDetails != []) && (
+					<Dialog open={bookingHistoryDialogBoxOpen} onClose={handleCloseDialog}>
+						<SpotBookingView bookingDetails={bookingDetails} />
+					</Dialog>
+				)}
 			</Box>
 			{/* Edit Profile Modal */}
 			<EditProfileModal open={isModalOpen} handleClose={handleCloseModal} user={user} handleSave={handleSave} />
 			{/* Edit Spot Modal */}
-			{selectedSpot != null && <EditSpot open={editSpotOpen} handleClose={toggleEditSpot} spot={selectedSpot} handleSave={handleEditSpot} />}
+			{selectedSpot != null && (
+				<EditSpot open={editSpotOpen} handleClose={toggleEditSpot} spot={selectedSpot} handleSave={handleEditSpot} />
+			)}
 		</Container>
 	);
 };

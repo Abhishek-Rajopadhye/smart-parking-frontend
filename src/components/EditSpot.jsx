@@ -12,31 +12,48 @@ import {
 	IconButton,
 	Snackbar,
 	Alert,
+    Typography,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ConfirmationDialogBox } from "./ConfirmationDialogBox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const EditSpot = ({ open, handleClose, spot, handleSave }) => {
 	const [confirmationOpen, setConfirmationOpen] = useState(false);
 	const [confirmationMessage, setConfirmationMessage] = useState(null);
 	const [action, setAction] = useState(null);
 	const [formData, setFormData] = useState({
-		spot_title: spot.spot_title || "",
-		spot_address: spot.spot_address || "",
-		spot_description: spot.spot_description || "",
-		open_time: spot.open_time || "",
-		close_time: spot.close_time || "",
-		hourly_rate: spot.hourly_rate || "",
-		total_slots: spot.total_slots || "",
-		image: spot.image || [],
+		spot_id: -1,
+		spot_title: "",
+		spot_address: "",
+		spot_description: "",
+		open_time: "",
+		close_time: "",
+		hourly_rate: "",
+        available_days: [],
+		total_slots: "",
+		image: [],
 	});
 	const [openSnackbar, setOpenSnackbar] = useState({
 		open: false,
 		message: "",
 		severity: "info",
 	});
+
+	useEffect(() => {
+		setFormData({
+			spot_title: spot.title,
+			spot_address: spot.address,
+			spot_description: spot.description,
+			open_time: spot.openTime,
+			close_time: spot.closeTime,
+			hourly_rate: spot.hourlyRate,
+			total_slots: spot.totalSlots,
+            available_days:spot.openDays.split(", ") || [],
+			image: spot.image || [],
+		});
+	}, [spot]);
 
 	/**
 	 * Handles input field changes.
@@ -130,7 +147,11 @@ const EditSpot = ({ open, handleClose, spot, handleSave }) => {
 	 * Calls the handleSave function with the updated form data.
 	 */
 	const onConfirmConfirmation = () => {
-		handleSave(formData);
+        setConfirmationOpen(false);
+		setAction(null);
+		setConfirmationMessage(null);
+		handleSave(spot.id, formData);
+        handleClose();
 	};
 
 	/**
@@ -144,13 +165,22 @@ const EditSpot = ({ open, handleClose, spot, handleSave }) => {
 		setConfirmationMessage(null);
 	};
 
+    const toggleDay = (day) => {
+        setFormData((prevData) => {
+            const updatedDays = prevData.available_days.includes(day)
+                ? prevData.available_days.filter((d) => d !== day) // Remove the day
+                : [...prevData.available_days, day]; // Add the day
+            return { ...prevData, available_days: updatedDays };
+        });
+    };
+
 	/**
 	 * Handles the cancellation of the confirmation dialog.
 	 *
 	 * Resets the confirmation state and closes the edit spot dialog.
 	 */
 	const onCancelConfirmation = () => {
-        setConfirmationOpen(false);
+		setConfirmationOpen(false);
 		setAction(null);
 		setConfirmationMessage(null);
 		handleClose();
@@ -251,6 +281,24 @@ const EditSpot = ({ open, handleClose, spot, handleSave }) => {
 								onChange={handleInputChange}
 							/>
 						</Grid>
+                        <Grid item xs={12}>
+                            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                                Select Open Days:
+                            </Typography>
+                            <Grid container spacing={1}>
+                                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                                    <Grid item key={day}>
+                                        <Button
+                                            variant={formData.available_days.includes(day) ? "contained" : "outlined"}
+                                            color={formData.available_days.includes(day) ? "primary" : "default"}
+                                            onClick={() => toggleDay(day)}
+                                        >
+                                            {day}
+                                        </Button>
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Grid>
 						<Grid item xs={12}>
 							<Input
 								type="file"
