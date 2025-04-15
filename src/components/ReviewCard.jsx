@@ -14,7 +14,7 @@ import {
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
-const ReviewCard = ({ review }) => {
+const ReviewCard = ({ review, handleDelete }) => {
 	const [formattedDate, setFormattedDate] = useState("");
 	const { user } = useContext(AuthContext);
 	const [images, setImages] = useState([]);
@@ -41,7 +41,6 @@ const ReviewCard = ({ review }) => {
 				}
 				subheader={formattedDate}
 			/>
-
 			<CardContent>
 				<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
 					<Rating name="read-only" value={review.rating_score} precision={0.5} readOnly />
@@ -78,7 +77,6 @@ const ReviewCard = ({ review }) => {
 						/>
 					))}
 			</Box>
-
 			<CardActions>
 				{user.id === review.spot_owner_id && <Button>Reply</Button>}
 				{user.id === review.user_id && (
@@ -86,7 +84,7 @@ const ReviewCard = ({ review }) => {
 						<Button variant="outlined" color="primary">
 							Edit
 						</Button>
-						<Button color="error">Delete</Button>
+						<Button color="error" onClick={handleDelete(review.id)}>Delete</Button>
 					</>
 				)}
 			</CardActions>

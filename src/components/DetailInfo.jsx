@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
 	Grid,
 	Paper,
@@ -50,7 +50,6 @@ const DetailInfo = () => {
 	const [selectedImage, setSelectedImage] = useState(null);
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
 	const [addReviewDialogOpen, setAddReviewDialogOpen] = useState(false);
-	const navigate = useNavigate();
 	console.log("slected amrker",ownerDetail );
 	useEffect(() => {
 		const fetchDetails = async () => {
@@ -101,6 +100,13 @@ const DetailInfo = () => {
 		}
 		setAddReviewDialogOpen(false);
 	};
+
+	const handleDeleteReview = async (review_id) =>{
+		const response = await axios.delete(`${BACKEND_URL}/reviews/${review_id}`)
+		if(response.status == 200){
+			setReviews(response.data);
+		}
+	}
 
 	return (
 <Box
@@ -248,7 +254,7 @@ const DetailInfo = () => {
 								<Grid container direction="column" spacing={2}>
 									{reviews.map((review, index) => (
 										<Grid item key={index} sx={{ bgcolor: "skyblue", borderRadius: 2, padding: 2, m:1 }}>
-											<ReviewCard review={review} />
+											<ReviewCard review={review} handleDelete={handleDeleteReview}/>
 										</Grid>
 									))}
 								</Grid>
@@ -262,21 +268,11 @@ const DetailInfo = () => {
 				<Button
 					fullWidth
 					variant="contained"
-					color="secondary"
+					color="primary"
 					sx={{ borderRadius: 2, mt: 2, fontSize: "large" }}
 					onClick={toggleDialogBooking}
 				>
 					Book Now
-				</Button>
-				<Button
-					variant="contained"
-					color="primary"
-					onClick={() => {
-						navigate("/homepage");
-					}}
-					sx={{ borderRadius: 2, mt: 2, fontSize: "large" }}
-				>
-					Go Home
 				</Button>
 			</Box>
 			<Booking open={dialogBookingOpen} spot_information={selectedMarker} set_dialog={toggleDialogBooking} />
