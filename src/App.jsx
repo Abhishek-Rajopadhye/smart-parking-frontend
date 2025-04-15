@@ -64,22 +64,21 @@ const AppLayout = () => {
 			case "/profile":
 				return "Profile";
 			case "/booking-history":
-				return "Booking History";
+				return "My Bookings";
 			case "/spot":
 				return "Add Spot";
 			case "/homepage":
 				return "Home";
-			case "/map-screen":
-				return "Map Screen";
+			case "/mapsearch":
+				return "Map View";
 			case "/auth":
 				return "Auth";
 			case "/booking":
 				return "Booking";
 			case "/spotdetail":
 				return "Detailed Info";
-
 			default:
-				return "Home";
+				return "App";
 		}
 	};
 
@@ -94,7 +93,7 @@ const AppLayout = () => {
 	const routes = [
 		{ label: "Home", path: "/homepage" },
 		{ label: "Profile", path: "/profile" },
-		{ label: "Booking History", path: "/booking-history" },
+		{ label: "My Bookings", path: "/booking-history" },
 	];
 
 	if (!user) {
@@ -127,16 +126,16 @@ const AppLayout = () => {
 					</IconButton>
 					<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
 						{routes
-							.filter((r) => r.path !== location.pathname)
-							.map((r) => (
+							.map((route) => (
 								<MenuItem
-									key={r.path}
+									key={route.path}
 									onClick={() => {
 										handleMenuClose();
-										navigate(r.path);
+										navigate(route.path);
 									}}
+									selected={route.path === location.pathname}
 								>
-									{r.label}
+									{route.label}
 								</MenuItem>
 							))}
 						<MenuItem
