@@ -98,7 +98,13 @@ const ReviewCard = ({ review, handleDeleteReview, handleEditReview }) => {
 					{user.id === review.spot_owner_id && <Button>Reply</Button>}
 					{user.id === review.user_id && (
 						<>
-							<Button variant="outlined" color="primary">
+							<Button
+								variant="outlined"
+								color="primary"
+								onClick={() => {
+									setEditReviewDialogOpen(true);
+								}}
+							>
 								Edit
 							</Button>
 							<Button color="error" onClick={onDeleteClick}>
@@ -119,8 +125,26 @@ const ReviewCard = ({ review, handleDeleteReview, handleEditReview }) => {
 					/>
 				</Dialog>
 			</Card>
-			<ConfirmationDialogBox open={deleteConfirmationOpen} message={deleteConfirmationMessage} onConfirm={()=>{onDeleteConfirmation()}} onCancel={()=>{setDeleteConfirmationOpen(false)}} />
-			<EditReview openDialog={editReviewDialogOpen} onClose={()=>{setEditReviewDialogOpen(false)}} review={review} handleSave={()=>{handleEditReview}}/>
+			<ConfirmationDialogBox
+				open={deleteConfirmationOpen}
+				message={deleteConfirmationMessage}
+				onConfirm={() => {
+					onDeleteConfirmation();
+				}}
+				onCancel={() => {
+					setDeleteConfirmationOpen(false);
+				}}
+			/>
+			<EditReview
+				openDialog={editReviewDialogOpen}
+				onClose={() => {
+					setEditReviewDialogOpen(false);
+				}}
+				review={review}
+				handleSave={() => {
+					handleEditReview;
+				}}
+			/>
 		</>
 	);
 };

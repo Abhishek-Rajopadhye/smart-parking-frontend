@@ -12,7 +12,7 @@ import {
 	IconButton,
 	Snackbar,
 	Alert,
-    Typography,
+	Typography,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -31,7 +31,7 @@ const EditSpot = ({ open, handleClose, spot, handleSave }) => {
 		open_time: "",
 		close_time: "",
 		hourly_rate: "",
-        available_days: [],
+		available_days: [],
 		total_slots: "",
 		image: [],
 	});
@@ -50,7 +50,7 @@ const EditSpot = ({ open, handleClose, spot, handleSave }) => {
 			close_time: spot.closeTime,
 			hourly_rate: spot.hourlyRate,
 			total_slots: spot.totalSlots,
-            available_days:spot.openDays.split(", ") || [],
+			available_days: spot.openDays.split(", ") || [],
 			image: spot.image || [],
 		});
 	}, [spot]);
@@ -147,11 +147,11 @@ const EditSpot = ({ open, handleClose, spot, handleSave }) => {
 	 * Calls the handleSave function with the updated form data.
 	 */
 	const onConfirmConfirmation = () => {
-        setConfirmationOpen(false);
+		setConfirmationOpen(false);
 		setAction(null);
 		setConfirmationMessage(null);
 		handleSave(spot.id, formData);
-        handleClose();
+		handleClose();
 	};
 
 	/**
@@ -165,14 +165,14 @@ const EditSpot = ({ open, handleClose, spot, handleSave }) => {
 		setConfirmationMessage(null);
 	};
 
-    const toggleDay = (day) => {
-        setFormData((prevData) => {
-            const updatedDays = prevData.available_days.includes(day)
-                ? prevData.available_days.filter((d) => d !== day) // Remove the day
-                : [...prevData.available_days, day]; // Add the day
-            return { ...prevData, available_days: updatedDays };
-        });
-    };
+	const toggleDay = (day) => {
+		setFormData((prevData) => {
+			const updatedDays = prevData.available_days.includes(day)
+				? prevData.available_days.filter((d) => d !== day) // Remove the day
+				: [...prevData.available_days, day]; // Add the day
+			return { ...prevData, available_days: updatedDays };
+		});
+	};
 
 	/**
 	 * Handles the cancellation of the confirmation dialog.
@@ -281,24 +281,24 @@ const EditSpot = ({ open, handleClose, spot, handleSave }) => {
 								onChange={handleInputChange}
 							/>
 						</Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                                Select Open Days:
-                            </Typography>
-                            <Grid container spacing={1}>
-                                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                                    <Grid item key={day}>
-                                        <Button
-                                            variant={formData.available_days.includes(day) ? "contained" : "outlined"}
-                                            color={formData.available_days.includes(day) ? "primary" : "default"}
-                                            onClick={() => toggleDay(day)}
-                                        >
-                                            {day}
-                                        </Button>
-                                    </Grid>
-                                ))}
-                            </Grid>
-                        </Grid>
+						<Grid item xs={12}>
+							<Typography variant="subtitle1" sx={{ mb: 1 }}>
+								Select Open Days:
+							</Typography>
+							<Grid container spacing={1}>
+								{["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+									<Grid item key={day}>
+										<Button
+											variant={formData.available_days.includes(day) ? "contained" : "outlined"}
+											color={formData.available_days.includes(day) ? "primary" : "default"}
+											onClick={() => toggleDay(day)}
+										>
+											{day}
+										</Button>
+									</Grid>
+								))}
+							</Grid>
+						</Grid>
 						<Grid item xs={12}>
 							<Input
 								type="file"

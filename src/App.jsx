@@ -125,19 +125,18 @@ const AppLayout = () => {
 						<Avatar alt="User Avatar" src={user.profile_picture || ""} />
 					</IconButton>
 					<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-						{routes
-							.map((route) => (
-								<MenuItem
-									key={route.path}
-									onClick={() => {
-										handleMenuClose();
-										navigate(route.path);
-									}}
-									selected={route.path === location.pathname}
-								>
-									{route.label}
-								</MenuItem>
-							))}
+						{routes.map((route) => (
+							<MenuItem
+								key={route.path}
+								onClick={() => {
+									handleMenuClose();
+									navigate(route.path);
+								}}
+								selected={route.path === location.pathname}
+							>
+								{route.label}
+							</MenuItem>
+						))}
 						<MenuItem
 							onClick={() => {
 								handleMenuClose();

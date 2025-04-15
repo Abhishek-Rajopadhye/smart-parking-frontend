@@ -17,6 +17,7 @@ import {
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import PhoneIcon from "@mui/icons-material/Phone";
+import EmailIcon from "@mui/icons-material/Email";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalParkingIcon from "@mui/icons-material/LocalParking";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
@@ -109,7 +110,7 @@ const DetailInfo = () => {
 		if (response.status == 200) {
 			setReviews(response.data);
 		}
-	}
+	};
 
 	return (
 		<Box
@@ -173,8 +174,8 @@ const DetailInfo = () => {
 							<Typography variant="h6">
 								<PhoneIcon sx={{ mr: 2 }} /> {ownerDetail.phone || "Contact not available"}
 							</Typography>
-							<Typography variant="h6" sx={{ ml: 6 }}>
-								{ownerDetail.email || "Email not provided"}
+							<Typography variant="h6">
+								<EmailIcon sx={{ mr: 2 }} /> {ownerDetail.email || "Email not provided"}
 							</Typography>
 						</Box>
 
@@ -248,7 +249,15 @@ const DetailInfo = () => {
 								<Grid container direction="column" spacing={2}>
 									{reviews.map((review, index) => (
 										<Grid item key={index} sx={{ bgcolor: "skyblue", borderRadius: 2, padding: 2, m: 1 }}>
-											<ReviewCard review={review} handleDeleteReview={()=>{handleDeleteReview(review.id)}} handleEditReview={()=>{handleEditReview}} />
+											<ReviewCard
+												review={review}
+												handleDeleteReview={() => {
+													handleDeleteReview(review.id);
+												}}
+												handleEditReview={() => {
+													handleEditReview;
+												}}
+											/>
 										</Grid>
 									))}
 								</Grid>

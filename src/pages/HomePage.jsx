@@ -338,9 +338,9 @@ const HomePage = () => {
 					>
 						Find Parking Spots
 					</Button>
-					<Divider sx={{ my: 4 }} >
+					<Divider sx={{ my: 4 }}>
 						<Typography variant="body2" color="text.secondary">
-							Or	
+							Or
 						</Typography>
 					</Divider>
 					{/* Button to add new parking spot */}

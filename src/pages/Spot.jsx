@@ -46,7 +46,7 @@ const Spot = ({ onCancel }) => {
 	const toggleDay = (day) => {
 		setOpenDays({ ...openDays, [day]: !openDays[day] });
 	};
-	
+
 	/**
 	 * checking size of photo and reading a Base64 data
 	 * If file size greater than 2 MB gives a warning
@@ -365,7 +365,7 @@ const Spot = ({ onCancel }) => {
 								onClose={() => setMapOpen(false)}
 								onSave={(coords, msg) => {
 									setLocation(coords);
-									
+
 									console.log("Location:", coords);
 									if (msg == "success") {
 										setOpenSnackbar({
