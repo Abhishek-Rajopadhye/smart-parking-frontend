@@ -100,13 +100,16 @@ const DetailInfo = () => {
 	const handleDeleteReview = async (review_id) => {
 		const response = await axios.delete(`${BACKEND_URL}/reviews/${review_id}`);
 		if (response.status == 200) {
-			setReviews(
-				reviews.filter((review) => {
-					review.id != review_id;
-				})
-			);
+			setReviews(reviews.filter((review) => review.id !== review_id));
 		}
 	};
+
+	const handleEditReview = async (review_id, updatedReview) => {
+		const response = await axios.put(`${BACKEND_URL}/reviews/${review_id}`, updatedReview);
+		if (response.status == 200) {
+			setReviews(response.data);
+		}
+	}
 
 	return (
 		<Box
@@ -245,7 +248,7 @@ const DetailInfo = () => {
 								<Grid container direction="column" spacing={2}>
 									{reviews.map((review, index) => (
 										<Grid item key={index} sx={{ bgcolor: "skyblue", borderRadius: 2, padding: 2, m: 1 }}>
-											<ReviewCard review={review} handleDelete={handleDeleteReview} />
+											<ReviewCard review={review} handleDeleteReview={()=>{handleDeleteReview(review.id)}} handleEditReview={()=>{handleEditReview}} />
 										</Grid>
 									))}
 								</Grid>
