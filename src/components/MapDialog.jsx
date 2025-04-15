@@ -74,8 +74,6 @@ function MapDialog({ open, onClose, onSave, spotAddress, setLocation }) {
             const loc = data.results[0].geometry.location;
             setMarkerPosition(loc);
             setMapCenter(loc);
-            console.log("Latitude:", loc.lat);
-            console.log("Longitude:", loc.lng);
           } else {
             defaultCenter = { lat: 18.52059, lng: 73.85537 };
           }

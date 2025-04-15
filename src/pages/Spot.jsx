@@ -74,23 +74,24 @@ const Spot = ({ onCancel }) => {
 
     const newImages = [];
     const newPreviews = [];
-
-    for (let file of files) {
-      if (file.size > maxSize) {
-        setOpenSnackbar({
-          open: true,
-          message: "Each file must be less than 2MB",
-          severity: "error",
-        });
-        continue;
-      }
-
+    let validateFile = [];
+    console.log(files.length);
+    for(let file of files) {
+      console.log(file.size);
+      if(file.size <= maxSize) validateFile.push(file)
+    }
+    console.log(validateFile)
+    if(validateFile.length == 0) {
+      setOpenSnackbar({open: true, message: "Images Should be less than 2MB", severity: "error"})
+      return;
+    }
+    for (let file of validateFile) {
       const reader = new FileReader();
       reader.onloadend = () => {
         newImages.push(reader.result.split(",")[1]);
         newPreviews.push(reader.result);
 
-        if (newImages.length === files.length) {
+        if (newImages.length === validateFile.length) {
           setImages((prev) => [...prev, ...newImages]);
           setImagePreviews((prev) => [...prev, ...newPreviews]);
 
@@ -102,6 +103,14 @@ const Spot = ({ onCancel }) => {
         }
       };
       reader.readAsDataURL(file);
+    }
+
+    if(files.length != validateFile.length) {
+      setOpenSnackbar({
+        open: true,
+        message: "Some files were skipped (over 2MB)",
+        severity: "warning"
+      })
     }
   };
 
