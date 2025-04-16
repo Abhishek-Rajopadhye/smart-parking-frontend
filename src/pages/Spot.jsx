@@ -179,10 +179,10 @@ const Spot = ({ onCancel }) => {
 		}
 
 		console.log(openTime);
-		let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
-		let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
-		let new_open_time = openTime + " " + open;
-		let new_close_time = closeTime + " " + close;
+		//let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
+		//let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
+		let new_open_time = openTime ;
+		let new_close_time = closeTime;
 		console.log("Open Days:", open_days);
 		setTotalSlots(parseInt(totalSlots));
 		try {
@@ -224,7 +224,7 @@ const Spot = ({ onCancel }) => {
 
 				setLatitude("");
 				setLongitude("");
-
+				setLocation(null);
 				setOpenDays({
 					Sun: false,
 					Mon: false,

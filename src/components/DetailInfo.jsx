@@ -136,7 +136,7 @@ const DetailInfo = () => {
 							<Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
 					Spot Images
 				</Typography>
-							<ImageList cols={3} gap={8} sx={{ width: "100%", height: 170 }}>
+							<ImageList cols={3} gap={8} sx={{ width: "100%", height: 300 }}>
 								{spotImages.map((img, index) => (
 									<ImageListItem key={index} onClick={() => setSelectedImage(img)}>
 										<img src={img} alt={`Spot ${index}`} loading="lazy" style={{ cursor: "pointer" }} />
