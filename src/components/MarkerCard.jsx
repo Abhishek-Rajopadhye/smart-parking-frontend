@@ -15,114 +15,117 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const MarkerCard = ({ markers, origin, latlng }) => {
-	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
-	const [sortedMarkers, setSortedMarkers] = useState([]);
-	const [sortType, setSortType] = useState("price");
-	const navigate = useNavigate();
-	console.log("Origin", origin);
-	console.log("ON the marker card ", markers);
-	// Calculate walking time & distance
+const MarkerCard = ({ markers, origin ,latlng}) => {
+  const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
+  const [sortedMarkers, setSortedMarkers] = useState([]);
+  const [sortType, setSortType] = useState("price");
+  const navigate = useNavigate();
+//  console.log("Origin",origin)
+//  console.log("lat.l",latlng);
+//  console.log("ON the marker card ",markers);
+  // Calculate walking time & distance
 
-	const toggleDialogBooking = () => {
+  const toggleDialogBooking = () => {
 		setDialogBookingOpen(!dialogBookingOpen);
 	};
 
-	useEffect(() => {
-		if (!window.google || !origin || markers.length === 0) return;
+  useEffect(() => {
+    if (!window.google || !origin || markers.length === 0) return;
+  
+    const service = new window.google.maps.DistanceMatrixService();
+    const destinations = markers.map((marker) => ({
+      lat: marker.latitude,
+      lng: marker.longitude,
+    }));
+  
+  //  console.log("Destinations:", destinations);
+   // console.log(" :", destinations);
+    service.getDistanceMatrix(
+      {
+        origins: [origin],
+        destinations,
+        travelMode: window.google.maps.TravelMode.WALKING,
+        unitSystem: window.google.maps.UnitSystem.METRIC,
+      },
+      (response, status) => {
+        if (status === "OK" && response?.rows?.length > 0) {
+          // console.log("Distance Matrix Response:", response);
+  
+          const updated = markers.map((marker, index) => {
+            const element = response.rows[0]?.elements?.[index];
+  
+            return {
+              ...marker,
+              walkingDistance: element?.distance?.text || "N/A",
+              walkingDuration: element?.duration?.text || "N/A",
+              rawDistance: element?.distance?.value || Infinity,
+            };
+          });
+  
+          setSortedMarkers(sortMarkers(updated, sortType));
+        } else {
+          console.error("Distance Matrix failed:", status, response);
+        }
+      }
+    );
+  }, [markers, origin, sortType]);
+  
 
-		const service = new window.google.maps.DistanceMatrixService();
-		const destinations = markers.map((marker) => ({
-			lat: marker.latitude,
-			lng: marker.longitude,
-		}));
 
-		console.log("Destinations:", destinations);
+// const calculateDistance = (origin, destination) => {
+//     try {
+//         if (!window.google?.maps?.geometry) return null;
 
-		service.getDistanceMatrix(
-			{
-				origins: [origin],
-				destinations,
-				travelMode: window.google.maps.TravelMode.WALKING,
-				unitSystem: window.google.maps.UnitSystem.METRIC,
-			},
-			(response, status) => {
-				if (status === "OK" && response?.rows?.length > 0) {
-					console.log("Distance Matrix Response:", response);
+//         if (!origin?.lat || !origin?.lng || !destination?.lat || !destination?.lng) {
+//             throw new Error("Invalid coordinates provided for distance calculation");
+//         }
 
-					const updated = markers.map((marker, index) => {
-						const element = response.rows[0]?.elements?.[index];
+//         const originLatLng = new window.google.maps.LatLng(origin.lat, origin.lng);
 
-						return {
-							...marker,
-							walkingDistance: element?.distance?.text || "N/A",
-							walkingDuration: element?.duration?.text || "N/A",
-							rawDistance: element?.distance?.value || Infinity,
-						};
-					});
+//         const destinationLatLng = new window.google.maps.LatLng(destination.lat, destination.lng);
 
-					setSortedMarkers(sortMarkers(updated, sortType));
-				} else {
-					console.error("Distance Matrix failed:", status, response);
-				}
-			}
-		);
-	}, [markers, origin, sortType]);
+//         // Distance in meters
+//         const distanceInMeters = window.google.maps.geometry.spherical.computeDistanceBetween(
+//             originLatLng,
+//             destinationLatLng
+//         );
 
-	// const calculateDistance = (origin, destination) => {
-	//     try {
-	//         if (!window.google?.maps?.geometry) return null;
+//         // Converting  km with 2 decimal places
+//         return (distanceInMeters / 1000).toFixed(2);
+//     } catch (error) {
+//         console.error("Distance claculation error:", error);
+//         return null;
+//     }
+// };
 
-	//         if (!origin?.lat || !origin?.lng || !destination?.lat || !destination?.lng) {
-	//             throw new Error("Invalid coordinates provided for distance calculation");
-	//         }
+  const sortMarkers = (markerList, type) => {
+    if (type === "price") {
+      return [...markerList].sort((a, b) => a.hourly_rate - b.hourly_rate);
+    } else if (type === "distance") {
+      return [...markerList].sort((a, b) => a.rawDistance - b.rawDistance);
+    }
+    return markerList;
+  };
 
-	//         const originLatLng = new window.google.maps.LatLng(origin.lat, origin.lng);
+  const handleSortChange = (event) => {
+    const newType = event.target.value;
+    setSortType(newType);
+    setSortedMarkers(sortMarkers(sortedMarkers, newType));
+  };
 
-	//         const destinationLatLng = new window.google.maps.LatLng(destination.lat, destination.lng);
+  return (
+    <Box sx={{ maxHeight: "100vh" ,p: 2, bgcolor: "#f9f9f9" }}>
+      <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+        <InputLabel>Sort by</InputLabel>
+        <Select value={sortType} label="Sort by" onChange={handleSortChange}>
+          <MenuItem value="price">Price</MenuItem>
+          <MenuItem value="distance">Distance</MenuItem>
+        </Select>
+      </FormControl>
 
-	//         // Distance in meters
-	//         const distanceInMeters = window.google.maps.geometry.spherical.computeDistanceBetween(
-	//             originLatLng,
-	//             destinationLatLng
-	//         );
-
-	//         // Converting  km with 2 decimal places
-	//         return (distanceInMeters / 1000).toFixed(2);
-	//     } catch (error) {
-	//         console.error("Distance claculation error:", error);
-	//         return null;
-	//     }
-	// };
-
-	const sortMarkers = (markerList, type) => {
-		if (type === "price") {
-			return [...markerList].sort((a, b) => a.hourly_rate - b.hourly_rate);
-		} else if (type === "distance") {
-			return [...markerList].sort((a, b) => a.rawDistance - b.rawDistance);
-		}
-		return markerList;
-	};
-
-	const handleSortChange = (event) => {
-		const newType = event.target.value;
-		setSortType(newType);
-		setSortedMarkers(sortMarkers(sortedMarkers, newType));
-	};
-
-	return (
-		<Box sx={{ maxHeight: "100vh", p: 2, bgcolor: "#f9f9f9" }}>
-			<FormControl fullWidth size="small" sx={{ mb: 2 }}>
-				<InputLabel>Sort by</InputLabel>
-				<Select value={sortType} label="Sort by" onChange={handleSortChange}>
-					<MenuItem value="price">Price</MenuItem>
-					<MenuItem value="distance">Distance</MenuItem>
-				</Select>
-			</FormControl>
-
-			{sortedMarkers.map((spot) => (
-				<Card key={spot.spot_id} sx={{ display: "flex", mb: 2, borderRadius: 3, boxShadow: 2 }}>
-					{/* <CardMedia
+      {sortedMarkers.map((spot) => (
+        <Card key={spot.spot_id} sx={{ display: "flex", mb: 2, borderRadius: 3, boxShadow: 2 }}>
+          {/* <CardMedia
             component="img"
             image={spot.image || "/placeholder.jpg"}
             alt={spot.spot_title}
