@@ -5,7 +5,7 @@ import { LocalizationProvider, DateCalendar, TimePicker } from "@mui/x-date-pick
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { isBefore, addMinutes, setHours, setMinutes } from "date-fns";
 
-const DateTimePicker = ({selectedDate,setSelectedDate,startTime,setStartTime,endTime,setEndTime,onClose}) => {
+const DateTimePicker = ({selectedDate,setSelectedDate,startTime,setStartTime,endTime,setEndTime,onClose,setFilters}) => {
   // const [selectedDate, setSelectedDate] = useState(new Date());
   const [bookingType, setBookingType] = useState("single");
   // const [startTime, setStartTime] = useState(null);
@@ -37,7 +37,10 @@ const DateTimePicker = ({selectedDate,setSelectedDate,startTime,setStartTime,end
 		const newMinEnd = addMinutes(newTime, 30);
 		setMinEndTime(newMinEnd);
 		setEndTime((prevEnd) => (isBefore(prevEnd, newMinEnd) ? newMinEnd : prevEnd));
+    console.log("newtime",newTime);
 	};
+  
+
 
   const handleSubmit = () => {
     console.log("Selected Date:", selectedDate.toDateString());
@@ -124,7 +127,8 @@ const DateTimePicker = ({selectedDate,setSelectedDate,startTime,setStartTime,end
                                 onChange={(newTime) => setEndTime(newTime)}
                                 minutesStep={30}
                                 ampm
-                                minTime={minEndTime}
+                                disablePast
+                                minTime={startTime}
                                 maxTime={setHours(setMinutes(selectedDate, 30), 23)}
                                 sx={{ mt: 1, width: "100%" }}
                             />

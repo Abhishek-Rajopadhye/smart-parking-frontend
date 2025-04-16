@@ -1,30 +1,37 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { Box, Paper, Typography, TextField, Button, InputAdornment, IconButton } from "@mui/material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Search as SearchIcon } from "@mui/icons-material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import ClearIcon from '@mui/icons-material/Clear';
+import ClearIcon from "@mui/icons-material/Clear";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { MapContext } from "../context/MapContext";
 import { getLatLng } from "react-places-autocomplete";
 import MarkerCard from "./MarkerCard";
+import { isBefore, addMinutes, setHours, setMinutes } from "date-fns";
 
-const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers }) => {
+const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilters ,filteredMarkers }) => {
+  const navigate = useNavigate();
   const location = useLocation();
   const [searchLocation, setSearchLocation] = useState("");
   const [latlng, setLatLng] = useState("null")
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [startTime, setStartTime] = useState(null);
+  const [endTime, setEndTime] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [suggestions, setSuggestions] = useState(false);
   const { isLoaded, loadError } = useContext(MapContext);
   const [predictions, setPredictions] = useState([]);
   const autocompleteServiceRef = useRef(null);
+  const [tempLocation, setTempLocation] = useState("");
+  const [tempDate, setTempDate] = useState(new Date());
+  const [tempStartTime, setTempStartTime] = useState(null);
+  const [tempEndTime, setTempEndTime] = useState(null);
 
-  console.log("searched loatino ", searchLocation);
+
+  //console.log("searched loatino ", searchLocation);
   useEffect(() => {
     if (isLoaded && window.google && !autocompleteServiceRef.current) {
       autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
@@ -34,24 +41,30 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers }) => {
     if (location?.state) {
       const { locationName, startTime, endTime, selectedDate } = location.state;
       setSearchLocation(locationName);
+      setTempLocation(locationName);
       setStartTime(startTime);
+      setTempStartTime(startTime);
       setEndTime(endTime);
+      setTempEndTime(endTime);
       setSelectedDate(selectedDate);
+      setTempDate(selectedDate);
     }
   }, [isLoaded, location]);
 
   if (loadError) return <div>Error loading Google Maps</div>;
   if (!isLoaded) return <div>Loading Google Maps...</div>;
 
+
   const handleSearchChange = (event) => {
     const value = event.target.value;
-    setSearchLocation(value);
+    setTempLocation(value);
 
     if (!value || !autocompleteServiceRef.current) {
       setPredictions([]);
       setSuggestions(false);
       return;
     }
+
 
     autocompleteServiceRef.current.getPlacePredictions(
       { input: value, componentRestrictions: { country: "IN" } },
@@ -68,36 +81,90 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers }) => {
   };
 
   const handleSuggestionClick = async (description) => {
-    setSearchLocation(description);
+    setTempLocation(description);
     setSuggestions(false);
     setPredictions([]);
+  };
+
+
+  const handleClearSearch = () => {
+    setTempLocation('');
+    setSuggestions(false);
+    setPredictions([]);
+  };
+
+  const handleUpdateSearch = () => {
+    setSearchLocation(tempLocation);
+    setSelectedDate(tempDate);
+    setStartTime(tempStartTime);
+    setEndTime(tempEndTime);
+
+    console.log("Selected Date:", tempDate.toDateString());
+    console.log("Selected Day:", tempDate.toLocaleDateString('en-US', { weekday: 'short' }));
+    const weekDay = tempDate.toLocaleDateString('en-US', { weekday: 'short' });
+    console.log("time ", tempStartTime, tempEndTime);
+    if (tempDate) {
+      setFilters((prev) => ({ ...prev, available_days: [weekDay] }));
+    }
+    if (tempStartTime) {
+      setFilters((prev) => ({ ...prev, open_time: (tempStartTime?.getHours() || 0) + ":" + (tempStartTime?.getMinutes().toString().padStart(2, '0')) }));
+      console.log("Enter After:", (tempStartTime?.getHours() || 0) + ":" + (tempStartTime?.getMinutes().toString().padStart(2, '0')));
+
+    }
+
+    if (tempEndTime) {
+      setFilters((prev) => ({ ...prev, close_time: (tempEndTime?.getHours() || 0) + ":" + (tempEndTime?.getMinutes().toString().padStart(2, '0')) }));
+      console.log("Exit Before:", (tempEndTime?.getHours() || 0) + ":" + (tempEndTime?.getMinutes().toString().padStart(2, '0')));
+
+    }
+
 
     // Optional: Get lat/lng using Geocoder
     const geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode({ address: description }, async (results, status) => {
+    geocoder.geocode({ address: tempLocation }, async (results, status) => {
       if (status === 'OK' && results[0]) {
         const latLng = await getLatLng(results[0]);
         setLatLng(latLng);
 
-        const newSearchMarker = { name: description, location: latLng };
+        const newSearchMarker = { name: tempLocation, location: latLng };
         setNewMarker(newSearchMarker);
         setSelectedMarker(newSearchMarker);
 
+        console.log("latlng ", latLng);
         if (mapRef.current) {
           mapRef.current.panTo(latLng);
           mapRef.current.setZoom(14);
+          //mapRef.current.setCenter(latLng);
         }
 
 
       }
     });
+
+    console.log("Filtering with temp values:", {
+      tempLocation,
+      tempStartTime,
+      tempEndTime,
+      tempDate,
+    });
   };
 
-  const handleClearSearch = () => {
-    setSearchLocation('');
-    setSuggestions(false);
-    setPredictions([]);
+  const getInitialStartTime = (date) => {
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    if (!isToday) return setHours(setMinutes(new Date(date), 0), 0);
+
+    
+  const minutes = now.getMinutes();
+  const remainder = 30 - (minutes % 30);
+  const roundedTime = addMinutes(now, remainder);
+  roundedTime.setSeconds(0);
+  roundedTime.setMilliseconds(0);
+  
+
+  return roundedTime;
   };
+
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -110,7 +177,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers }) => {
         <TextField
           fullWidth
           placeholder=" "
-          value={searchLocation}
+          value={tempLocation}
           onChange={handleSearchChange}
           InputProps={{
             startAdornment: (
@@ -176,8 +243,9 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers }) => {
         )}
 
         <DatePicker
-          value={selectedDate}
-          onChange={setSelectedDate}
+          value={tempDate}
+          onChange={setTempDate}
+          disablePast
           slotProps={{
             textField: {
               fullWidth: true,
@@ -198,8 +266,11 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers }) => {
         <Box display="flex" gap={1} mb={3}>
 
           <TimePicker
-            value={startTime}
-            onChange={setStartTime}
+            value={tempStartTime}
+            onChange={setTempStartTime}
+            ampm
+            minTime={getInitialStartTime(tempDate)}
+            minutesStep={30}
             slotProps={{
               textField: {
                 fullWidth: true,
@@ -219,30 +290,34 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers }) => {
           Exit Before
         </Typography>
         <Box display="flex" gap={1} mb={3}>
-					<TimePicker
-						value={endTime}
-						onChange={setEndTime}
-						slotProps={{
-							textField: {
-								fullWidth: true,
-								InputProps: {
-									endAdornment: (
-										<InputAdornment position="end">
-											<AccessTimeIcon fontSize="small" />
-										</InputAdornment>
-									),
-								},
-							},
-						}}
-					/>
-				</Box>
+          <TimePicker
+            value={tempEndTime}
+            onChange={setTempEndTime}
+            ampm
+            minutesStep={30}
+            minTime={tempStartTime}
+            maxTime={setHours(setMinutes(selectedDate, 30), 23)}
+            slotProps={{
+              textField: {
+                fullWidth: true,
+                InputProps: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <AccessTimeIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                },
+              },
+            }}
+          />
+        </Box>
 
-				<Button variant="contained" fullWidth onClick={handleSearchChange}>
-					Update Search
-				</Button>
+        <Button variant="contained" fullWidth onClick={handleUpdateSearch}>
+          Update Search
+        </Button>
         <Box sx={{ bgcolor: "red", mt: 2 }}>
           <MarkerCard
-            markers={markers}
+            markers={filteredMarkers}
             origin={searchLocation}
             latlng={latlng}
           />

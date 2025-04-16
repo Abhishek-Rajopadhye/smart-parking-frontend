@@ -12,14 +12,15 @@ import {
 	ListItem,
 	ListItemText,
 	Dialog,
-	CardContent
+	CardContent,
 } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import { EditProfileModal } from "../components/EditProfileModal";
+import { EditSpot } from "../components/EditSpot";
 import axios from "axios";
 import { CurrencyRupee } from "@mui/icons-material";
 import { BACKEND_URL } from "../const";
-import { OwnerBookingView } from "../components/OwnerBookingView";
+import { SpotBookingView } from "../components/SpotBookingView";
 
 /**
  * Profile Component
@@ -32,10 +33,12 @@ import { OwnerBookingView } from "../components/OwnerBookingView";
  */
 const Profile = () => {
 	const { user, setUser } = useContext(AuthContext);
+	const [selectedSpot, setSelectedSpot] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [userSpots, setUserSpots] = useState([]); // State to store user's spots
-	const [dialogBoxOpen, setDialogBoxOpen] = useState(false);
-	const [bookingDetails, setBookingDetails] = useState(null);
+	const [bookingHistoryDialogBoxOpen, setBookingHistoryDialogBoxOpen] = useState(false);
+	const [bookingDetails, setBookingDetails] = useState([]);
+	const [editSpotOpen, setEditSpotOpen] = useState(false);
 	const [totalEarning, setTotalEarning] = useState(0); // State to store total earnings
 	/**
 	 * Fetches the user's profile data from the server and updates the user state.
@@ -65,7 +68,6 @@ const Profile = () => {
 				const response = await axios.get(`${BACKEND_URL}/spots/owner/${user_id}`, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
-				console.log(response.data);
 				if (response.status === 200) {
 					setUserSpots(response.data);
 					const total = response.data.reduce((acc, spot) => acc + spot.totalEarning, 0);
@@ -126,39 +128,44 @@ const Profile = () => {
 		} catch (error) {
 			console.error("Error fetching booking history:", error);
 		}
-		setDialogBoxOpen(true);
+		setBookingHistoryDialogBoxOpen(true);
 	};
 
 	// Close the dialog
 	const handleCloseDialog = () => {
-		setDialogBoxOpen(false);
+		setBookingHistoryDialogBoxOpen(false);
 	};
 
-	// Placeholder for editing a spot
-	const handleEditSpot = async (spotId, updatedSpot) => {
+	const handleEditSpot = async (spotId, updated_spot) => {
 		try {
-			const response = await axios.put(`${BACKEND_URL}/bookings/spot/${spotId}`, updatedSpot);
+			const response = await axios.put(`${BACKEND_URL}/spots/${spotId}`, updated_spot);
 			if (response.status === 200) {
 				setBookingDetails(response.data);
 			}
 		} catch (error) {
-			console.error("Error fetching booking history:", error);
+			console.error("Error updating spot:", error);
 		}
-		setDialogBoxOpen(true);
-		console.log(`Edit spot with ID: ${spotId}`);
+		setBookingHistoryDialogBoxOpen(false);
 	};
 
-	// Placeholder for deleting a spot
 	const handleDeleteSpot = async (spotId) => {
-		console.log(`Delete spot with ID: ${spotId}`);
 		try {
-			const response = await axios.delete(`${BACKEND_URL}/bookings/spot/${spotId}`);
+			const response = await axios.delete(`${BACKEND_URL}/spots/${spotId}`);
 			if (response.status === 200) {
 				setBookingDetails(response.data);
 			}
 		} catch (error) {
-			console.error("Error fetching booking history:", error);
+			console.error("Error deleting spot:", error);
 		}
+	};
+
+	const onEditSpotClick = async (spotID) => {
+		setSelectedSpot(userSpots.find((spot) => spot.id === spotID));
+		toggleEditSpot();
+	};
+
+	const toggleEditSpot = () => {
+		setEditSpotOpen(!editSpotOpen);
 	};
 
 	if (!user) return <Typography variant="h5">Loading profile...</Typography>;
@@ -214,7 +221,7 @@ const Profile = () => {
 				<List>
 					{userSpots.length > 0 ? (
 						userSpots.map((spot) => (
-							<ListItem key={spot.spot_id} sx={{ mb: 2 }}>
+							<ListItem key={spot.id} sx={{ mb: 2 }}>
 								<Card
 									elevation={2}
 									sx={{
@@ -226,32 +233,53 @@ const Profile = () => {
 									}}
 								>
 									<Box>
-									<CardContent>
-										<Typography variant="h6"><strong>Title: </strong>{spot.title}</Typography>
-										<Typography variant="h6"><strong>Address: </strong>{spot.address}</Typography>
-										<Typography variant="h6"><strong>Description: </strong>{spot.description}</Typography>
-										<Typography variant="h6"><strong>Open Time: </strong>{spot.openTime}</Typography>
-										<Typography variant="h6"><strong>Close Time: </strong>{spot.closeTime}</Typography>
-										<Typography variant="h6"><strong>Hourly Rate: </strong>{spot.hourlyRate} Rs.</Typography>
-										<Typography variant="h6"><strong>Open Days: </strong>{spot.openDays}</Typography>
-										<Typography variant="h6" fontWeight="bold" color="success">
-											Earnings: <CurrencyRupee fontSize="small" />
-											{spot.totalEarning}
-										</Typography>
-									</CardContent>
+										<CardContent>
+											<Typography variant="h6">
+												<strong>Title: </strong>
+												{spot.title}
+											</Typography>
+											<Typography variant="h6">
+												<strong>Address: </strong>
+												{spot.address}
+											</Typography>
+											<Typography variant="h6">
+												<strong>Description: </strong>
+												{spot.description}
+											</Typography>
+											<Typography variant="h6">
+												<strong>Open Time: </strong>
+												{spot.openTime}
+											</Typography>
+											<Typography variant="h6">
+												<strong>Close Time: </strong>
+												{spot.closeTime}
+											</Typography>
+											<Typography variant="h6">
+												<strong>Hourly Rate: </strong>
+												{spot.hourlyRate} Rs.
+											</Typography>
+											<Typography variant="h6">
+												<strong>Open Days: </strong>
+												{spot.openDays}
+											</Typography>
+											<Typography variant="h6" fontWeight="bold" color="success">
+												Earnings: <CurrencyRupee fontSize="small" />
+												{spot.totalEarning}
+											</Typography>
+										</CardContent>
 									</Box>
-									
+
 									<CardActions sx={{ justifyContent: "flex-end" }}>
-										<Button variant="outlined" color="primary" onClick={() => handleEditSpot(spot.spot_id)}>
+										<Button variant="outlined" color="primary" onClick={() => onEditSpotClick(spot.id)}>
 											Edit
 										</Button>
-										<Button variant="outlined" color="error" onClick={() => handleDeleteSpot(spot.spot_id)}>
+										<Button variant="outlined" color="error" onClick={() => handleDeleteSpot(spot.id)}>
 											Delete
 										</Button>
 										<Button
 											variant="contained"
 											color="secondary"
-											onClick={() => handleViewBookingHistory(spot.spot_id)}
+											onClick={() => handleViewBookingHistory(spot.id)}
 										>
 											View Booking History
 										</Button>
@@ -266,12 +294,18 @@ const Profile = () => {
 					)}
 				</List>
 				{/* Booking History Dialog */}
-				<Dialog open={dialogBoxOpen} onClose={handleCloseDialog}>
-					<OwnerBookingView bookingDetails={bookingDetails} />
-				</Dialog>
+				{bookingHistoryDialogBoxOpen != false && (bookingDetails != null || bookingDetails != []) && (
+					<Dialog open={bookingHistoryDialogBoxOpen} onClose={handleCloseDialog}>
+						<SpotBookingView bookingDetails={bookingDetails} />
+					</Dialog>
+				)}
 			</Box>
 			{/* Edit Profile Modal */}
 			<EditProfileModal open={isModalOpen} handleClose={handleCloseModal} user={user} handleSave={handleSave} />
+			{/* Edit Spot Modal */}
+			{selectedSpot != null && (
+				<EditSpot open={editSpotOpen} handleClose={toggleEditSpot} spot={selectedSpot} handleSave={handleEditSpot} spot_id={selectedSpot.id}/>
+			)}
 		</Container>
 	);
 };

@@ -16,7 +16,14 @@ import { MapProvider } from "./context/MapContext";
 import HomePage from "./pages/HomePage";
 import MapSearch from "./pages/MapSearch";
 
-
+/**
+ * AppLayout component for rendering the main layout of the application.
+ *
+ * Handles routing, navigation, and global state management for the authenticated user.
+ *
+ * @component
+ * @returns {JSX.Element} The AppLayout component.
+ */
 const AppLayout = () => {
 	const { user, logout } = useContext(AuthContext);
 	const navigate = useNavigate();
@@ -30,6 +37,11 @@ const AppLayout = () => {
 	const [filters, setFilters] = useState({});
 	const mapRef = useRef(null);
 
+    /**
+     * Handles token and user ID extraction from the URL and stores them in localStorage.
+     *
+     * Redirects the user to the homepage if a token is found.
+     */
 	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
 		const token = params.get("token");
@@ -41,53 +53,103 @@ const AppLayout = () => {
 		}
 	}, [navigate]);
 
+	/**
+     * Filters the markers based on the applied filters.
+     *
+     * Updates the `filteredMarkers` state with the filtered results.
+     */
 	useEffect(() => {
-		let result = markers;
-		if (filters.hourly_rate) {
-			result = result.filter((marker) => marker.hourly_rate <= filters.hourly_rate);
-		}
-		if (filters.open_time) {
-			result = result.filter((marker) => marker.open_time <= filters.open_time && marker.close_time >= filters.open_time);
-		}
-		if (filters.close_time) {
-			result = result.filter(
-				(marker) => marker.close_time >= filters.close_time && marker.open_time <= filters.close_time
-			);
-		}
+			
+		
+		// Filter markers based on the parsed times
+let result = markers;
+
 		if (filters.available_days && filters.available_days.length > 0) {
 			result = result.filter((marker) => filters.available_days.every((day) => marker.available_days.includes(day)));
 		}
+
+// Function to parse time string to minutes since midnight
+function parseTime(timeStr) {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+}
+
+// Function to parse time string with AM/PM to minutes since midnight
+function parseTimeWithAMPM(timeStr) {
+    const [time, meridiem] = timeStr.split(' ');
+    const [hours, minutes] = time.split(':').map(Number);
+    if (meridiem === 'PM' && hours !== 12) {
+        return (hours + 12) * 60 + minutes;
+    } else if (meridiem === 'AM' && hours === 12) {
+        return 0 * 60 + minutes;
+    }
+    return hours * 60 + minutes;
+}
+
+
+if (filters.open_time) {
+	const filterOpenTimeMinutes = parseTime(filters.open_time); // Convert filters to minutes since midnight
+    result = result.filter((marker) => {
+        const markerOpenTimeMinutes = parseTimeWithAMPM(marker.open_time);
+        const markerCloseTimeMinutes = parseTimeWithAMPM(marker.close_time);
+        return markerOpenTimeMinutes <= filterOpenTimeMinutes && markerCloseTimeMinutes >= filterOpenTimeMinutes;
+    });
+}
+
+if (filters.close_time) {
+	const filterCloseTimeMinutes = parseTime(filters.close_time); // Convert filters to minutes since midnight
+    result = result.filter((marker) => {
+        const markerOpenTimeMinutes = parseTimeWithAMPM(marker.open_time);
+        const markerCloseTimeMinutes = parseTimeWithAMPM(marker.close_time);
+        return markerCloseTimeMinutes >= filterCloseTimeMinutes && markerOpenTimeMinutes <= filterCloseTimeMinutes;
+    });
+}
+
+
 		setFilteredMarkers(result);
 	}, [filters, markers]);
+	console.log("Filters and markers",filters,filteredMarkers);
 
+	/**
+     * Retrieves the page title based on the current route.
+     *
+     * @returns {string} The title of the current page.
+     */
 	const getPageTitle = () => {
 		switch (location.pathname) {
 			case "/profile":
 				return "Profile";
 			case "/booking-history":
-				return "Booking History";
+				return "My Bookings";
 			case "/spot":
 				return "Add Spot";
 			case "/homepage":
 				return "Home";
-			case "/map-screen":
-				return "Map Screen";
+			case "/mapsearch":
+				return "Map View";
 			case "/auth":
 				return "Auth";
 			case "/booking":
 				return "Booking";
 			case "/spotdetail":
 				return "Detailed Info";
-
 			default:
-				return "Home";
+				return "App";
 		}
 	};
 
+	/**
+     * Handles the avatar click to open the user menu.
+     *
+     * @param {Object} event - The click event.
+     */
 	const handleAvatarClick = (event) => {
 		setAnchorEl(event.currentTarget);
 	};
 
+    /**
+     * Closes the user menu.
+     */
 	const handleMenuClose = () => {
 		setAnchorEl(null);
 	};
@@ -95,7 +157,7 @@ const AppLayout = () => {
 	const routes = [
 		{ label: "Home", path: "/homepage" },
 		{ label: "Profile", path: "/profile" },
-		{ label: "Booking History", path: "/booking-history" },
+		{ label: "My Bookings", path: "/booking-history" },
 	];
 
 	if (!user) {
@@ -108,7 +170,7 @@ const AppLayout = () => {
 
 	return (
 		<Box className="outermost-container" sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
-			<AppBar position="fixed" sx={{ zIndex: 3 }}>
+			<AppBar position="fixed" sx={{ zIndex: 3 , bgcolor:"#3f51b5",color:"white"}}>
 				<Toolbar>
 					{location.pathname !== "/homepage" && location.pathname !== "/auth" && (
 						<Button
@@ -124,22 +186,21 @@ const AppLayout = () => {
 						{getPageTitle()}
 					</Typography>
 					<IconButton onClick={handleAvatarClick}>
-						<Avatar alt="User Avatar" src={user?.avatarUrl || ""} />
+						<Avatar alt="User Avatar" src={user.profile_picture || ""} />
 					</IconButton>
 					<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-						{routes
-							.filter((r) => r.path !== location.pathname)
-							.map((r) => (
-								<MenuItem
-									key={r.path}
-									onClick={() => {
-										handleMenuClose();
-										navigate(r.path);
-									}}
-								>
-									{r.label}
-								</MenuItem>
-							))}
+						{routes.map((route) => (
+							<MenuItem
+								key={route.path}
+								onClick={() => {
+									handleMenuClose();
+									navigate(route.path);
+								}}
+								selected={route.path === location.pathname}
+							>
+								{route.label}
+							</MenuItem>
+						))}
 						<MenuItem
 							onClick={() => {
 								handleMenuClose();
@@ -159,7 +220,7 @@ const AppLayout = () => {
 					<Route path="/spot" element={<Spot />} />
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
-					<Route path="/homepage" element={<HomePage />} />
+					<Route path="/homepage" element={<HomePage setSelectedMarker={setSelectedMarker} setNewMarker={setNewMarker} newMarker={newMarker} setFilters={setFilters}/>} />
 
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
@@ -178,6 +239,8 @@ const AppLayout = () => {
 								setMarkers={setMarkers}
 								mapRef={mapRef}
 								filteredMarkers={filteredMarkers}
+								setFilters={setFilters}
+								
 							/>
 						}
 					/>
@@ -189,6 +252,14 @@ const AppLayout = () => {
 	);
 };
 
+/**
+ * App component for initializing the application.
+ *
+ * Wraps the application with providers for authentication, theming, and map context.
+ *
+ * @component
+ * @returns {JSX.Element} The App component.
+ */
 const App = () => {
 	return (
 		<ThemeProvider theme={appTheme}>

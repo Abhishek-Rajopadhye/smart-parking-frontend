@@ -13,6 +13,11 @@ import { Spot } from "../pages/Spot";
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef, filteredMarkers }) {
 	const { isLoaded, loadError } = useContext(MapContext);
 	const navigate = useNavigate();
+	const defaultCenter = {
+		lat: 18.519584,
+		lng: 73.855421,
+	};
+
 	const [currentPosition, setCurrentPosition] = useState(null);
 	const [openAddSpotDialogBox, setOpenAddSpotDialogBox] = useState(false);
 	const [snackbar, setSnackbar] = useState({
@@ -21,6 +26,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 		severity: "info", // "success", "error", "warning"
 	});
 	const [isRetrying, setIsRetrying] = useState(false);
+	const [mapCenter, setMapCenter] = useState(defaultCenter);
 
 	const mapStyles = {
 		display: "flex",
@@ -30,16 +36,12 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 		width: "100%",
 	};
 
-	const defaultCenter = {
-		lat: 18.519584,
-		lng: 73.855421,
-	};
-
+	
 	/**
 	 * Fetch parking spot markers from the API
 	 */
 
-	console.log("Marker fetched ", markers);
+	//console.log("Marker fetched ", markers);
 	useEffect(() => {
 		if ("geolocation" in navigator) {
 			navigator.geolocation.getCurrentPosition(
@@ -123,6 +125,21 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 		}
 	};
 
+	
+
+	useEffect(() => {
+		if (newMarker) {
+			// Center the map to the searched location
+			setMapCenter({ lat: newMarker.lat, lng: newMarker.lng });
+		} else if (currentPosition) {
+			// Center the map to user's current location if available
+			setMapCenter(currentPosition);
+		} else {
+			// Otherwise use default center
+			setMapCenter(defaultCenter);
+		}
+	}, [newMarker, currentPosition]);
+
 	// Calculate distance between selected marker and the seach point location
 	const calculateDistance = (origin, destination) => {
 		try {
@@ -149,6 +166,8 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 			return null;
 		}
 	};
+
+	console.log("center ",currentPosition ,defaultCenter)
 
 	const handleCloseSnackbar = () => {
 		setSnackbar({ ...snackbar, open: false });
@@ -178,9 +197,13 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 				<>
 					<GoogleMap
 						mapContainerStyle={mapStyles}
-						center={currentPosition || defaultCenter}
+						center={mapCenter}
 						zoom={12}
 						onLoad={(map) => (mapRef.current = map)}
+						options={{
+							gestureHandling: 'greedy', // <-- important
+							zoomControl: true,
+						  }}
 					>
 						{/*Render existing parking spot markers */}
 
@@ -206,7 +229,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 							/>
 						)}
 					</GoogleMap>
-					
+
 					<Snackbar
 						open={snackbar.open}
 						autoHideDuration={4000}
@@ -234,7 +257,6 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 							{snackbar.message}
 						</Alert>
 					</Snackbar>
-
 				</>
 			)}
 		</Box>
