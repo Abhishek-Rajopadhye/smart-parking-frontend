@@ -41,23 +41,56 @@ const AppLayout = () => {
 	}, [navigate]);
 
 	useEffect(() => {
-		let result = markers;
-		if (filters.hourly_rate) {
-			result = result.filter((marker) => marker.hourly_rate <= filters.hourly_rate);
-		}
-		if (filters.open_time) {
-			result = result.filter((marker) => marker.open_time <= filters.open_time && marker.close_time >= filters.open_time);
-		}
-		if (filters.close_time) {
-			result = result.filter(
-				(marker) => marker.close_time >= filters.close_time && marker.open_time <= filters.close_time
-			);
-		}
+			
+		
+		// Filter markers based on the parsed times
+let result = markers;
+
 		if (filters.available_days && filters.available_days.length > 0) {
 			result = result.filter((marker) => filters.available_days.every((day) => marker.available_days.includes(day)));
 		}
+
+// Function to parse time string to minutes since midnight
+function parseTime(timeStr) {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+}
+
+// Function to parse time string with AM/PM to minutes since midnight
+function parseTimeWithAMPM(timeStr) {
+    const [time, meridiem] = timeStr.split(' ');
+    const [hours, minutes] = time.split(':').map(Number);
+    if (meridiem === 'PM' && hours !== 12) {
+        return (hours + 12) * 60 + minutes;
+    } else if (meridiem === 'AM' && hours === 12) {
+        return 0 * 60 + minutes;
+    }
+    return hours * 60 + minutes;
+}
+
+
+if (filters.open_time) {
+	const filterOpenTimeMinutes = parseTime(filters.open_time); // Convert filters to minutes since midnight
+    result = result.filter((marker) => {
+        const markerOpenTimeMinutes = parseTimeWithAMPM(marker.open_time);
+        const markerCloseTimeMinutes = parseTimeWithAMPM(marker.close_time);
+        return markerOpenTimeMinutes <= filterOpenTimeMinutes && markerCloseTimeMinutes >= filterOpenTimeMinutes;
+    });
+}
+
+if (filters.close_time) {
+	const filterCloseTimeMinutes = parseTime(filters.close_time); // Convert filters to minutes since midnight
+    result = result.filter((marker) => {
+        const markerOpenTimeMinutes = parseTimeWithAMPM(marker.open_time);
+        const markerCloseTimeMinutes = parseTimeWithAMPM(marker.close_time);
+        return markerCloseTimeMinutes >= filterCloseTimeMinutes && markerOpenTimeMinutes <= filterCloseTimeMinutes;
+    });
+}
+
+
 		setFilteredMarkers(result);
 	}, [filters, markers]);
+	console.log("Filters and markers",filters,filteredMarkers);
 
 	const getPageTitle = () => {
 		switch (location.pathname) {
@@ -107,7 +140,7 @@ const AppLayout = () => {
 
 	return (
 		<Box className="outermost-container" sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
-			<AppBar position="fixed" sx={{ zIndex: 3 }}>
+			<AppBar position="fixed" sx={{ zIndex: 3 , bgcolor:"#3f51b5",color:"white"}}>
 				<Toolbar>
 					{location.pathname !== "/homepage" && location.pathname !== "/auth" && (
 						<Button
@@ -158,7 +191,7 @@ const AppLayout = () => {
 					<Route path="/spot" element={<Spot />} />
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
-					<Route path="/homepage" element={<HomePage />} />
+					<Route path="/homepage" element={<HomePage setSelectedMarker={setSelectedMarker} setNewMarker={setNewMarker} newMarker={newMarker} setFilters={setFilters}/>} />
 
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
@@ -177,6 +210,8 @@ const AppLayout = () => {
 								setMarkers={setMarkers}
 								mapRef={mapRef}
 								filteredMarkers={filteredMarkers}
+								setFilters={setFilters}
+								
 							/>
 						}
 					/>

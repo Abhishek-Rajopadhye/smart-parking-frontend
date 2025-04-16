@@ -323,6 +323,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
 		if (paymentStatus) {
 			return;
 		}
+		setRatePerHour(spot_information.hourly_rate);
 		if (!startTime || !endTime) {
 			showSnackbar("Please select start and end time.", "warning");
 			return false;
