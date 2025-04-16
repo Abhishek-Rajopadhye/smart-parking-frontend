@@ -20,8 +20,9 @@ const MarkerCard = ({ markers, origin ,latlng}) => {
   const [sortedMarkers, setSortedMarkers] = useState([]);
   const [sortType, setSortType] = useState("price");
    const navigate = useNavigate();
-  console.log("Origin",origin)
-  console.log("ON the marker card ",markers);
+//  console.log("Origin",origin)
+//  console.log("lat.l",latlng);
+//  console.log("ON the marker card ",markers);
   // Calculate walking time & distance
 
   const toggleDialogBooking = () => {
@@ -37,8 +38,8 @@ const MarkerCard = ({ markers, origin ,latlng}) => {
       lng: marker.longitude,
     }));
   
-    console.log("Destinations:", destinations);
-  
+  //  console.log("Destinations:", destinations);
+   // console.log(" :", destinations);
     service.getDistanceMatrix(
       {
         origins: [origin],
@@ -48,7 +49,7 @@ const MarkerCard = ({ markers, origin ,latlng}) => {
       },
       (response, status) => {
         if (status === "OK" && response?.rows?.length > 0) {
-          console.log("Distance Matrix Response:", response);
+          // console.log("Distance Matrix Response:", response);
   
           const updated = markers.map((marker, index) => {
             const element = response.rows[0]?.elements?.[index];

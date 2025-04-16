@@ -26,7 +26,7 @@ import { BACKEND_URL } from "../const";
 import MapDialog from "../components/MapDialog";
 
 const Spot = ({ onCancel }) => {
-  const [mapOpen, setMapOpen] = useState(false);
+const [mapOpen, setMapOpen] = useState(false);
   const [location, setLocation] = useState(null);
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
