@@ -2,6 +2,8 @@ import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, CircularProgress } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
+import { BACKEND_URL } from "../const";
 
 /**
  * Auth page component for handling OAuth redirection and user authentication.
@@ -19,10 +21,10 @@ const Auth = () => {
 		const params = new URLSearchParams(window.location.search);
 		const token = params.get("token");
 		const user_id = params.get("user_id");
-		console.log(token, user_id);
 		if (token) {
 			localStorage.setItem("token", String(token));
 			localStorage.setItem("user_id", String(user_id));
+			axios.put(`${BACKEND_URL}/bookings/user/${user_id}`);
 			navigate("/homepage");
 		}
 	}, [navigate]);
