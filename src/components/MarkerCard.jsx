@@ -16,10 +16,10 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const MarkerCard = ({ markers, origin ,latlng}) => {
-    const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
+  const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
   const [sortedMarkers, setSortedMarkers] = useState([]);
   const [sortType, setSortType] = useState("price");
-   const navigate = useNavigate();
+  const navigate = useNavigate();
 //  console.log("Origin",origin)
 //  console.log("lat.l",latlng);
 //  console.log("ON the marker card ",markers);
@@ -132,38 +132,40 @@ const MarkerCard = ({ markers, origin ,latlng}) => {
             sx={{ width: 100, height: 100, borderRadius: "12px 0 0 12px" }}
           /> */}
 
-          <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
-            <CardContent sx={{ pb: 0 }}>
-              <Box sx={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-              <Typography fontWeight="bold" noWrap>{spot.spot_title}</Typography>
-              <Typography fontWeight="bold" sx={{ mt: 0.5 }}>
-              ₹ {spot.hourly_rate}
-              </Typography>
-              </Box>
-              
-              <Typography variant="body2" color="text.secondary">
-                🚶 {spot.walkingDuration} ({spot.walkingDistance})
-                {/* ({calculateDistance({ lat: latlng.lat, lng: latlng.lng}, { lat: spot.latitude, lng: spot.longitude })} km ) */}
-              </Typography>
-              
-            </CardContent>
-            <CardActions>
-              <Button size="small"
-              onClick={() => {navigate(`/spotdetail/${spot.spot_id}`)
-     console.log("Inside navigate ",spot.spot_id);
-            }
-            
-            }
-            variant="text"
-              >Details</Button>
-              <Button size="small" 
-              >Book </Button>
-            </CardActions>
-          </Box>
-        </Card>
-      ))}
-    </Box>
-  );
+					<Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+						<CardContent sx={{ pb: 0 }}>
+							<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+								<Typography fontWeight="bold" noWrap>
+									{spot.spot_title}
+								</Typography>
+								<Typography fontWeight="bold" sx={{ mt: 0.5 }}>
+									₹ {spot.hourly_rate}
+								</Typography>
+							</Box>
+
+							<Typography variant="body2" color="text.secondary">
+								🚶 {spot.walkingDuration} ({spot.walkingDistance})
+								{/* ({calculateDistance({ lat: latlng.lat, lng: latlng.lng}, { lat: spot.latitude, lng: spot.longitude })} km ) */}
+							</Typography>
+						</CardContent>
+						<CardActions>
+							<Button
+								size="small"
+								onClick={() => {
+									navigate(`/spotdetail/${spot.spot_id}`);
+									console.log("Inside navigate ", spot.spot_id);
+								}}
+								variant="text"
+							>
+								Details
+							</Button>
+							<Button size="small">Book </Button>
+						</CardActions>
+					</Box>
+				</Card>
+			))}
+		</Box>
+	);
 };
 
 export default MarkerCard;

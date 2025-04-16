@@ -364,7 +364,7 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 					>
 						Find Parking Spots
 					</Button>
-					<Divider sx={{ my: 4 }} >
+					<Divider sx={{ my: 4 }}>
 						<Typography variant="body2" color="text.secondary">
 							Or
 						</Typography>

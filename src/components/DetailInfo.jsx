@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
-	Grid,
-	Paper,
-	Typography,
-	Chip,
-	Box,
-	Rating,
-	Avatar,
-	CardMedia,
-	Button,
-	ImageList,
-	ImageListItem,
-	Dialog,
+  Grid,
+  Paper,
+  Typography,
+  Chip,
+  Box,
+  Rating,
+  Avatar,
+  CardMedia,
+  Button,
+  ImageList,
+  ImageListItem,
+  Dialog,
+  IconButton,
 } from "@mui/material";
+import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+import { useRef } from "react";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import PhoneIcon from "@mui/icons-material/Phone";
+import EmailIcon from "@mui/icons-material/Email";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalParkingIcon from "@mui/icons-material/LocalParking";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
@@ -26,267 +30,375 @@ import { Booking } from "../pages/Booking";
 import { ReviewCard } from "./ReviewCard";
 import { AddReview } from "./AddReview";
 
+// Top imports remain the same...
+
 const DetailInfo = () => {
+  const { spot_id } = useParams();
+  const [selectedMarker, setSelectedMarker] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [ownerDetail, setOwnerDetail] = useState({});
+  const [spotImages, setSpotImages] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
+  const [addReviewDialogOpen, setAddReviewDialogOpen] = useState(false);
+  const navigate = useNavigate();
 
-	const {spot_id}=useParams();
-	const [selectedMarker,setSelectedMarker]=useState([]);
-	console.log("dpot",spot_id);
-	
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/spotdetails/get-spot/${spot_id}`)
+      .then((res) => res.json())
+      .then((data) => setSelectedMarker(data))
+      .catch((err) => console.error("Error:", err));
+  }, [spot_id]);
 
-	useEffect(() => {
-		// Fetch the spot details from your API
-		fetch(`${BACKEND_URL}/spotdetails/get-spot/${spot_id}`)
-		  .then(response => response.json())
-		  .then(data => {
-			setSelectedMarker(data);
-			
-		  })
-		  .catch(error => console.error('Error fetching spot details:', error));
-	  }, [spot_id])
-	
-	const [reviews, setReviews] = useState([]);
-	const [ownerDetail, setOwnerDetail] = useState({});
-	const [spotImages, setSpotImages] = useState([]);
-	const [selectedImage, setSelectedImage] = useState(null);
-	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
-	const [addReviewDialogOpen, setAddReviewDialogOpen] = useState(false);
-	const navigate = useNavigate();
-	console.log("slected amrker",ownerDetail );
-	useEffect(() => {
-		const fetchDetails = async () => {
-			try {
-				const [reviewsRes, ownerRes] = await Promise.all([
-					axios.get(`${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`),
-					axios.get(`${BACKEND_URL}/users/owner/${selectedMarker.owner_id}`),
-				]);
-				setReviews(reviewsRes.data);
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const [reviewsRes, ownerRes] = await Promise.all([
+          axios.get(`${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`),
+          axios.get(`${BACKEND_URL}/users/owner/${selectedMarker.owner_id}`),
+        ]);
+        setReviews(reviewsRes.data);
+        setOwnerDetail(ownerRes.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
-				// Extract images from reviews where image is not null
-				setOwnerDetail(ownerRes.data);
-			} catch (error) {
-				console.error("Error fetching data", error);
-			}
-			
-		};
+    const getImages = async () => {
+      try {
+        const { data } = await axios.get(
+          `${BACKEND_URL}/spotdetails/get-images/${selectedMarker.spot_id}`
+        );
+        setSpotImages(data.images.map((b64) => `data:image/png;base64,${b64}`));
+      } catch (err) {
+        console.error("Image Error:", err);
+      }
+    };
 
-		const getImages = async () => {
-			try {
-				const { data, status } = await axios.get(`${BACKEND_URL}/spotdetails/get-images/${selectedMarker.spot_id}`);
-				if (status === 200 && Array.isArray(data.images)) {
-					// data.images is ["iVBORw0KG…", "R0lGODlh…", …]
-					setSpotImages(data.images.map((b64) => `data:image/png;base64,${b64}`));
-				}
-			} catch (error) {
-				console.error("Error fetching spot images:", error);
-			}
-		};
+    if (selectedMarker.spot_id && selectedMarker.owner_id) {
+      fetchDetails();
+      getImages();
+    }
+  }, [selectedMarker.spot_id, selectedMarker.owner_id]);
 
-		if (selectedMarker.spot_id && selectedMarker.owner_id) {
-			fetchDetails();
-			getImages();
-		}
-	}, [selectedMarker.spot_id, selectedMarker.owner_id]);
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((acc, review) => acc + review.rating_score, 0) /
+        reviews.length
+      : 0;
 
-	const averageRating =
-		reviews.length > 0 ? reviews.reduce((acc, review) => acc + review.rating_score, 0) / reviews.length : 0;
+  const toggleDialogBooking = () => setDialogBookingOpen(!dialogBookingOpen);
 
-	const toggleDialogBooking = () => {
-		setDialogBookingOpen(!dialogBookingOpen);
-	};
+  const handleAddReviewClose = async () => {
+    const res = await axios.get(
+      `${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`
+    );
+    if (res.status === 200) setReviews(res.data);
+    setAddReviewDialogOpen(false);
+  };
 
-	const handleAddReviewClose = async () =>{
-		const response = await axios.get(`${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`)
-		if(response.status == 200){
-			setReviews(response.data);
-		}
-		setAddReviewDialogOpen(false);
-	};
+  const scrollRef = useRef();
 
-	return (
-<Box
-		sx={{
-			width: "100%",
-			padding: { xs: 2, sm: 3, md: 4 },
-			boxSizing: "border-box",
-			overflowX: "hidden", // 🚫 Disable horizontal scrolling
-		}}
-	>
-			<Paper
-			sx={{
-				textAlign: "center",
-				py: { xs: 2, sm: 3 },
-				px: { xs: 1, sm: 2 },
-				mb: 3,
-				backgroundColor: "#f5f5f5",
-				borderRadius: 3,
-			}}
-		>
-			<Typography
-				variant="h4"
-				fontWeight="bold"
-				sx={{ fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" } }}
-			>
-				{selectedMarker.spot_title}
-			</Typography>
-		</Paper>
-			{/* Image Section */}
-			<Box>
-					{spotImages.length > 0 && (
-						<Box sx={{ mt: 4 }}>
-							<Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
-					Spot Images
-				</Typography>
-							<ImageList cols={3} gap={8} sx={{ width: "100%", height: 300 }}>
-								{spotImages.map((img, index) => (
-									<ImageListItem key={index} onClick={() => setSelectedImage(img)}>
-										<img src={img} alt={`Spot ${index}`} loading="lazy" style={{ cursor: "pointer" }} />
-									</ImageListItem>
-								))}
-							</ImageList>
-						</Box>
-					)}
-					{/* Image Enlargement Dialog */}
-					<Dialog open={!!selectedImage} onClose={() => setSelectedImage(null)}>
-						<img
-							src={selectedImage}
-							alt="Enlarged"
-							style={{ maxWidth: "90vw", maxHeight: "90vh", objectFit: "contain" }}
-						/>
-					</Dialog>
-				</Box>
+  const scroll = (direction) => {
+    const { current } = scrollRef;
+    const scrollAmount = 300;
+    if (current) {
+      current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
 
-			<Grid container spacing={3} sx={{ marginTop: 1 }}>
-				{/* Left Section */}
-				<Grid item xs={12} md={6}>
-					<Paper elevation={6} sx={{ padding: 3, height: "100%", overflow: "hidden" }}>
-						<Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-							<Avatar alt="Owner" src={ownerDetail.profile_picture} sx={{ mr: 2, width: 56, height: 56 }} />
-							<Typography variant="h5">{ownerDetail.name || "Unknown Owner"}</Typography>
-						</Box>
+  const handlePrev = () => {
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? spotImages.length - 1 : prev - 1
+    );
+  };
 
-						<Box sx={{ mt: 2 }}>
-							<Typography variant="h6">
-								<PhoneIcon sx={{ mr: 2 }} /> {ownerDetail.phone || "Contact not available"}
-							</Typography>
-							<Typography variant="h6" sx={{ ml: 6 }}>
-								{ownerDetail.email || "Email not provided"}
-							</Typography>
-						</Box>
+  const handleNext = () => {
+    setCurrentImageIndex((prev) =>
+      prev === spotImages.length - 1 ? 0 : prev + 1
+    );
+  };
 
-						<Box sx={{ display: "flex", mt: 2 }}>
-							<LocationOnIcon sx={{ mr: 2, color: "red" }} />
-							<Typography variant="h6" color="primary">
-								{selectedMarker.address}
-							</Typography>
-						</Box>
+  return (
+    <Box
+      sx={{
+        maxWidth: { xs: "100%", sm: 600, md: 700 },
+        margin: "auto",
+        padding: { xs: 1, sm: 2 },
+      }}
+    >
+      {/* Spot Images */}
+      {spotImages.length > 0 && (
+        <>
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            sx={{
+              mb: 2,
+              textAlign: "center",
+              fontSize: { xs: "1.3rem", sm: "1.6rem", md: "1.8rem" },
+            }}
+          >
+            Spot Details
+          </Typography>
 
-						<Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-							<CurrencyRupeeIcon sx={{ mr: 2, color: "green" }} />
-							<Typography variant="h6">{selectedMarker.hourly_rate} (1 Hr)</Typography>
-						</Box>
+          <Box
+            sx={{
+              position: "relative",
+              width: "100%",
+              height: { xs: 200, sm: 300 },
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              mb: 3,
+            }}
+          >
+            {/* Left Arrow */}
+            <IconButton
+              onClick={handlePrev}
+              sx={{
+                position: "absolute",
+                left: 10,
+                zIndex: 1,
+                backgroundColor: "rgba(255,255,255,0.7)",
+                "&:hover": { backgroundColor: "white" },
+              }}
+            >
+              <ArrowBackIos />
+            </IconButton>
 
-						<Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-							<AccessTimeIcon sx={{ mr: 2 }} />
-							<Typography variant="h6">
-								{selectedMarker.open_time} to {selectedMarker.close_time}
-							</Typography>
-						</Box>
+            {/* Current Image */}
+            <Box
+              component="img"
+              src={spotImages[currentImageIndex]}
+              alt={`Spot ${currentImageIndex}`}
+              onClick={() => setSelectedImage(spotImages[currentImageIndex])}
+              sx={{
+                maxHeight: { xs: 180, sm: 250 },
+                maxWidth: { xs: "90%", sm: "80%", md: "60%" },
+                objectFit: "cover",
+                borderRadius: 2,
+                boxShadow: 3,
+                cursor: "pointer",
+              }}
+            />
 
-						<Box sx={{ display: "flex", mt: 2 }}>
-							<CalendarTodayIcon sx={{ mr: 2 }} />
-							<Grid container spacing={1}>
-								{Array.isArray(selectedMarker.available_days) ? (
-									selectedMarker.available_days.map((day, index) => (
-										<Grid item key={index}>
-											<Chip label={day.slice(0, 3).toUpperCase()} color="primary" size="medium" />
-										</Grid>
-									))
-								) : (
-									<Typography variant="h6">No available days</Typography>
-								)}
-							</Grid>
-						</Box>
+            {/* Right Arrow */}
+            <IconButton
+              onClick={handleNext}
+              sx={{
+                position: "absolute",
+                right: 10,
+                zIndex: 1,
+                backgroundColor: "rgba(255,255,255,0.7)",
+                "&:hover": { backgroundColor: "white" },
+              }}
+            >
+              <ArrowForwardIos />
+            </IconButton>
+          </Box>
+        </>
+      )}
 
-						<Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-							<LocalParkingIcon sx={{ mr: 2 }} />
-							<Typography variant="h6">Available Slots: {selectedMarker.available_slots}</Typography>
-						</Box>
-					</Paper>
-				</Grid>
+      {/* Image Dialog */}
+      <Dialog
+        open={!!selectedImage}
+        onClose={() => setSelectedImage(null)}
+        fullWidth
+        maxWidth="md"
+        sx={{
+          "& .MuiDialog-paper": {
+            backgroundColor: "transparent",
+            boxShadow: "none",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            p: { xs: 1, sm: 2 },
+          },
+        }}
+      >
+        <Box
+          component="img"
+          src={selectedImage}
+          alt="Enlarged"
+          sx={{
+            maxWidth: "90vw",
+            maxHeight: "90vh",
+            objectFit: "contain",
+            borderRadius: 2,
+            boxShadow: 3,
+          }}
+        />
+      </Dialog>
 
-				{/* Right Section */}
-				<Grid item xs={12} md={6}>
-					<Paper elevation={6} sx={{ padding: 3, height: "500px", overflow: "visible"}} variant="outlined">
+      {/* Spot Info */}
+      <Paper
+        elevation={4}
+        sx={{
+          padding: { xs: 2, sm: 3 },
+          backgroundColor: "#f9f9ff",
+          borderRadius: 3,
+        }}
+      >
+        <Typography
+          variant="h5"
+          textAlign="center"
+          fontWeight="bold"
+          color="primary"
+          mb={2}
+          sx={{ fontSize: { xs: "1.2rem", sm: "1.5rem" } }}
+        >
+          {selectedMarker.spot_title}
+        </Typography>
 
-						<Typography
-							variant="h5"
-							fontWeight="bold"
-							sx={{ m: 2, display: "flex", alignItems: "center" }}
-						>
-							Reviews
-							<Box sx={{ display: "flex", justifyContent:"space-between" }}>
-								<Rating name="read-only" value={averageRating} precision={0.5} readOnly />
-								<Typography>({reviews.length})</Typography>
-							</Box>
-							<Button
-								variant="outlined"
-								color="primary"
-								size="small"
-								onClick={() => setAddReviewDialogOpen(true)} // Placeholder action
-								sx={{ ml: 2, justifyContent:"space-between" }}
-							>
-								Add Review
-							</Button>
-						</Typography>
-						{/*Scroble review*/}
-						{reviews.length === 0 ? (
-							<Typography variant="h6" sx={{ mt: 2, color: "gray", textAlign: "center" }}>
-								No reviews available
-							</Typography>
-						) : (
-							<Box sx={{ height: "400px", overflowY: "auto", padding: 2 }}>
-								<Grid container direction="column" spacing={2}>
-									{reviews.map((review, index) => (
-										<Grid item key={index} sx={{ bgcolor: "skyblue", borderRadius: 2, padding: 2, m:1 }}>
-											<ReviewCard review={review} />
-										</Grid>
-									))}
-								</Grid>
-							</Box>
-						)}
-					</Paper>
-				</Grid>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexDirection: { xs: "column", sm: "row" },
+            mb: 2,
+            textAlign: { xs: "center", sm: "left" },
+          }}
+        >
+          {/* <Avatar
+            src={ownerDetail.profile_picture}
+            sx={{ mr: { sm: 2 }, mb: { xs: 1, sm: 0 }, width: 56, height: 56 }}
+          /> */}
+          <Box>
+            <Typography variant="h6">
+              Owner: {ownerDetail.name || "Unknown Owner"}
+            </Typography>
+            <Typography variant="body2">Contact: {ownerDetail.email}</Typography>
+            <Typography variant="body2">{ownerDetail.phone}</Typography>
+          </Box>
+        </Box>
 
-			</Grid>
-			<Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-				<Button
-					fullWidth
-					variant="contained"
-					color="secondary"
-					sx={{ borderRadius: 2, mt: 2, fontSize: "large" }}
-					onClick={toggleDialogBooking}
-				>
-					Book Now
-				</Button>
-				<Button
-					variant="contained"
-					color="primary"
-					onClick={() => {
-						navigate("/homepage");
-					}}
-					sx={{ borderRadius: 2, mt: 2, fontSize: "large" }}
-				>
-					Go Home
-				</Button>
-			</Box>
-			<Booking open={dialogBookingOpen} spot_information={selectedMarker} set_dialog={toggleDialogBooking} />
-			<AddReview
-				openDialog={addReviewDialogOpen}
-				onClose={() => handleAddReviewClose()}
-				spot_id={selectedMarker.spot_id}
-			/>
-		</Box>
-	);
+        <Typography variant="body1" mb={1}>
+          <LocationOnIcon fontSize="small" sx={{ mr: 1, color: "red" }} />
+          {selectedMarker.address}
+        </Typography>
+
+        <Typography variant="body1" mb={1}>
+          <CurrencyRupeeIcon fontSize="small" sx={{ mr: 1, color: "green" }} />
+          {selectedMarker.hourly_rate} / hour
+        </Typography>
+
+        <Typography variant="body1" mb={1}>
+          <AccessTimeIcon fontSize="small" sx={{ mr: 1 }} />
+          {selectedMarker.open_time} - {selectedMarker.close_time}
+        </Typography>
+
+        <Box mb={1} sx={{ display: "flex", flexWrap: "wrap" }}>
+          <CalendarTodayIcon fontSize="small" sx={{ mr: 1 }} />
+          {Array.isArray(selectedMarker.available_days) ? (
+            selectedMarker.available_days.map((day, i) => (
+              <Chip
+                key={i}
+                label={day.slice(0, 3).toUpperCase()}
+                size="small"
+                color="info"
+                sx={{ mx: 0.5, my: 0.5 }}
+              />
+            ))
+          ) : (
+            <Typography>No Available Days</Typography>
+          )}
+        </Box>
+
+        <Typography variant="body1" mb={2}>
+          <LocalParkingIcon fontSize="small" sx={{ mr: 1 }} />
+          Available Slots: {selectedMarker.available_slots}
+        </Typography>
+
+        <Button
+          variant="contained"
+          color="success"
+          fullWidth
+          size="large"
+          onClick={toggleDialogBooking}
+          sx={{ mt: 2, borderRadius: 2 }}
+        >
+          Book Now
+        </Button>
+      </Paper>
+
+      {/* Reviews */}
+      <Paper
+        elevation={3}
+        sx={{
+          padding: { xs: 2, sm: 3 },
+          mt: 4,
+          backgroundColor: "#fff3e0",
+          borderRadius: 3,
+        }}
+      >
+        <Typography variant="h6" fontWeight="bold" mb={2}>
+          Reviews
+        </Typography>
+
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: 1,
+            justifyContent: "space-between",
+          }}
+        >
+          <Rating value={averageRating} precision={0.5} readOnly />
+          <Typography>({reviews.length})</Typography>
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={() => setAddReviewDialogOpen(true)}
+          >
+            Add Review
+          </Button>
+        </Box>
+
+        <Box sx={{ maxHeight: 300, overflowY: "auto", mt: 2 }}>
+          {reviews.length === 0 ? (
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              textAlign="center"
+            >
+              No reviews yet.
+            </Typography>
+          ) : (
+            reviews.map((review, i) => (
+              <Box key={i} sx={{ my: 1 }}>
+                <ReviewCard review={review} />
+              </Box>
+            ))
+          )}
+        </Box>
+      </Paper>
+
+      {/* Navigation */}
+      <Box textAlign="center" mt={4}>
+        <Button variant="outlined" onClick={() => navigate("/homepage")}>
+          Back to Home
+        </Button>
+      </Box>
+
+      {/* Dialogs */}
+      <Booking
+        open={dialogBookingOpen}
+        spot_information={selectedMarker}
+        set_dialog={toggleDialogBooking}
+      />
+      <AddReview
+        openDialog={addReviewDialogOpen}
+        onClose={handleAddReviewClose}
+        spot_id={selectedMarker.spot_id}
+      />
+    </Box>
+  );
 };
 
 export default DetailInfo;
