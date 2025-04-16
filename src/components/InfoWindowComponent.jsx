@@ -1,23 +1,28 @@
 import { InfoWindow } from "@react-google-maps/api";
-import { Box, Typography, IconButton, Tooltip } from "@mui/material";
+import { Box, Typography, IconButton, Tooltip, Button } from "@mui/material";
 import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import InfoIcon from "@mui/icons-material/Info";
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Booking } from "../pages/Booking";
 
 const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, calculateDistance }) => {
 	const navigate = useNavigate();
+	const [dialogBookingOpen, setDialogBookingOpen] =useState(false);
 
+
+	const toggleDialogBooking = () => setDialogBookingOpen(!dialogBookingOpen);
 	if (!selectedMarker) {
 		console.error("InfoWindowComponent received null or undefined selectedMarker");
 		return null;
 	}
 
 	const position = {
-		lat: selectedMarker.location?.lat || selectedMarker.latitude,
-		lng: selectedMarker.location?.lng || selectedMarker.longitude,
+		lat:  selectedMarker.latitude,
+		lng:  selectedMarker.longitude,
 	};
 
 	if (!position.lat || !position.lng) {
@@ -67,11 +72,6 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
 							{selectedMarker?.spot_title || "Destination"}
 						</Typography>
 
-						{!isSearchLocation && (
-							<IconButton size="small" onClick={showDetails} sx={{ marginRight: 1 }}>
-								<InfoIcon color="primary" />
-							</IconButton>
-						)}
 					</Box>
 
 					<Box sx={{ display: "flex", alignItems: "center", mb: 1, maxWidth: 260 }}>
@@ -112,8 +112,25 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
 							</Box>
 						</>
 					)}
+
+					<Button
+						variant="contained"
+						color="success"
+						fullWidth
+						size="large"
+						onClick={toggleDialogBooking}
+						sx={{ mt: 2, borderRadius: 2 }}
+					>
+						Book Now
+					</Button>
 				</Box>
 			</InfoWindow>
+
+			<Booking
+        open={dialogBookingOpen}
+        spot_information={selectedMarker}
+        set_dialog={toggleDialogBooking}
+      />
 		</Box>
 	);
 };
