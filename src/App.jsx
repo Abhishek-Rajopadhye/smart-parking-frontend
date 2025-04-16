@@ -16,6 +16,7 @@ import { MapProvider } from "./context/MapContext";
 import HomePage from "./pages/HomePage";
 import MapSearch from "./pages/MapSearch";
 
+
 const AppLayout = () => {
 	const { user, logout } = useContext(AuthContext);
 	const navigate = useNavigate();
