@@ -21,6 +21,22 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../const";
 
+/**
+ * EditSpot component for editing parking spot details.
+ *
+ * Allows users to edit details such as title, address, description, open/close times, hourly rate, total slots, open days, and images.
+ * Provides confirmation dialogs for saving or canceling changes.
+ *
+ * @component
+ * @param {Object} props - The props for the component.
+ * @param {boolean} props.open - Whether the dialog is open.
+ * @param {Function} props.handleClose - Function to close the dialog.
+ * @param {Object} props.spot - The spot object containing the current details of the parking spot.
+ * @param {Function} props.handleSave - Function to save the updated spot details.
+ * @param {number} props.spot_id - The ID of the spot being edited.
+ *
+ * @returns {JSX.Element} The EditSpot component.
+ */
 const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 	const [confirmationOpen, setConfirmationOpen] = useState(false);
 	const [confirmationMessage, setConfirmationMessage] = useState(null);
@@ -44,6 +60,12 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 	});
 
 	useEffect(() => {
+		/**
+		 * Fetches images for the spot from the backend.
+		 *
+		 * @async
+		 * @returns {Promise<Array>} An array of images in Base64 format.
+		 */
 		const fetchImages = async () => {
 			const imageRes = await axios.get(`${BACKEND_URL}/spotdetails/get-images/${spot_id}`);
 			if (imageRes.status === 200) {
@@ -52,12 +74,25 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 			return [];
 		};
 
+	    /**
+		 * Formats a time string to the "HH:mm" format.
+		 *
+		 * @param {string} time - The time string to format.
+		 * @returns {string} The formatted time string.
+		 */
 		const formatTime = (time) => {
 			if (!time) return "";
 			const [hours, minutes] = time.replace(" AM", "").replace(" PM", "").split(":");
 			return `${hours}:${minutes}`;
 		};
 
+		/**
+		 * Initializes the form data with the current spot details.
+		 *
+		 * Fetches images and sets the form data state.
+		 *
+		 * @async
+		 */
 		const initializeFormData = async () => {
 			const images = await fetchImages();
 			setFormData({

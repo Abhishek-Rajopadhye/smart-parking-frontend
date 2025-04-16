@@ -16,6 +16,14 @@ import { MapProvider } from "./context/MapContext";
 import HomePage from "./pages/HomePage";
 import MapSearch from "./pages/MapSearch";
 
+/**
+ * AppLayout component for rendering the main layout of the application.
+ *
+ * Handles routing, navigation, and global state management for the authenticated user.
+ *
+ * @component
+ * @returns {JSX.Element} The AppLayout component.
+ */
 const AppLayout = () => {
 	const { user, logout } = useContext(AuthContext);
 	const navigate = useNavigate();
@@ -29,6 +37,11 @@ const AppLayout = () => {
 	const [filters, setFilters] = useState({});
 	const mapRef = useRef(null);
 
+    /**
+     * Handles token and user ID extraction from the URL and stores them in localStorage.
+     *
+     * Redirects the user to the homepage if a token is found.
+     */
 	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
 		const token = params.get("token");
@@ -40,6 +53,11 @@ const AppLayout = () => {
 		}
 	}, [navigate]);
 
+	/**
+     * Filters the markers based on the applied filters.
+     *
+     * Updates the `filteredMarkers` state with the filtered results.
+     */
 	useEffect(() => {
 		let result = markers;
 		if (filters.hourly_rate) {
@@ -59,6 +77,11 @@ const AppLayout = () => {
 		setFilteredMarkers(result);
 	}, [filters, markers]);
 
+	/**
+     * Retrieves the page title based on the current route.
+     *
+     * @returns {string} The title of the current page.
+     */
 	const getPageTitle = () => {
 		switch (location.pathname) {
 			case "/profile":
@@ -82,10 +105,18 @@ const AppLayout = () => {
 		}
 	};
 
+	/**
+     * Handles the avatar click to open the user menu.
+     *
+     * @param {Object} event - The click event.
+     */
 	const handleAvatarClick = (event) => {
 		setAnchorEl(event.currentTarget);
 	};
 
+    /**
+     * Closes the user menu.
+     */
 	const handleMenuClose = () => {
 		setAnchorEl(null);
 	};
@@ -186,6 +217,14 @@ const AppLayout = () => {
 	);
 };
 
+/**
+ * App component for initializing the application.
+ *
+ * Wraps the application with providers for authentication, theming, and map context.
+ *
+ * @component
+ * @returns {JSX.Element} The App component.
+ */
 const App = () => {
 	return (
 		<ThemeProvider theme={appTheme}>

@@ -98,8 +98,6 @@ const Spot = ({ onCancel }) => {
 
 	const validateForm = () => {
 		const total = parseInt(totalSlots);
-		console.log(typeof totalSlots);
-		console.log(typeof availableSlots);
 		if (!spotTitle.trim()) return "Spot Title is required";
 		if (!spotAddress.trim()) return "Address is required";
 		if (location == null) return "Please select a location to proceed";
@@ -110,8 +108,6 @@ const Spot = ({ onCancel }) => {
 		if (!hourlyRate || hourlyRate <= 0) return "Hourly Rate must be positive";
 		if (!totalSlots || totalSlots <= 0) return "Total Slots must be a positive number";
 		if (!Object.values(openDays).includes(true)) return "At least one open day must be selected";
-		console.log(total);
-		console.log(typeof total);
 		return total;
 	};
 
@@ -131,7 +127,6 @@ const Spot = ({ onCancel }) => {
 	 * @returns
 	 */
 	const handleAddSpot = async () => {
-		console.log("Location:", location);
 		const error = validateForm();
 		if (error)
 			if (error && typeof error === "string") {
@@ -139,7 +134,6 @@ const Spot = ({ onCancel }) => {
 				return;
 			}
 		setTotalSlots(error);
-		//console.log(openTime);
 		if (
 			!(location.lat >= 6.554607 && location.lat <= 35.674545 && location.lng >= 68.162385 && location.lng <= 97.395561)
 		) {
@@ -179,12 +173,10 @@ const Spot = ({ onCancel }) => {
 			}
 		}
 
-		console.log(openTime);
 		let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
 		let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
 		let new_open_time = openTime + " " + open;
 		let new_close_time = closeTime + " " + close;
-		console.log("Open Days:", open_days);
 		setTotalSlots(parseInt(totalSlots));
 		try {
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot/`, {
@@ -237,7 +229,6 @@ const Spot = ({ onCancel }) => {
 				});
 			}
 		} catch (error) {
-			console.log(error);
 			setOpenSnackbar({
 				open: true,
 				message: "Error uploading data",
@@ -249,7 +240,6 @@ const Spot = ({ onCancel }) => {
 	};
 
 	return (
-		// <Box className="main">
 		<Box className="form-container">
 			<Box className="form-box">
 				<Grid container spacing={2}>

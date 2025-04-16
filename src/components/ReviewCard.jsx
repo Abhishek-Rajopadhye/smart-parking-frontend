@@ -16,6 +16,20 @@ import { AuthContext } from "../context/AuthContext";
 import { ConfirmationDialogBox } from "./ConfirmationDialogBox";
 import { EditReview } from "./EditReview";
 
+/**
+ * Component to display a single review card with user details, rating, description, and images.
+ *
+ * Provides options to edit or delete the review if the logged-in user is the reviewer.
+ * Allows the spot owner to reply to the review.
+ *
+ * @component
+ * @param {Object} props - The props for the component.
+ * @param {Object} props.review - The review object containing details about the review.
+ * @param {Function} props.handleDeleteReview - Function to handle the deletion of the review.
+ * @param {Function} props.handleEditReview - Function to handle the editing of the review.
+ *
+ * @returns {JSX.Element} A card displaying the review details with actions for edit and delete.
+ */
 const ReviewCard = ({ review, handleDeleteReview, handleEditReview }) => {
 	const [formattedDate, setFormattedDate] = useState("");
 	const { user } = useContext(AuthContext);
@@ -25,6 +39,11 @@ const ReviewCard = ({ review, handleDeleteReview, handleEditReview }) => {
 	const [deleteConfirmationMessage, setDeleteConfirmationMessage] = useState(null);
 	const [editReviewDialogOpen, setEditReviewDialogOpen] = useState(false);
 
+    /**
+     * Formats the review creation date to a readable format.
+     *
+     * Updates the `formattedDate` state with the formatted date string.
+     */
 	useEffect(() => {
 		if (review.created_at) {
 			const date = new Date(review.created_at);
@@ -35,11 +54,21 @@ const ReviewCard = ({ review, handleDeleteReview, handleEditReview }) => {
 		}
 	}, [review]);
 
+	/**
+     * Handles the delete button click.
+     *
+     * Opens the confirmation dialog to confirm the deletion of the review.
+     */
 	const onDeleteClick = () => {
 		setDeleteConfirmationMessage("Are you sure you want to delete this review?");
 		setDeleteConfirmationOpen(true);
 	};
 
+	/**
+     * Handles the confirmation of review deletion.
+     *
+     * Closes the confirmation dialog and calls the `handleDeleteReview` function.
+     */
 	const onDeleteConfirmation = () => {
 		setDeleteConfirmationOpen(false);
 		setDeleteConfirmationMessage(null);

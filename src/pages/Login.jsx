@@ -2,12 +2,11 @@ import { Button, Container, Typography, Box, Paper } from "@mui/material";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import GoogleIcon from "@mui/icons-material/Google";
-import GitHubIcon from "@mui/icons-material/GitHub";
 
 /**
  * Login page component for Smart Parking.
  *
- * Provides options for users to log in using Google or GitHub.
+ * Provides options for users to log in using Google.
  * @component
  * @returns {JSX.Element} The Login page component.
  */
@@ -56,21 +55,6 @@ const Login = () => {
 				>
 					Login with Google
 					<GoogleIcon sx={{ ml: 2 }} />
-				</Button>
-				<Button
-					disabled
-					variant="outlined"
-					color="primary"
-					fullWidth
-					onClick={() => login("github")}
-					sx={{
-						padding: 1.5,
-						fontSize: "1rem",
-						textTransform: "none",
-					}}
-				>
-					Login with GitHub
-					<GitHubIcon sx={{ ml: 2 }} />
 				</Button>
 			</Paper>
 		</Container>
