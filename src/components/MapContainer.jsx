@@ -229,7 +229,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 							/>
 						)}
 					</GoogleMap>
-					
+
 					<Snackbar
 						open={snackbar.open}
 						autoHideDuration={4000}
@@ -257,7 +257,6 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 							{snackbar.message}
 						</Alert>
 					</Snackbar>
-
 				</>
 			)}
 		</Box>

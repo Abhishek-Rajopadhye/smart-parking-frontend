@@ -4,35 +4,34 @@ import axios from "axios";
 import { MapContainer } from "../components/MapContainer";
 import MapSidebar from "../components/MapSideBar";
 import { BACKEND_URL } from "../const";
-import { Drawer, Box, Button, Grid, IconButton } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-
+import { Drawer, Box, Button, Grid, IconButton } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const MapSearch = ({ selectedMarker, setSelectedMarker, newMarker, setNewMarker, markers, setMarkers, mapRef, filteredMarkers, setFilters }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchMarkers = async () => {
-      try {
-        const response = await axios.get(`${BACKEND_URL}/spotdetails/getparkingspot`);
-        if (!response.data) {
-          throw new Error("No data received from the server");
-        }
+	useEffect(() => {
+		const fetchMarkers = async () => {
+			try {
+				const response = await axios.get(`${BACKEND_URL}/spotdetails/getparkingspot`);
+				if (!response.data) {
+					throw new Error("No data received from the server");
+				}
 
-        setMarkers(response.data);
-      } catch (error) {
-        console.error("Error fetching markers", error);
-      }
-    };
+				setMarkers(response.data);
+			} catch (error) {
+				console.error("Error fetching markers", error);
+			}
+		};
 
-    fetchMarkers();
-  }, [setMarkers]);
+		fetchMarkers();
+	}, [setMarkers]);
+    
+	const toggleDrawer = () => {
+		setDrawerOpen(!drawerOpen);
+	};
 
-  const toggleDrawer = () => {
-    setDrawerOpen(!drawerOpen);
-  };
-
-  return (
+return (
     <Box sx={{ display: 'flex', alignItems: "flex-start" }}>
       {/* Mobile Drawer Button */}
       <IconButton
@@ -128,6 +127,5 @@ const MapSearch = ({ selectedMarker, setSelectedMarker, newMarker, setNewMarker,
     </Box>
   );
 };
-
 
 export default MapSearch;

@@ -16,7 +16,14 @@ import { MapProvider } from "./context/MapContext";
 import HomePage from "./pages/HomePage";
 import MapSearch from "./pages/MapSearch";
 
-
+/**
+ * AppLayout component for rendering the main layout of the application.
+ *
+ * Handles routing, navigation, and global state management for the authenticated user.
+ *
+ * @component
+ * @returns {JSX.Element} The AppLayout component.
+ */
 const AppLayout = () => {
 	const { user, logout } = useContext(AuthContext);
 	const navigate = useNavigate();
@@ -30,6 +37,11 @@ const AppLayout = () => {
 	const [filters, setFilters] = useState({});
 	const mapRef = useRef(null);
 
+    /**
+     * Handles token and user ID extraction from the URL and stores them in localStorage.
+     *
+     * Redirects the user to the homepage if a token is found.
+     */
 	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
 		const token = params.get("token");
@@ -41,6 +53,11 @@ const AppLayout = () => {
 		}
 	}, [navigate]);
 
+	/**
+     * Filters the markers based on the applied filters.
+     *
+     * Updates the `filteredMarkers` state with the filtered results.
+     */
 	useEffect(() => {
 			
 		
@@ -93,34 +110,46 @@ if (filters.close_time) {
 	}, [filters, markers]);
 	console.log("Filters and markers",filters,filteredMarkers);
 
+	/**
+     * Retrieves the page title based on the current route.
+     *
+     * @returns {string} The title of the current page.
+     */
 	const getPageTitle = () => {
 		switch (location.pathname) {
 			case "/profile":
 				return "Profile";
 			case "/booking-history":
-				return "Booking History";
+				return "My Bookings";
 			case "/spot":
 				return "Add Spot";
 			case "/homepage":
 				return "Home";
-			case "/map-screen":
-				return "Map Screen";
+			case "/mapsearch":
+				return "Map View";
 			case "/auth":
 				return "Auth";
 			case "/booking":
 				return "Booking";
 			case "/spotdetail":
 				return "Detailed Info";
-
 			default:
-				return "Home";
+				return "App";
 		}
 	};
 
+	/**
+     * Handles the avatar click to open the user menu.
+     *
+     * @param {Object} event - The click event.
+     */
 	const handleAvatarClick = (event) => {
 		setAnchorEl(event.currentTarget);
 	};
 
+    /**
+     * Closes the user menu.
+     */
 	const handleMenuClose = () => {
 		setAnchorEl(null);
 	};
@@ -128,7 +157,7 @@ if (filters.close_time) {
 	const routes = [
 		{ label: "Home", path: "/homepage" },
 		{ label: "Profile", path: "/profile" },
-		{ label: "Booking History", path: "/booking-history" },
+		{ label: "My Bookings", path: "/booking-history" },
 	];
 
 	if (!user) {
@@ -157,22 +186,21 @@ if (filters.close_time) {
 						{getPageTitle()}
 					</Typography>
 					<IconButton onClick={handleAvatarClick}>
-						<Avatar alt="User Avatar" src={user?.avatarUrl || ""} />
+						<Avatar alt="User Avatar" src={user.profile_picture || ""} />
 					</IconButton>
 					<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-						{routes
-							.filter((r) => r.path !== location.pathname)
-							.map((r) => (
-								<MenuItem
-									key={r.path}
-									onClick={() => {
-										handleMenuClose();
-										navigate(r.path);
-									}}
-								>
-									{r.label}
-								</MenuItem>
-							))}
+						{routes.map((route) => (
+							<MenuItem
+								key={route.path}
+								onClick={() => {
+									handleMenuClose();
+									navigate(route.path);
+								}}
+								selected={route.path === location.pathname}
+							>
+								{route.label}
+							</MenuItem>
+						))}
 						<MenuItem
 							onClick={() => {
 								handleMenuClose();
@@ -224,6 +252,14 @@ if (filters.close_time) {
 	);
 };
 
+/**
+ * App component for initializing the application.
+ *
+ * Wraps the application with providers for authentication, theming, and map context.
+ *
+ * @component
+ * @returns {JSX.Element} The App component.
+ */
 const App = () => {
 	return (
 		<ThemeProvider theme={appTheme}>

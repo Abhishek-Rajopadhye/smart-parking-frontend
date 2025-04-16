@@ -68,11 +68,7 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
 						</Typography>
 
 						{!isSearchLocation && (
-							<IconButton
-								size="small"
-								onClick={showDetails}
-								sx={{ marginRight: 1 }}
-							>
+							<IconButton size="small" onClick={showDetails} sx={{ marginRight: 1 }}>
 								<InfoIcon color="primary" />
 							</IconButton>
 						)}

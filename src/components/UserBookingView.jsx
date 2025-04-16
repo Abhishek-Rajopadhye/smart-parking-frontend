@@ -65,7 +65,7 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 	const canCheckIn = (startDateTime) => {
 		const now = new Date();
 		const startTime = new Date(startDateTime);
-		const diffInMinutes = Math.floor(Math.abs((startTime - now) / (1000 * 60))); // Difference in minutes
+		const diffInMinutes = Math.floor((startTime - now) / (1000 * 60)); // Difference in minutes
 		return diffInMinutes <= 15 && diffInMinutes >= 0; // Allow check-in within 15 minutes before start time
 	};
 
