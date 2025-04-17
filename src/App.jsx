@@ -66,11 +66,17 @@ const AppLayout = () => {
 			result = result.filter((marker) => filters.available_days.every((day) => marker.available_days.includes(day)));
 		}
 
-		// Function to parse time string to minutes since midnight
-		function parseTime(timeStr) {
-			const [hours, minutes] = timeStr.split(":").map(Number);
-			return hours * 60 + minutes;
-		}
+		
+
+
+if (filters.hourly_rate) {
+	result = result.filter((marker) =>  marker.hourly_rate >= filters.hourly_rate[0] && marker.hourly_rate <= filters.hourly_rate[1]);
+  }
+// Function to parse time string to minutes since midnight
+function parseTime(timeStr) {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+}
 
 		// Function to parse time string with AM/PM to minutes since midnight
 		function parseTimeWithAMPM(timeStr) {
@@ -101,6 +107,9 @@ const AppLayout = () => {
 				return markerCloseTimeMinutes >= filterCloseTimeMinutes && markerOpenTimeMinutes <= filterCloseTimeMinutes;
 			});
 		}
+if (filters.hourly_rate) {
+	result = result.filter((marker) =>  marker.hourly_rate >= filters.hourly_rate[0] && marker.hourly_rate <= filters.hourly_rate[1]);
+  }
 
 		setFilteredMarkers(result);
 	}, [filters, markers]);

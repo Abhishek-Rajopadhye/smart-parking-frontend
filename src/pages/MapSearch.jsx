@@ -4,112 +4,141 @@ import axios from "axios";
 import { MapContainer } from "../components/MapContainer";
 import MapSidebar from "../components/MapSideBar";
 import { BACKEND_URL } from "../const";
-import { Drawer, Box, Button, Grid, IconButton } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import {
+  Box,
+  Button,
+  Drawer,
+  Grid,
+  IconButton,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 
-const MapSearch = ({ selectedMarker, setSelectedMarker, newMarker, setNewMarker, markers, setMarkers, mapRef, filteredMarkers, setFilters }) => {
+const MapSearch = ({
+  selectedMarker,
+  setSelectedMarker,
+  newMarker,
+  setNewMarker,
+  markers,
+  setMarkers,
+  mapRef,
+  filteredMarkers,
+  setFilters,
+}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const theme = useTheme();
+  const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('md'));
 
-	useEffect(() => {
-		const fetchMarkers = async () => {
-			try {
-				const response = await axios.get(`${BACKEND_URL}/spotdetails/getparkingspot`);
-				if (!response.data) {
-					throw new Error("No data received from the server");
-				}
+  useEffect(() => {
+    const fetchMarkers = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/spotdetails/getparkingspot`);
+        if (!response.data) {
+          throw new Error("No data received from the server");
+        }
+        setMarkers(response.data);
+      } catch (error) {
+        console.error("Error fetching markers", error);
+      }
+    };
 
-				setMarkers(response.data);
-			} catch (error) {
-				console.error("Error fetching markers", error);
-			}
-		};
+    fetchMarkers();
+  }, [setMarkers]);
 
-		fetchMarkers();
-	}, [setMarkers]);
-    
-	const toggleDrawer = () => {
-		setDrawerOpen(!drawerOpen);
-	};
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
 
-return (
-    <Box sx={{ display: 'flex', alignItems: "flex-start" }}>
-      {/* Mobile Drawer Button */}
-      <IconButton
-        edge="start"
-        color="inherit"
-        aria-label="menu"
-        onClick={toggleDrawer}
-        sx={{ display: { sm: 'none' } }}
-      >
-        <MenuIcon />
-      </IconButton>
+  return (
+    <Box sx={{ display: 'flex', height: '100vh' }}>
+      {/* Menu button on mobile/tablet */}
+      {isMobileOrTablet && (
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          onClick={toggleDrawer}
+          sx={{
+            position: 'fixed',
+            top: 10,
+            left: 16,
+            zIndex: 1300,
+            bgcolor: "white",
+            boxShadow: 3,
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+      )}
 
-      {/* Left Sidebar as Drawer on mobile */}
+      {/* Drawer for mobile/tablet */}
       <Drawer
         anchor="left"
         open={drawerOpen}
         onClose={toggleDrawer}
+        variant= "temporary" 
         sx={{
-          display: { sm: 'none', md: "none" }, // Hide on larger screens
-          width: '250px',  // Fixed width for mobile view
-        }}
-      >
-        <Box
-          sx={{
-            width: 250,
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': {
+            width:{
+              xs:'100vw',
+              sm:"40vw"
+            } ,
             padding: 2,
             backgroundColor: '#f5f5f5',
-            overflowY: 'hidden',
-          }}
-        >
-          {/* Your Sidebar Content Here */}
-          <MapSidebar mapRef={mapRef}
-            setNewMarker={setNewMarker}
-            setSelectedMarker={setSelectedMarker}
-            markers={markers}
-            setFilters={setFilters}
-            filteredMarkers={filteredMarkers}
-          />
+          },
+        }}
+      >
+        <Box sx={{mt:7}}>
+        <MapSidebar
+          mapRef={mapRef}
+          setNewMarker={setNewMarker}
+          setSelectedMarker={setSelectedMarker}
+          markers={markers}
+          setFilters={setFilters}
+          filteredMarkers={filteredMarkers}
+          
+        />
         </Box>
       </Drawer>
 
-      {/* Main Content */}
-      <Grid container spacing={2} sx={{ flexGrow: 1 }}>
-        {/* Left Sidebar (Visible on larger screens) */}
-        <Grid item xs={12} sm={4} md={3}>
+      {/* Main layout using Grid */}
+      <Grid container sx={{ flexGrow: 1 }}>
+        {/* Sidebar (desktop only) */}
+        {!isMobileOrTablet && (
+          <Grid item md={3}>
+            <Box
+              sx={{
+                height: '100vh',
+                // overflowY: 'auto',
+                padding: 2,
+                
+                backgroundColor: '#f5f5f5',
+              }}
+            >
+              
+              <MapSidebar
+                mapRef={mapRef}
+                setNewMarker={setNewMarker}
+                setSelectedMarker={setSelectedMarker}
+                markers={markers}
+                setFilters={setFilters}
+                filteredMarkers={filteredMarkers}
+              />
+            </Box>
+          </Grid>
+        )}
+
+        {/* Map */}
+        <Grid item xs={12} md={9}>
           <Box
             sx={{
-              padding: 2,
-              backgroundColor: '#f5f5f5',
-              display: { xs: 'none', sm: "block" }, // Hide on mobile
               height: '100vh',
-
-
-
+              padding: isMobileOrTablet ? 0 : 2,
+              pt: isMobileOrTablet ? 1 : 2, // account for MenuIcon button
+              overflow: 'hidden',
             }}
           >
-            {/* Your Left Sidebar Content Here */}
-            <MapSidebar mapRef={mapRef}
-              setNewMarker={setNewMarker}
-              setSelectedMarker={setSelectedMarker}
-              markers={markers}
-              setFilters={setFilters}
-              filteredMarkers={filteredMarkers}
-            />
-          </Box>
-        </Grid>
-
-        {/* Right Map Container */}
-        <Grid item xs={12} sm={8} md={9}>
-          <Box
-            sx={{
-              padding: 2,
-              height: '100vh',
-              overflow: 'auto',
-              overflowX: "hidden",
-            }}
-          >
-            {/* Your Map Container Content Here */}
             <MapContainer
               selectedMarker={selectedMarker}
               setSelectedMarker={setSelectedMarker}
@@ -119,7 +148,6 @@ return (
               setMarkers={setMarkers}
               mapRef={mapRef}
               filteredMarkers={filteredMarkers}
-
             />
           </Box>
         </Grid>
