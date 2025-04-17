@@ -12,8 +12,10 @@ import { MapContext } from "../context/MapContext";
 import { getLatLng } from "react-places-autocomplete";
 import MarkerCard from "./MarkerCard";
 import { isBefore, addMinutes, setHours, setMinutes } from "date-fns";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
+import Slider from "@mui/material/Slider";
 
-const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilters ,filteredMarkers }) => {
+const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilters, filteredMarkers }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchLocation, setSearchLocation] = useState("");
@@ -29,6 +31,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
   const [tempDate, setTempDate] = useState(new Date());
   const [tempStartTime, setTempStartTime] = useState(null);
   const [tempEndTime, setTempEndTime] = useState(null);
+  const [parkingPrice,setParkingPrice]=useState([0,250]);
 
 
   //console.log("searched loatino ", searchLocation);
@@ -53,6 +56,10 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 
   if (loadError) return <div>Error loading Google Maps</div>;
   if (!isLoaded) return <div>Loading Google Maps...</div>;
+
+  const handlePrice = (event, value) => {
+		setParkingPrice(value);
+	};
 
 
   const handleSearchChange = (event) => {
@@ -118,6 +125,11 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 
     }
 
+    if(parkingPrice){
+      setFilters((prev) => ({ ...prev, hourly_rate: parkingPrice }));
+      console.log("parking prive",parkingPrice);
+    }
+
 
     // Optional: Get lat/lng using Geocoder
     const geocoder = new window.google.maps.Geocoder();
@@ -154,15 +166,15 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
     const isToday = date.toDateString() === now.toDateString();
     if (!isToday) return setHours(setMinutes(new Date(date), 0), 0);
 
-    
-  const minutes = now.getMinutes();
-  const remainder = 30 - (minutes % 30);
-  const roundedTime = addMinutes(now, remainder);
-  roundedTime.setSeconds(0);
-  roundedTime.setMilliseconds(0);
-  
 
-  return roundedTime;
+    const minutes = now.getMinutes();
+    const remainder = 30 - (minutes % 30);
+    const roundedTime = addMinutes(now, remainder);
+    roundedTime.setSeconds(0);
+    roundedTime.setMilliseconds(0);
+
+
+    return roundedTime;
   };
 
 
@@ -203,10 +215,10 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
         />
         {suggestions && predictions.length > 0 && (
           <Paper sx={{
-            position: 'absolute',
+            
             width: '100%',
             zIndex: 1100,
-            mt: 0.5,
+            mt: -2,
             borderRadius: '4px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
             bgcolor: "background.paper"
@@ -221,7 +233,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
                   '&:hover': { backgroundColor: '#f5f5f5' }
                 }}
               >
-                <Typography variant="body2">
+                <Typography variant="body2" >
                   {prediction.description}
                 </Typography>
               </Box>
@@ -233,11 +245,11 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
               display: 'flex',
               justifyContent: 'center'
             }}>
-              <Box component="img"
+              {/* <Box component="img"
                 src="/api/placeholder/144/18"
                 alt="Powered by Google"
                 sx={{ height: '18px' }}
-              />
+              /> */}
             </Box>
           </Paper>
         )}
@@ -269,7 +281,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
             value={tempStartTime}
             onChange={setTempStartTime}
             ampm
-            minTime={getInitialStartTime(tempDate)}
+           // minTime={getInitialStartTime(tempDate)}
             minutesStep={30}
             slotProps={{
               textField: {
@@ -309,6 +321,21 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
                 },
               },
             }}
+          />
+        </Box>
+
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
+          <CurrencyRupeeIcon sx={{ color: "green" }} />
+          <Typography variant="h6">Price Range</Typography>
+        </Box>
+        <Box sx={{ width: "90%", px: 2 }}>
+          <Slider
+            value={parkingPrice}
+            onChange={handlePrice}
+            aria-label="Default"
+            valueLabelDisplay="auto"
+            max={500}
+            sx={{ color: "primary.main" }}
           />
         </Box>
 

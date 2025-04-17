@@ -223,12 +223,12 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 										justifyContent: "center",
 									}}
 								>
-									<Box
+									{/* <Box
 										component="img"
 										src="/api/placeholder/144/18"
 										alt="Powered by Google"
 										sx={{ height: "18px" }}
-									/>
+									/> */}
 								</Box>
 							</Paper>
 						)}

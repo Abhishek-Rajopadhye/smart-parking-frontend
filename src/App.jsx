@@ -68,6 +68,12 @@ let result = markers;
 			result = result.filter((marker) => filters.available_days.every((day) => marker.available_days.includes(day)));
 		}
 
+		
+
+
+if (filters.hourly_rate) {
+	result = result.filter((marker) =>  marker.hourly_rate >= filters.hourly_rate[0] && marker.hourly_rate <= filters.hourly_rate[1]);
+  }
 // Function to parse time string to minutes since midnight
 function parseTime(timeStr) {
     const [hours, minutes] = timeStr.split(':').map(Number);
@@ -104,6 +110,7 @@ if (filters.close_time) {
         return markerCloseTimeMinutes >= filterCloseTimeMinutes && markerOpenTimeMinutes <= filterCloseTimeMinutes;
     });
 }
+
 
 
 		setFilteredMarkers(result);
@@ -172,7 +179,7 @@ if (filters.close_time) {
 		<Box className="outermost-container" sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
 			<AppBar position="fixed" sx={{ zIndex: 3 , bgcolor:"#3f51b5",color:"white"}}>
 				<Toolbar>
-					{location.pathname !== "/homepage" && location.pathname !== "/auth" && (
+					{location.pathname !== "/homepage" && location.pathname !== "/auth" && location.pathname !=="/mapsearch" &&(
 						<Button
 							variant="Text"
 							color="primary"
