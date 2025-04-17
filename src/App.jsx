@@ -2,6 +2,7 @@ import { useContext, useEffect, useState, useRef } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { Box, CircularProgress, AppBar, Toolbar, Typography, IconButton, Avatar, Menu, MenuItem, Button } from "@mui/material";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import HomeIcon from "@mui/icons-material/Home";
 import { ThemeProvider } from "@mui/material/styles";
 import appTheme from "./style/AppTheme";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
@@ -33,15 +34,14 @@ const AppLayout = () => {
 	const [newMarker, setNewMarker] = useState(null);
 	const [markers, setMarkers] = useState([]);
 	const [filteredMarkers, setFilteredMarkers] = useState([]);
-	// eslint-disable-next-line no-unused-vars
 	const [filters, setFilters] = useState({});
 	const mapRef = useRef(null);
 
-    /**
-     * Handles token and user ID extraction from the URL and stores them in localStorage.
-     *
-     * Redirects the user to the homepage if a token is found.
-     */
+	/**
+	 * Handles token and user ID extraction from the URL and stores them in localStorage.
+	 *
+	 * Redirects the user to the homepage if a token is found.
+	 */
 	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
 		const token = params.get("token");
@@ -54,67 +54,63 @@ const AppLayout = () => {
 	}, [navigate]);
 
 	/**
-     * Filters the markers based on the applied filters.
-     *
-     * Updates the `filteredMarkers` state with the filtered results.
-     */
+	 * Filters the markers based on the applied filters.
+	 *
+	 * Updates the `filteredMarkers` state with the filtered results.
+	 */
 	useEffect(() => {
-			
-		
 		// Filter markers based on the parsed times
-let result = markers;
+		let result = markers;
 
 		if (filters.available_days && filters.available_days.length > 0) {
 			result = result.filter((marker) => filters.available_days.every((day) => marker.available_days.includes(day)));
 		}
 
-// Function to parse time string to minutes since midnight
-function parseTime(timeStr) {
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    return hours * 60 + minutes;
-}
+		// Function to parse time string to minutes since midnight
+		function parseTime(timeStr) {
+			const [hours, minutes] = timeStr.split(":").map(Number);
+			return hours * 60 + minutes;
+		}
 
-// Function to parse time string with AM/PM to minutes since midnight
-function parseTimeWithAMPM(timeStr) {
-    const [time, meridiem] = timeStr.split(' ');
-    const [hours, minutes] = time.split(':').map(Number);
-    if (meridiem === 'PM' && hours !== 12) {
-        return (hours + 12) * 60 + minutes;
-    } else if (meridiem === 'AM' && hours === 12) {
-        return 0 * 60 + minutes;
-    }
-    return hours * 60 + minutes;
-}
+		// Function to parse time string with AM/PM to minutes since midnight
+		function parseTimeWithAMPM(timeStr) {
+			const [time, meridiem] = timeStr.split(" ");
+			const [hours, minutes] = time.split(":").map(Number);
+			if (meridiem === "PM" && hours !== 12) {
+				return (hours + 12) * 60 + minutes;
+			} else if (meridiem === "AM" && hours === 12) {
+				return 0 * 60 + minutes;
+			}
+			return hours * 60 + minutes;
+		}
 
+		if (filters.open_time) {
+			const filterOpenTimeMinutes = parseTime(filters.open_time); // Convert filters to minutes since midnight
+			result = result.filter((marker) => {
+				const markerOpenTimeMinutes = parseTimeWithAMPM(marker.open_time);
+				const markerCloseTimeMinutes = parseTimeWithAMPM(marker.close_time);
+				return markerOpenTimeMinutes <= filterOpenTimeMinutes && markerCloseTimeMinutes >= filterOpenTimeMinutes;
+			});
+		}
 
-if (filters.open_time) {
-	const filterOpenTimeMinutes = parseTime(filters.open_time); // Convert filters to minutes since midnight
-    result = result.filter((marker) => {
-        const markerOpenTimeMinutes = parseTimeWithAMPM(marker.open_time);
-        const markerCloseTimeMinutes = parseTimeWithAMPM(marker.close_time);
-        return markerOpenTimeMinutes <= filterOpenTimeMinutes && markerCloseTimeMinutes >= filterOpenTimeMinutes;
-    });
-}
-
-if (filters.close_time) {
-	const filterCloseTimeMinutes = parseTime(filters.close_time); // Convert filters to minutes since midnight
-    result = result.filter((marker) => {
-        const markerOpenTimeMinutes = parseTimeWithAMPM(marker.open_time);
-        const markerCloseTimeMinutes = parseTimeWithAMPM(marker.close_time);
-        return markerCloseTimeMinutes >= filterCloseTimeMinutes && markerOpenTimeMinutes <= filterCloseTimeMinutes;
-    });
-}
-
+		if (filters.close_time) {
+			const filterCloseTimeMinutes = parseTime(filters.close_time); // Convert filters to minutes since midnight
+			result = result.filter((marker) => {
+				const markerOpenTimeMinutes = parseTimeWithAMPM(marker.open_time);
+				const markerCloseTimeMinutes = parseTimeWithAMPM(marker.close_time);
+				return markerCloseTimeMinutes >= filterCloseTimeMinutes && markerOpenTimeMinutes <= filterCloseTimeMinutes;
+			});
+		}
 
 		setFilteredMarkers(result);
 	}, [filters, markers]);
-	console.log("Filters and markers",filters,filteredMarkers);
+	console.log("Filters and markers", filters, filteredMarkers);
 
 	/**
-     * Retrieves the page title based on the current route.
-     *
-     * @returns {string} The title of the current page.
-     */
+	 * Retrieves the page title based on the current route.
+	 *
+	 * @returns {string} The title of the current page.
+	 */
 	const getPageTitle = () => {
 		switch (location.pathname) {
 			case "/profile":
@@ -139,17 +135,17 @@ if (filters.close_time) {
 	};
 
 	/**
-     * Handles the avatar click to open the user menu.
-     *
-     * @param {Object} event - The click event.
-     */
+	 * Handles the avatar click to open the user menu.
+	 *
+	 * @param {Object} event - The click event.
+	 */
 	const handleAvatarClick = (event) => {
 		setAnchorEl(event.currentTarget);
 	};
 
-    /**
-     * Closes the user menu.
-     */
+	/**
+	 * Closes the user menu.
+	 */
 	const handleMenuClose = () => {
 		setAnchorEl(null);
 	};
@@ -170,17 +166,23 @@ if (filters.close_time) {
 
 	return (
 		<Box className="outermost-container" sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
-			<AppBar position="fixed" sx={{ zIndex: 3 , bgcolor:"#3f51b5",color:"white"}}>
+			<AppBar position="fixed" sx={{ zIndex: 3, bgcolor: "#3f51b5", color: "white" }}>
 				<Toolbar>
 					{location.pathname !== "/homepage" && location.pathname !== "/auth" && (
-						<Button
-							variant="Text"
-							color="primary"
-							startIcon={<KeyboardBackspaceIcon />}
-							onClick={() => navigate(-1)}
-						>
-							Back
-						</Button>
+						<>
+							<Button
+								variant="Text"
+								color="primary"
+								startIcon={<KeyboardBackspaceIcon />}
+								onClick={() => navigate(-1)}
+							/>
+							<Button
+								variant="Text"
+								color="primary"
+								startIcon={<HomeIcon />}
+								onClick={() => navigate("/homepage")}
+							/>
+						</>
 					)}
 					<Typography variant="h6" sx={{ flexGrow: 1, justifyContent: "center", textAlign: "center" }}>
 						{getPageTitle()}
@@ -220,7 +222,17 @@ if (filters.close_time) {
 					<Route path="/spot" element={<Spot />} />
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
-					<Route path="/homepage" element={<HomePage setSelectedMarker={setSelectedMarker} setNewMarker={setNewMarker} newMarker={newMarker} setFilters={setFilters}/>} />
+					<Route
+						path="/homepage"
+						element={
+							<HomePage
+								setSelectedMarker={setSelectedMarker}
+								setNewMarker={setNewMarker}
+								newMarker={newMarker}
+								setFilters={setFilters}
+							/>
+						}
+					/>
 
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
@@ -240,7 +252,6 @@ if (filters.close_time) {
 								mapRef={mapRef}
 								filteredMarkers={filteredMarkers}
 								setFilters={setFilters}
-								
 							/>
 						}
 					/>

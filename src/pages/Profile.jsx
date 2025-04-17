@@ -21,7 +21,7 @@ import axios from "axios";
 import { CurrencyRupee } from "@mui/icons-material";
 import { BACKEND_URL } from "../const";
 import { SpotBookingView } from "../components/SpotBookingView";
-
+import { ConfirmationDialogBox } from "../components/ConfirmationDialogBox";
 /**
  * Profile Component
  *
@@ -40,6 +40,9 @@ const Profile = () => {
 	const [bookingDetails, setBookingDetails] = useState([]);
 	const [editSpotOpen, setEditSpotOpen] = useState(false);
 	const [totalEarning, setTotalEarning] = useState(0); // State to store total earnings
+	const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
+	const [confirmationMessage, setConfirmationMessage] = useState(null);
+	const [selectedSpotID, setSelectedSpotID] = useState(null);
 	/**
 	 * Fetches the user's profile data from the server and updates the user state.
 	 */
@@ -152,7 +155,14 @@ const Profile = () => {
 		try {
 			const response = await axios.delete(`${BACKEND_URL}/spots/${spotId}`);
 			if (response.status === 200) {
-				setBookingDetails(response.data);
+				const token = localStorage.getItem("token");
+				const user_id = String(localStorage.getItem("user_id"));
+				const spotRes = await axios.get(`${BACKEND_URL}/spots/owner/${user_id}`, {
+					headers: { Authorization: `Bearer ${token}` },
+				});
+				setBookingDetails(spotRes.data);
+				const total = response.data.reduce((acc, spot) => acc + spot.totalEarning, 0);
+				setTotalEarning(total);
 			}
 		} catch (error) {
 			console.error("Error deleting spot:", error);
@@ -163,6 +173,19 @@ const Profile = () => {
 		setSelectedSpot(userSpots.find((spot) => spot.id === spotID));
 		toggleEditSpot();
 	};
+
+	const onDeleteSpotClick = (spotId) =>{
+		setSelectedSpotID(spotId);
+		setConfirmationMessage("Are you sure you want to delete this spot?")
+		setConfirmationDialogOpen(true);
+	}
+
+	const onDeleteConfirmation = () =>{
+		setConfirmationDialogOpen(false);
+		setConfirmationMessage(null);
+		handleDeleteSpot(selectedSpotID);
+		setSelectedSpotID(null);
+	}
 
 	const toggleEditSpot = () => {
 		setEditSpotOpen(!editSpotOpen);
@@ -273,7 +296,7 @@ const Profile = () => {
 										<Button variant="outlined" color="primary" onClick={() => onEditSpotClick(spot.id)}>
 											Edit
 										</Button>
-										<Button variant="outlined" color="error" onClick={() => handleDeleteSpot(spot.id)}>
+										<Button variant="outlined" color="error" onClick={() => onDeleteSpotClick(spot.id)}>
 											Delete
 										</Button>
 										<Button
@@ -306,6 +329,7 @@ const Profile = () => {
 			{selectedSpot != null && (
 				<EditSpot open={editSpotOpen} handleClose={toggleEditSpot} spot={selectedSpot} handleSave={handleEditSpot} spot_id={selectedSpot.id}/>
 			)}
+			<ConfirmationDialogBox open={confirmationDialogOpen} message={confirmationMessage} onCancel={()=>setConfirmationDialogOpen(false)} onConfirm={()=>onDeleteConfirmation()}/>
 		</Container>
 	);
 };
