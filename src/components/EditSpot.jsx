@@ -275,6 +275,9 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 								name="spot_title"
 								value={formData.spot_title}
 								onChange={handleInputChange}
+								sx={{
+									mt:2
+								}}
 							/>
 						</Grid>
 						<Grid item xs={12}>

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useMemo } from "react";
 import { Box, Button, Alert, Snackbar, Dialog } from "@mui/material";
 import { GoogleMap } from "@react-google-maps/api";
 import { MarkerComponent } from "./MarkerComponent";
@@ -13,10 +13,10 @@ import { Spot } from "../pages/Spot";
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef, filteredMarkers }) {
 	const { isLoaded, loadError } = useContext(MapContext);
 	const navigate = useNavigate();
-	const defaultCenter = {
+	const defaultCenter = useMemo(() => ({
 		lat: 18.519584,
 		lng: 73.855421,
-	};
+	}), []);
 
 	const [currentPosition, setCurrentPosition] = useState(null);
 	const [openAddSpotDialogBox, setOpenAddSpotDialogBox] = useState(false);
@@ -138,7 +138,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 			// Otherwise use default center
 			setMapCenter(defaultCenter);
 		}
-	}, [newMarker, currentPosition]);
+	}, [newMarker, currentPosition, defaultCenter]);
 
 	// Calculate distance between selected marker and the seach point location
 	const calculateDistance = (origin, destination) => {

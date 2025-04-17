@@ -38,6 +38,7 @@ let defaultCenter = {
   lng: 73.85537,
 };
 
+// eslint-disable-next-line no-unused-vars
 const dialogStyle = {
   position: "absolute",
   zIndex: 9999,
