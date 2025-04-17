@@ -5,14 +5,12 @@ import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import InfoIcon from "@mui/icons-material/Info";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Booking } from "../pages/Booking";
 
 const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, calculateDistance }) => {
-	const navigate = useNavigate();
-	const [dialogBookingOpen, setDialogBookingOpen] =useState(false);
-
+	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
 
 	const toggleDialogBooking = () => setDialogBookingOpen(!dialogBookingOpen);
 	if (!selectedMarker) {
@@ -21,8 +19,8 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
 	}
 
 	const position = {
-		lat:  selectedMarker.latitude,
-		lng:  selectedMarker.longitude,
+		lat: selectedMarker.latitude,
+		lng: selectedMarker.longitude,
 	};
 
 	if (!position.lat || !position.lng) {
@@ -34,19 +32,6 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
 		selectedMarker && newMarker && (selectedMarker.name !== newMarker.name || selectedMarker.spot_id !== newMarker.spot_id);
 
 	const isSearchLocation = !selectedMarker.spot_id;
-
-	const showDetails = () => {
-		try {
-			if (selectedMarker) {
-				console.log("Before navigating  ", selectedMarker); // Ensure selectedMarker is not null
-				navigate(`/spotdetail/${selectedMarker.spot_id}`);
-			} else {
-				throw new Error("No marker selected to navigate!");
-			}
-		} catch (error) {
-			console.error("Navigation error:", error.message);
-		}
-	};
 
 	return (
 		<Box>
@@ -71,7 +56,6 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
 						<Typography variant="h6" fontWeight="bold" color="primary">
 							{selectedMarker?.spot_title || "Destination"}
 						</Typography>
-
 					</Box>
 
 					<Box sx={{ display: "flex", alignItems: "center", mb: 1, maxWidth: 260 }}>
@@ -126,11 +110,7 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
 				</Box>
 			</InfoWindow>
 
-			<Booking
-        open={dialogBookingOpen}
-        spot_information={selectedMarker}
-        set_dialog={toggleDialogBooking}
-      />
+			<Booking open={dialogBookingOpen} spot_information={selectedMarker} set_dialog={toggleDialogBooking} />
 		</Box>
 	);
 };

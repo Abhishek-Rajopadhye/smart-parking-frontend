@@ -85,18 +85,14 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 			if (status === "OK" && results[0]) {
 				const location = results[0].geometry.location;
 
-
 				console.log("Lat:", location.lat(), "Lng:", location.lng());
 				const newSearchMarker = { name: description, location: { lat: location.lat(), lng: location.lng() } };
 				// const marker = { lat: location.lat(), lng: location.lng() }
 				setNewMarker(newSearchMarker);
 				setSelectedMarker(newSearchMarker);
-
-
 			}
 		});
 	};
-
 
 	const handleClearSearch = () => {
 		setSearchAddress("");
@@ -333,20 +329,34 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 						variant="contained"
 						onClick={() => {
 							console.log("Selected Date:", selectedDate.toDateString());
-							console.log("Selected Day:", selectedDate.toLocaleDateString('en-US', { weekday: 'short' }));
-							const weekDay=selectedDate.toLocaleDateString('en-US', { weekday: 'short' });
-							
-							 setFilters((prev)=>({...prev,available_days: [weekDay]}));
-							if (startTime) {
-								setFilters((prev) => ({ ...prev, open_time: (startTime?.getHours() || 0) + ":" + (startTime?.getMinutes().toString().padStart(2, '0')) }));
-								console.log("Enter After:", (startTime?.getHours() || 0) + ":" + (startTime?.getMinutes().toString().padStart(2, '0')));
+							console.log("Selected Day:", selectedDate.toLocaleDateString("en-US", { weekday: "short" }));
+							const weekDay = selectedDate.toLocaleDateString("en-US", { weekday: "short" });
 
+							setFilters((prev) => ({ ...prev, available_days: [weekDay] }));
+							if (startTime) {
+								setFilters((prev) => ({
+									...prev,
+									open_time:
+										(startTime?.getHours() || 0) +
+										":" +
+										startTime?.getMinutes().toString().padStart(2, "0"),
+								}));
+								console.log(
+									"Enter After:",
+									(startTime?.getHours() || 0) + ":" + startTime?.getMinutes().toString().padStart(2, "0")
+								);
 							}
 
 							if (endTime) {
-								setFilters((prev) => ({ ...prev, close_time: (endTime?.getHours() || 0) + ":" + (endTime?.getMinutes().toString().padStart(2, '0')) }));
-								console.log("Exit Before:", (endTime?.getHours() || 0) + ":" + (endTime?.getMinutes().toString().padStart(2, '0')));
-
+								setFilters((prev) => ({
+									...prev,
+									close_time:
+										(endTime?.getHours() || 0) + ":" + endTime?.getMinutes().toString().padStart(2, "0"),
+								}));
+								console.log(
+									"Exit Before:",
+									(endTime?.getHours() || 0) + ":" + endTime?.getMinutes().toString().padStart(2, "0")
+								);
 							}
 							navigate("/mapsearch", {
 								state: {
