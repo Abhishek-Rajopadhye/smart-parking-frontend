@@ -264,10 +264,6 @@ const DetailInfo = () => {
             textAlign: { xs: "center", sm: "left" },
           }}
         >
-          {/* <Avatar
-            src={ownerDetail.profile_picture}
-            sx={{ mr: { sm: 2 }, mb: { xs: 1, sm: 0 }, width: 56, height: 56 }}
-          /> */}
           <Box>
             <Typography variant="h6">
               Owner: {ownerDetail.name || "Unknown Owner"}
