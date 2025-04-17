@@ -16,6 +16,7 @@ import DetailInfo from "./components/DetailInfo";
 import { MapProvider } from "./context/MapContext";
 import HomePage from "./pages/HomePage";
 import MapSearch from "./pages/MapSearch";
+import Validation from "./pages/Validation";
 
 /**
  * AppLayout component for rendering the main layout of the application.
@@ -269,7 +270,7 @@ const AppLayout = () => {
 						}
 					/>
 					<Route path="/spotdetail/:spot_id" element={<DetailInfo />} />
-					<Route path="/validation"/>
+					<Route path="/validation" element={<Validation/>}/>
 					<Route path="*" element={<Navigate to="/homepage" />} />
 				</Routes>
 			</Box>
