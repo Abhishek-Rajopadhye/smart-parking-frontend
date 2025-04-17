@@ -66,17 +66,16 @@ const AppLayout = () => {
 			result = result.filter((marker) => filters.available_days.every((day) => marker.available_days.includes(day)));
 		}
 
-		
-
-
-if (filters.hourly_rate) {
-	result = result.filter((marker) =>  marker.hourly_rate >= filters.hourly_rate[0] && marker.hourly_rate <= filters.hourly_rate[1]);
-  }
-// Function to parse time string to minutes since midnight
-function parseTime(timeStr) {
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    return hours * 60 + minutes;
-}
+		if (filters.hourly_rate) {
+			result = result.filter(
+				(marker) => marker.hourly_rate >= filters.hourly_rate[0] && marker.hourly_rate <= filters.hourly_rate[1]
+			);
+		}
+		// Function to parse time string to minutes since midnight
+		function parseTime(timeStr) {
+			const [hours, minutes] = timeStr.split(":").map(Number);
+			return hours * 60 + minutes;
+		}
 
 		// Function to parse time string with AM/PM to minutes since midnight
 		function parseTimeWithAMPM(timeStr) {
@@ -107,9 +106,11 @@ function parseTime(timeStr) {
 				return markerCloseTimeMinutes >= filterCloseTimeMinutes && markerOpenTimeMinutes <= filterCloseTimeMinutes;
 			});
 		}
-if (filters.hourly_rate) {
-	result = result.filter((marker) =>  marker.hourly_rate >= filters.hourly_rate[0] && marker.hourly_rate <= filters.hourly_rate[1]);
-  }
+		if (filters.hourly_rate) {
+			result = result.filter(
+				(marker) => marker.hourly_rate >= filters.hourly_rate[0] && marker.hourly_rate <= filters.hourly_rate[1]
+			);
+		}
 
 		setFilteredMarkers(result);
 	}, [filters, markers]);
@@ -138,6 +139,8 @@ if (filters.hourly_rate) {
 				return "Booking";
 			case "/spotdetail":
 				return "Detailed Info";
+			case "/validation":
+				return "Verify Spot Requests";
 			default:
 				return "App";
 		}
@@ -163,6 +166,7 @@ if (filters.hourly_rate) {
 		{ label: "Home", path: "/homepage" },
 		{ label: "Profile", path: "/profile" },
 		{ label: "My Bookings", path: "/booking-history" },
+		{ label: "Verify Spot Requests", path: "/validation"}
 	];
 
 	if (!user) {
@@ -197,7 +201,7 @@ if (filters.hourly_rate) {
 						{getPageTitle()}
 					</Typography>
 					<IconButton onClick={handleAvatarClick}>
-						<Avatar alt="User Avatar" src={user.profile_picture || ""} />
+						<Avatar alt="Avatar" src={user.profile_picture || ""} />
 					</IconButton>
 					<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
 						{routes.map((route) => (
@@ -265,6 +269,7 @@ if (filters.hourly_rate) {
 						}
 					/>
 					<Route path="/spotdetail/:spot_id" element={<DetailInfo />} />
+					<Route path="/validation"/>
 					<Route path="*" element={<Navigate to="/homepage" />} />
 				</Routes>
 			</Box>
