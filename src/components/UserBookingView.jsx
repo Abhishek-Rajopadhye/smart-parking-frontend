@@ -9,6 +9,7 @@ import {
 	TableHead,
 	TableRow,
 	TableCell,
+	TablePagination,
 	TableBody,
 	Collapse,
 	IconButton,
@@ -65,7 +66,7 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 	const canCheckIn = (startDateTime) => {
 		const now = new Date();
 		const startTime = new Date(startDateTime);
-		const diffInMinutes = Math.floor(Math.abs((startTime - now) / (1000 * 60))); // Difference in minutes
+		const diffInMinutes = Math.floor((startTime - now) / (1000 * 60)); // Difference in minutes
 		return diffInMinutes <= 15 && diffInMinutes >= 0; // Allow check-in within 15 minutes before start time
 	};
 
@@ -109,9 +110,9 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 	};
 
 	return (
-		<Box sx={{ padding: 3 }}>
+		<Box sx={{ padding: 1 }}>
 			<TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2 }}>
-				<Table>
+				<Table sx={{width:"85vw"}}>
 					<TableHead>
 						<TableRow sx={{ backgroundColor: "#f5f5f5" }}>
 							<TableCell />

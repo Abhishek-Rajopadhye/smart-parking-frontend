@@ -1,44 +1,50 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext, useEffect, useState } from "react";
 import {
-	Box,
-	Typography,
-	Button,
-	Select,
-	MenuItem,
-	Card,
-	CardMedia,
-	CardContent,
-	CardActions,
-	FormControl,
-	InputLabel,
+  Box,
+  Typography,
+  Button,
+  Select,
+  MenuItem,
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Booking } from "../pages/Booking";
 
-const MarkerCard = ({ markers, origin ,latlng}) => {
-    const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
+const MarkerCard = ({ markers, origin, latlng }) => {
+  const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
   const [sortedMarkers, setSortedMarkers] = useState([]);
   const [sortType, setSortType] = useState("price");
-   const navigate = useNavigate();
-  console.log("Origin",origin)
-  console.log("ON the marker card ",markers);
+  const [bookingMarker, setBookingMarker] = useState(null);
+
+
+  console.log("booking marker",bookingMarker);
+  const navigate = useNavigate();
+  //  console.log("Origin",origin)
+  //  console.log("lat.l",latlng);
+  //  console.log("ON the marker card ",markers);
   // Calculate walking time & distance
 
   const toggleDialogBooking = () => {
-		setDialogBookingOpen(!dialogBookingOpen);
-	};
+    setDialogBookingOpen(!dialogBookingOpen);
+  };
 
   useEffect(() => {
     if (!window.google || !origin || markers.length === 0) return;
-  
+
     const service = new window.google.maps.DistanceMatrixService();
     const destinations = markers.map((marker) => ({
       lat: marker.latitude,
       lng: marker.longitude,
     }));
-  
-    console.log("Destinations:", destinations);
-  
+
+    //  console.log("Destinations:", destinations);
+    // console.log(" :", destinations);
     service.getDistanceMatrix(
       {
         origins: [origin],
@@ -48,11 +54,11 @@ const MarkerCard = ({ markers, origin ,latlng}) => {
       },
       (response, status) => {
         if (status === "OK" && response?.rows?.length > 0) {
-          console.log("Distance Matrix Response:", response);
-  
+          // console.log("Distance Matrix Response:", response);
+
           const updated = markers.map((marker, index) => {
             const element = response.rows[0]?.elements?.[index];
-  
+
             return {
               ...marker,
               walkingDistance: element?.distance?.text || "N/A",
@@ -60,7 +66,7 @@ const MarkerCard = ({ markers, origin ,latlng}) => {
               rawDistance: element?.distance?.value || Infinity,
             };
           });
-  
+
           setSortedMarkers(sortMarkers(updated, sortType));
         } else {
           console.error("Distance Matrix failed:", status, response);
@@ -68,34 +74,34 @@ const MarkerCard = ({ markers, origin ,latlng}) => {
       }
     );
   }, [markers, origin, sortType]);
-  
 
 
-// const calculateDistance = (origin, destination) => {
-//     try {
-//         if (!window.google?.maps?.geometry) return null;
 
-//         if (!origin?.lat || !origin?.lng || !destination?.lat || !destination?.lng) {
-//             throw new Error("Invalid coordinates provided for distance calculation");
-//         }
+  // const calculateDistance = (origin, destination) => {
+  //     try {
+  //         if (!window.google?.maps?.geometry) return null;
 
-//         const originLatLng = new window.google.maps.LatLng(origin.lat, origin.lng);
+  //         if (!origin?.lat || !origin?.lng || !destination?.lat || !destination?.lng) {
+  //             throw new Error("Invalid coordinates provided for distance calculation");
+  //         }
 
-//         const destinationLatLng = new window.google.maps.LatLng(destination.lat, destination.lng);
+  //         const originLatLng = new window.google.maps.LatLng(origin.lat, origin.lng);
 
-//         // Distance in meters
-//         const distanceInMeters = window.google.maps.geometry.spherical.computeDistanceBetween(
-//             originLatLng,
-//             destinationLatLng
-//         );
+  //         const destinationLatLng = new window.google.maps.LatLng(destination.lat, destination.lng);
 
-//         // Converting  km with 2 decimal places
-//         return (distanceInMeters / 1000).toFixed(2);
-//     } catch (error) {
-//         console.error("Distance claculation error:", error);
-//         return null;
-//     }
-// };
+  //         // Distance in meters
+  //         const distanceInMeters = window.google.maps.geometry.spherical.computeDistanceBetween(
+  //             originLatLng,
+  //             destinationLatLng
+  //         );
+
+  //         // Converting  km with 2 decimal places
+  //         return (distanceInMeters / 1000).toFixed(2);
+  //     } catch (error) {
+  //         console.error("Distance claculation error:", error);
+  //         return null;
+  //     }
+  // };
 
   const sortMarkers = (markerList, type) => {
     if (type === "price") {
@@ -113,7 +119,7 @@ const MarkerCard = ({ markers, origin ,latlng}) => {
   };
 
   return (
-    <Box sx={{ maxHeight: "100vh" ,p: 2, bgcolor: "#f9f9f9" }}>
+    <Box sx={{ maxHeight: "100vh", p: 2, bgcolor: "#f9f9f9" }}>
       <FormControl fullWidth size="small" sx={{ mb: 2 }}>
         <InputLabel>Sort by</InputLabel>
         <Select value={sortType} label="Sort by" onChange={handleSortChange}>
@@ -123,7 +129,8 @@ const MarkerCard = ({ markers, origin ,latlng}) => {
       </FormControl>
 
       {sortedMarkers.map((spot) => (
-        <Card key={spot.spot_id} sx={{ display: "flex", mb: 2, borderRadius: 3, boxShadow: 2 }}>
+        <Card key={spot.spot_id} 
+        sx={{ display: "flex", mb: 2, borderRadius: 3,flexDirection: "column",boxShadow: 2 }}>
           {/* <CardMedia
             component="img"
             image={spot.image || "/placeholder.jpg"}
@@ -131,36 +138,76 @@ const MarkerCard = ({ markers, origin ,latlng}) => {
             sx={{ width: 100, height: 100, borderRadius: "12px 0 0 12px" }}
           /> */}
 
-          <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
-            <CardContent sx={{ pb: 0 }}>
-              <Box sx={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-              <Typography fontWeight="bold" noWrap>{spot.spot_title}</Typography>
-              <Typography fontWeight="bold" sx={{ mt: 0.5 }}>
-              ₹ {spot.hourly_rate}
+            <CardContent sx={{ pb: 1 }}>
+             
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap" }}>
+              <Typography
+                fontWeight="bold"
+                sx={{
+                  fontSize: "0.8rem",
+                  whiteSpace: "normal",
+                  wordBreak: "break-word",
+                  maxWidth: "75%",
+                }}
+              >
+                {spot.spot_title}
               </Typography>
-              </Box>
-              
-              <Typography variant="body2" color="text.secondary">
+              <Typography fontWeight="bold" color="green" sx={{ mt: 0.5 }}>
+                ₹ {spot.hourly_rate}
+              </Typography>
+            </Box>
+                
+            
+              <Typography variant="body2" 
+              color="text.secondary"
+              sx={{
+               
+                whiteSpace: "normal",
+                wordBreak: "break-word",
+                maxWidth: "85%",
+              }}
+              >
                 🚶 {spot.walkingDuration} ({spot.walkingDistance})
+                
                 {/* ({calculateDistance({ lat: latlng.lat, lng: latlng.lng}, { lat: spot.latitude, lng: spot.longitude })} km ) */}
               </Typography>
               
             </CardContent>
-            <CardActions>
-              <Button size="small"
-              onClick={() => {navigate(`/spotdetail/${spot.spot_id}`)
-     console.log("Inside navigate ",spot.spot_id);
-            }
             
-            }
-            variant="text"
-              >Details</Button>
-              <Button size="small" 
-              >Book </Button>
+            <CardActions>
+              <Button
+                size="small"
+                onClick={() => {
+                  navigate(`/spotdetail/${spot.spot_id}`);
+                  console.log("Inside navigate ", spot.spot_id);
+                }}
+                variant="text"
+              >
+                Details
+              </Button>
+              <Button size="small"
+              color="success"
+              
+                onClick={() => {
+                  console.log("SPott" ,spot);
+                  setBookingMarker(spot);
+                  toggleDialogBooking();
+
+                }} >Book  </Button>
+                
             </CardActions>
-          </Box>
+            
+          
         </Card>
       ))}
+
+    {bookingMarker && (
+      <Booking
+        spot_information={bookingMarker}
+        open={dialogBookingOpen}
+        set_dialog={toggleDialogBooking}
+      />
+    )}  
     </Box>
   );
 };
