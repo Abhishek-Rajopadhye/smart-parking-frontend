@@ -9,6 +9,7 @@ import {
 	TableHead,
 	TableRow,
 	TableCell,
+	TablePagination,
 	TableBody,
 	Collapse,
 	IconButton,
@@ -109,9 +110,9 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 	};
 
 	return (
-		<Box sx={{ padding: 3 }}>
+		<Box sx={{ padding: 1 }}>
 			<TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2 }}>
-				<Table>
+				<Table sx={{width:"85vw"}}>
 					<TableHead>
 						<TableRow sx={{ backgroundColor: "#f5f5f5" }}>
 							<TableCell />
