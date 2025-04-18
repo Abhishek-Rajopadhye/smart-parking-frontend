@@ -33,35 +33,10 @@ const Validation = () => {
 	 */
 	const fetchDocuments = async () => {
 		const response = await axios.get(`${BACKEND_URL}/verfiy-list`);
-		if(response.status == 200){
-		    setRequests(response.data);
+		if (response.status == 200) {
+			setRequests(response.data);
 		}
-		// setRequests([
-		// 	{
-		// 		id: 1,
-		// 		spot_title: "ABC",
-		// 		spot_address: "ABC GEF",
-		// 		identityProof: "",
-		// 		ownershipProof: "",
-		// 		noc: "",
-		// 	},
-		// 	{
-		// 		id: 2,
-		// 		spot_title: "XYZ",
-		// 		spot_address: "XYZ PQR",
-		// 		identityProof: "",
-		// 		ownershipProof: "",
-		// 		noc: "",
-		// 	},
-		// 	{
-		// 		id: 3,
-		// 		spot_title: "LMN",
-		// 		spot_address: "LMN PQR",
-		// 		identityProof: "",
-		// 		ownershipProof: "",
-		// 		noc: "",
-		// 	},
-		// ]);
+		
 	};
 
 	/**
@@ -78,7 +53,7 @@ const Validation = () => {
 	 * Handles the Deny action for a document.
 	 *
 	 * Placeholder function for now.
-	 *
+	 *3
 	 * @param {number} id - The ID of the document to deny.
 	 */
 	const handleDeny = async (id) => {
@@ -89,13 +64,10 @@ const Validation = () => {
 	// Fetch documents on component load
 	useEffect(() => {
 		fetchDocuments();
-	},[]);
+	}, []);
 
 	return (
 		<Box sx={{ p: 3 }}>
-			<Typography variant="h4" gutterBottom>
-				Document Validation
-			</Typography>
 			<TableContainer component={Paper}>
 				<Table>
 					<TableHead>
@@ -126,12 +98,11 @@ const Validation = () => {
 								<TableRow
 									key={request.id}
 									onClick={() => {
-                                        if(collapseToggle == request.id){
-                                            setCollapseToggle(null);                                            
-                                        }
-                                        else{
-                                            setCollapseToggle(request.id);
-                                        }
+										if (collapseToggle == request.id) {
+											setCollapseToggle(null);
+										} else {
+											setCollapseToggle(request.id);
+										}
 									}}
 								>
 									<TableCell>{index + 1}</TableCell>
@@ -149,7 +120,7 @@ const Validation = () => {
 											Accept
 										</Button>
 										<Button variant="contained" color="error" onClick={() => handleDeny(request.id)}>
-											Deny
+											Reject
 										</Button>
 									</TableCell>
 								</TableRow>
