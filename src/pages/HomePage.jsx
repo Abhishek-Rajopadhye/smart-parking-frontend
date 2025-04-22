@@ -535,7 +535,6 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 						<Typography variant="h5" fontWeight="bold" textAlign="center" mb={6} color="text.primary">
 							How Smart Parking Works
 						</Typography>
-
 						<Grid container spacing={6} justifyContent="center">
 							{[
 								{

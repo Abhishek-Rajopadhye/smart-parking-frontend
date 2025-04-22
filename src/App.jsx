@@ -16,6 +16,7 @@ import DetailInfo from "./components/DetailInfo";
 import { MapProvider } from "./context/MapContext";
 import HomePage from "./pages/HomePage";
 import MapSearch from "./pages/MapSearch";
+import Validation from "./pages/Validation";
 
 /**
  * AppLayout component for rendering the main layout of the application.
@@ -139,6 +140,8 @@ const AppLayout = () => {
 				return "Booking";
 			case "/spotdetail":
 				return "Detailed Info";
+			case "/validation":
+				return "Verify Spot Requests";
 			default:
 				return "App";
 		}
@@ -164,6 +167,7 @@ const AppLayout = () => {
 		{ label: "Home", path: "/homepage" },
 		{ label: "Profile", path: "/profile" },
 		{ label: "My Bookings", path: "/booking-history" },
+		{ label: "Verify Spot Requests", path: "/validation"}
 	];
 
 	if (!user) {
@@ -198,7 +202,7 @@ const AppLayout = () => {
 						{getPageTitle()}
 					</Typography>
 					<IconButton onClick={handleAvatarClick}>
-						<Avatar alt="User Avatar" src={user.profile_picture || ""} />
+						<Avatar alt="Avatar" src={user.profile_picture || ""} />
 					</IconButton>
 					<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
 						{routes.map((route) => (
@@ -229,7 +233,7 @@ const AppLayout = () => {
 
 			<Box variant="main" sx={{ flex: 1, mt: 8 }}>
 				<Routes>
-					<Route path="/spot" element={<Spot />} />
+					{/* <Route path="/spot" element={<Spot />} /> */}
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
 					<Route
@@ -249,6 +253,7 @@ const AppLayout = () => {
 					<Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker} />} />
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
+					<Route path="/addspot" element={<Spot />} />
 					<Route
 						path="/mapsearch"
 						element={
@@ -266,6 +271,7 @@ const AppLayout = () => {
 						}
 					/>
 					<Route path="/spotdetail/:spot_id" element={<DetailInfo />} />
+					<Route path="/validation" element={<Validation/>}/>
 					<Route path="*" element={<Navigate to="/homepage" />} />
 				</Routes>
 			</Box>
