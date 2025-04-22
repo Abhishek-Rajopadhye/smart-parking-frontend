@@ -350,7 +350,7 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 					borderRadius: isMobile ? 2 : 1,
 					py: isMobile ? 1.5 : 1.25,
 				}}
-				onClick={() => setOpenAddSpotDialogBox(true)}
+				onClick={() => navigate("/addspot")}
 				variant="outlined"
 				fullWidth
 				disableElevation
