@@ -382,7 +382,7 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 					{/* Button to add new parking spot */}
 					<Button
 						sx={{ position: "relative" }}
-						onClick={() => setOpenAddSpotDialogBox(true)}
+						onClick={() => navigate("/addspot")}
 						variant="contained"
 						fullWidth
 						disableElevation

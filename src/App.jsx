@@ -228,7 +228,7 @@ if (filters.hourly_rate) {
 
 			<Box variant="main" sx={{ flex: 1, mt: 8 }}>
 				<Routes>
-					<Route path="/spot" element={<Spot />} />
+					{/* <Route path="/spot" element={<Spot />} /> */}
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
 					<Route
@@ -248,6 +248,7 @@ if (filters.hourly_rate) {
 					<Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker} />} />
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
+					<Route path="/addspot" element={<Spot />} />
 					<Route
 						path="/mapsearch"
 						element={
