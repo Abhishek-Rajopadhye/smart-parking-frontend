@@ -140,19 +140,20 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 
             <CardContent sx={{ pb: 1 }}>
              
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap" }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <Typography
                 fontWeight="bold"
+                noWrap
                 sx={{
                   fontSize: "0.8rem",
-                  whiteSpace: "normal",
-                  wordBreak: "break-word",
+               //  whiteSpace: "normal",
                   maxWidth: "75%",
+                  
                 }}
               >
                 {spot.spot_title}
               </Typography>
-              <Typography fontWeight="bold" color="green" sx={{ mt: 0.5 }}>
+              <Typography fontWeight="bold" color="green" >
                 ₹ {spot.hourly_rate}
               </Typography>
             </Box>
