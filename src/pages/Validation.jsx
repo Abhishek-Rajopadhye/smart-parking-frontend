@@ -12,6 +12,7 @@ import {
 	Paper,
 	Collapse,
 	Container,
+	TablePagination,
 } from "@mui/material";
 import axios from "axios";
 import { BACKEND_URL } from "../const";
@@ -28,15 +29,17 @@ import { BACKEND_URL } from "../const";
 const Validation = () => {
 	const [requests, setRequests] = useState([]);
 	const [collapseToggle, setCollapseToggle] = useState(null);
+	const [page, setPage] = useState(0); // Current page
+	const [rowsPerPage, setRowsPerPage] = useState(5); // Rows per page
+
 	/**
 	 * Fetches the list of documents from the backend.
 	 */
 	const fetchDocuments = async () => {
-		const response = await axios.get(`${BACKEND_URL}/verfiy-list`);
-		if (response.status == 200) {
+		const response = await axios.get(`${BACKEND_URL}/verfiy-list/`);
+		if (response.status === 200) {
 			setRequests(response.data);
 		}
-		
 	};
 
 	/**
@@ -52,13 +55,31 @@ const Validation = () => {
 	/**
 	 * Handles the Deny action for a document.
 	 *
-	 * Placeholder function for now.
-	 *3
 	 * @param {number} id - The ID of the document to deny.
 	 */
 	const handleDeny = async (id) => {
 		const response = await axios.put(`${BACKEND_URL}/verify-list/request/reject/${id}`);
 		console.log(response.data);
+	};
+
+	/**
+	 * Handles changing the current page.
+	 *
+	 * @param {Object} event - The event object.
+	 * @param {number} newPage - The new page number.
+	 */
+	const handleChangePage = (event, newPage) => {
+		setPage(newPage);
+	};
+
+	/**
+	 * Handles changing the number of rows per page.
+	 *
+	 * @param {Object} event - The event object.
+	 */
+	const handleChangeRowsPerPage = (event) => {
+		setRowsPerPage(parseInt(event.target.value, 10));
+		setPage(0); // Reset to the first page
 	};
 
 	// Fetch documents on component load
@@ -72,7 +93,7 @@ const Validation = () => {
 				<Table>
 					<TableHead>
 						<TableRow>
-							<TableCell>
+							<TableCell width="5vw">
 								<strong>Sr.No</strong>
 							</TableCell>
 							<TableCell>
@@ -84,55 +105,76 @@ const Validation = () => {
 							<TableCell>
 								<strong>Ownership Proof Document</strong>
 							</TableCell>
-							<TableCell>
-								<strong>NOC</strong>
-							</TableCell>
-							<TableCell>
+							<TableCell width="15%">
 								<strong>Actions</strong>
 							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{requests.map((request, index) => (
-							<>
+						{requests.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((request, index) => (
+							<React.Fragment key={request.spot_id}>
 								<TableRow
-									key={request.id}
 									onClick={() => {
-										if (collapseToggle == request.id) {
+										if (collapseToggle === index) {
 											setCollapseToggle(null);
 										} else {
-											setCollapseToggle(request.id);
+											setCollapseToggle(index);
 										}
 									}}
 								>
-									<TableCell>{index + 1}</TableCell>
+									<TableCell>{page * rowsPerPage + index + 1}</TableCell>
 									<TableCell>{request.spot_title}</TableCell>
 									<TableCell>{request.identityProof}</TableCell>
 									<TableCell>{request.ownershipProof}</TableCell>
-									<TableCell>{request.noc}</TableCell>
-									<TableCell>
+									<TableCell align="right">
 										<Button
 											variant="contained"
 											color="success"
 											sx={{ mr: 1 }}
-											onClick={() => handleAccept(request.id)}
+											onClick={(e) => {
+												e.stopPropagation();
+												handleAccept(request.spot_id);
+											}}
 										>
 											Accept
 										</Button>
-										<Button variant="contained" color="error" onClick={() => handleDeny(request.id)}>
+										<Button
+											variant="contained"
+											color="error"
+											onClick={(e) => {
+												e.stopPropagation();
+												handleDeny(request.spot_id);
+											}}
+										>
 											Reject
 										</Button>
 									</TableCell>
 								</TableRow>
 								<TableRow>
-									<Collapse in={collapseToggle == request.id}>
-										<Container>{request.spot_address}</Container>
-									</Collapse>
+									<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
+										<Collapse in={collapseToggle === index} timeout="auto" unmountOnExit>
+											<Container>
+												<Typography variant="subtitle1" gutterBottom>
+													Address:
+												</Typography>
+												<Typography>{request.spot_address}</Typography>
+											</Container>
+										</Collapse>
+									</TableCell>
 								</TableRow>
-							</>
+							</React.Fragment>
 						))}
 					</TableBody>
 				</Table>
+				<TablePagination
+					rowsPerPageOptions={[5, 10, 20]}
+					component="div"
+					count={requests.length}
+					rowsPerPage={rowsPerPage}
+					page={page}
+					onPageChange={handleChangePage}
+					onRowsPerPageChange={handleChangeRowsPerPage}
+				/>
 			</TableContainer>
 		</Box>
 	);
