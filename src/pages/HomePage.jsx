@@ -433,7 +433,7 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 					].map((item) => (
 						<Grid item xs={12} md={4} textAlign="center" key={item.title}>
 							<Box component="img" src={item.img} alt={item.title} sx={{ width: 80, height: 80, mb: 2 }} />
-							<Typography variant="h6" fontWeight="bold" gutterBottom>
+							<Typography variant="h6" fontWeight="bold" gutterBottom color="text.primary">
 								{item.title}
 							</Typography>
 							<Typography variant="body2" color="text.secondary">
