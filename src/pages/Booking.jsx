@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -25,7 +25,7 @@ import { BACKEND_URL } from "../const";
 import { AuthContext } from "../context/AuthContext";
 
 //spot_information is object which hold the all information
-const Booking = ({ spot_information, open, set_dialog }) => {
+const Booking = ({ spot_information, open, set_dialog, previous_booking=null }) => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [razorpay_signature, setRazorpaySignature] = useState(null);
@@ -51,9 +51,9 @@ const Booking = ({ spot_information, open, set_dialog }) => {
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   yesterday.setHours(0, 0, 0, 0);
-  const showSnackbar = (message, severity = "info") => {
+  const showSnackbar = useCallback((message, severity = "info") => {
     setOpenSnackbar({ open: true, message, severity });
-  };
+  }, []);
 
   /**
    * This function is used to validate the date and time
@@ -121,7 +121,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
    * This function is used to download the pdf file
    * @returns
    */
-  const downloadPDF = async () => {
+  const downloadPDF = useCallback(async () => {
     const doc = new jsPDF();
     const primaryColor = "#007bff";
     const lightGray = "#f2f2f2";
@@ -296,7 +296,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
       showSnackbar("Fail to Send Receipt to mail", "error");
     }
     setButtonDisabled(true);
-  };
+  }, [indianEndTime, indianStartTime, paymentDetails, ratePerHour, showSnackbar, spot_information, totalAmount, totalSlots, user.email]);
 
   useEffect(() => {
     if (paymentStatus) {
@@ -314,7 +314,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
         navigate("/booking-history");
       }, 3000);
     }
-  }, [paymentStatus, navigate, downloadPDF]);
+  }, [paymentStatus, navigate, downloadPDF, showSnackbar]);
 
   /**
    * This function is used to calculate the amount of the parking slot
