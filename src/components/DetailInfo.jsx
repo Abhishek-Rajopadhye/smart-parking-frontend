@@ -60,14 +60,12 @@ const DetailInfo = () => {
 	const spot_information = selectedMarker;
 	console.log(spot_information);
 	const { user } = useContext(AuthContext);
-	const [razorpay_signature, setRazorpaySignature] = useState(null);
 	const [razorpay_order_id, setRazorpayOrderId] = useState(null);
 	const [totalSlots, setTotalSlots] = useState(1);
 	const [startTime, setStartTime] = useState(null);
 	const [endTime, setEndTime] = useState(null);
 	const [totalAmount, setTotalAmount] = useState(null);
 	const [ratePerHour, setRatePerHour] = useState(spot_information.hourly_rate);
-	const [openDialog, setOpenDialog] = useState(false);
 	const [prevTotalSlots, setPrevTotalSlots] = useState(0);
 	const [openSnackbar, setOpenSnackbar] = useState({
 		open: false,
@@ -79,13 +77,12 @@ const DetailInfo = () => {
 	const [indianStartTime, setIndianStartTime] = useState(null);
 	const [indianEndTime, setIndianEndTime] = useState(null);
 	const [flag, setFlag] = useState(false);
-	const [buttonDisabled, setButtonDisabled] = useState(false);
 	const yesterday = new Date();
 	yesterday.setDate(yesterday.getDate() - 1);
 	yesterday.setHours(0, 0, 0, 0);
-	const showSnackbar = (message, severity = "info") => {
+	const showSnackbar = useCallback((message, severity = "info") => {
 		setOpenSnackbar({ open: true, message, severity });
-	};
+	}, []);
 
 	/*
 	 */
@@ -180,7 +177,6 @@ const DetailInfo = () => {
 		const isoString = selectedDate.toLocaleString("en-IN", {
 			timeZone: "Asia/Kolkata",
 		});
-		const dateParts = isoString.split(",")[0].split("/");
 		const timeParts = isoString.split(",")[1].trim().split(":");
 		let hours = parseInt(timeParts[0]);
 		const minutes = parseInt(timeParts[1]);
@@ -386,9 +382,9 @@ const DetailInfo = () => {
                 showSnackbar("Failed to send receipt to email", "error");
             }
         } catch (err) {
+			console.log(err);
             showSnackbar("Fail to Send Receipt to mail", "error");
         }
-        setButtonDisabled(true);
 	}, [
 		indianEndTime,
 		indianStartTime,
@@ -417,7 +413,7 @@ const DetailInfo = () => {
 				navigate("/booking-history");
 			}, 3000);
 		}
-	}, [paymentStatus, navigate, downloadPDF]);
+	}, [paymentStatus, navigate, downloadPDF, showSnackbar]);
 
 	/**
 	 * This function is used to calculate the amount of the parking slot
@@ -506,10 +502,11 @@ const DetailInfo = () => {
 				});
 				setPrevTotalSlots(0);
 				setFlag(false);
+				console.log(response);
 			}
+
 			const start_time = dateTimeToString(startTime);
 			const end_time = dateTimeToString(endTime);
-			setRazorpaySignature(null);
 			setRazorpayOrderId(null);
 			setPrevTotalSlots(totalSlots);
 			orderResponse = await axios.post(`${BACKEND_URL}/bookings/book-spot`, {
@@ -552,7 +549,6 @@ const DetailInfo = () => {
 					});
 
 					try {
-						setRazorpaySignature(response.razorpay_signature);
 						const check_payment = await axios.post(`${BACKEND_URL}/bookings/update-payment-status`, {
 							start_time: indianStartTime,
 							end_time: indianEndTime,
@@ -566,7 +562,6 @@ const DetailInfo = () => {
 						}
 					} catch (error) {
 						if (error.response) {
-							const errorMsg = error.response.data?.detail || "Payment failed.";
 							showSnackbar("Booking failed We're refunding your payment", "error");
 						} else {
 							showSnackbar("Booking failed We're refunding your payment", "error");
@@ -596,6 +591,7 @@ const DetailInfo = () => {
 					spot_id: spot_information.spot_id,
 					total_slots: totalSlots,
 				});
+				console.log(response);
 				setTotalSlots(0);
 				setStartTime(null);
 				setEndTime(null);

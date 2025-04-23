@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	Box,
 	Typography,
@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { BACKEND_URL } from "../const";
+import {AuthContext} from "../context/AuthContext"
 
 /**
  * Validation page for displaying and managing document validation requests.
@@ -27,6 +28,7 @@ import { BACKEND_URL } from "../const";
  * @returns {JSX.Element} The Validation page component.
  */
 const Validation = () => {
+	const {user} = useContext(AuthContext);
 	const [requests, setRequests] = useState([]);
 	const [collapseToggle, setCollapseToggle] = useState(null);
 	const [page, setPage] = useState(0); // Current page
@@ -84,6 +86,7 @@ const Validation = () => {
 
 	// Fetch documents on component load
 	useEffect(() => {
+		if(user)
 		fetchDocuments();
 	}, []);
 
@@ -104,6 +107,9 @@ const Validation = () => {
 							</TableCell>
 							<TableCell>
 								<strong>Ownership Proof Document</strong>
+							</TableCell>
+							<TableCell>
+								<strong>Supporting Document(Optional)</strong>
 							</TableCell>
 							<TableCell width="15%">
 								<strong>Actions</strong>
@@ -126,6 +132,7 @@ const Validation = () => {
 									<TableCell>{request.spot_title}</TableCell>
 									<TableCell>{request.identityProof}</TableCell>
 									<TableCell>{request.ownershipProof}</TableCell>
+									<TableCell>{request.supportingDocument}</TableCell>
 									<TableCell align="right">
 										<Button
 											variant="contained"
