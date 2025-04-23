@@ -458,7 +458,7 @@ const DetailInfo = () => {
 
 		setTotalAmount(hours * spot_information.hourly_rate * totalSlots);
 		//setOpenDialog(true);
-		const t = `Are You Sure.!! You have to pay ${hours * spot_information.hourly_rate * totalSlots}`;
+		const t = `You have to pay ₹${hours * spot_information.hourly_rate * totalSlots}. Are you sure you want to proceed?`;
 		console.log(totalAmount);
 		console.log(t);
 		setMsg(t);
