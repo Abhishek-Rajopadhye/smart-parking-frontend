@@ -231,7 +231,7 @@ const AppLayout = () => {
 				</Toolbar>
 			</AppBar>
 
-			<Box variant="main" sx={{ flex: 1, mt: 8 }}>
+			<Box variant="main" sx={{ flex: 1, mt: 8, width:"100vw" }}>
 				<Routes>
 					{/* <Route path="/spot" element={<Spot />} /> */}
 					<Route path="/profile" element={<Profile />} />
