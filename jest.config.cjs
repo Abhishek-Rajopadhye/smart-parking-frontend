@@ -34,8 +34,8 @@ module.exports = {
 	testMatch: ["**/__tests__/**/*.test.{js,jsx,ts,tsx}", "**/?(*.)+(spec|test).{js,jsx,ts,tsx}"],
 
 	// Code coverage configuration (optional)
-	// collectCoverage: true,
-	// coverageDirectory: 'coverage',
-	// coverageReporters: ['json', 'lcov', 'text'],
-	// collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.d.ts'],
+	collectCoverage: true,
+	coverageDirectory: 'coverage',
+	coverageReporters: ['json', 'lcov', 'text'],
+	collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.d.ts'],
 };
