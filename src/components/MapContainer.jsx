@@ -1,31 +1,25 @@
 /* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState, useMemo } from "react";
-import { Box, Button, Alert, Snackbar, Dialog } from "@mui/material";
+import { Box, Alert } from "@mui/material";
 import { GoogleMap } from "@react-google-maps/api";
 import { MarkerComponent } from "./MarkerComponent";
 import { InfoWindowComponent } from "./InfoWindowComponent";
-import { IoLocationSharp } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
+
 import { CircularProgress } from "@mui/material";
 import { MapContext } from "../context/MapContext";
-import { Spot } from "../pages/Spot";
 
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef, filteredMarkers }) {
 	const { isLoaded, loadError } = useContext(MapContext);
-	const navigate = useNavigate();
-	const defaultCenter = useMemo(() => ({
-		lat: 18.519584,
-		lng: 73.855421,
-	}), []);
+
+	const defaultCenter = useMemo(
+		() => ({
+			lat: 18.519584,
+			lng: 73.855421,
+		}),
+		[]
+	);
 
 	const [currentPosition, setCurrentPosition] = useState(null);
-	const [openAddSpotDialogBox, setOpenAddSpotDialogBox] = useState(false);
-	const [snackbar, setSnackbar] = useState({
-		open: false,
-		message: "",
-		severity: "info", // "success", "error", "warning"
-	});
-	const [isRetrying, setIsRetrying] = useState(false);
 	const [mapCenter, setMapCenter] = useState(defaultCenter);
 
 	const mapStyles = {
@@ -36,7 +30,6 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 		width: "100%",
 	};
 
-	
 	/**
 	 * Fetch parking spot markers from the API
 	 */
@@ -44,93 +37,17 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 	//console.log("Marker fetched ", markers);
 	useEffect(() => {
 		if ("geolocation" in navigator) {
-			navigator.geolocation.getCurrentPosition(
-				(position) => {
-					const { latitude, longitude } = position.coords;
-					setCurrentPosition({ lat: latitude, lng: longitude });
-
-					setSnackbar({
-						open: true,
-						message: "📍 Location found successfully!",
-						severity: "success",
-					});
-				},
-				(error) => {
-					let errorMessage = "Something went wrong.";
-					if (error.code === error.PERMISSION_DENIED) {
-						errorMessage = "❌ Location permission denied.";
-					} else if (error.code === error.POSITION_UNAVAILABLE) {
-						errorMessage = "⚠️ Location unavailable.";
-					} else if (error.code === error.TIMEOUT) {
-						errorMessage = "⏳ Location request timed out.";
-					}
-
-					setSnackbar({
-						open: true,
-						message: errorMessage,
-						severity: "error",
-					});
-				}
-			);
-		} else {
-			setSnackbar({
-				open: true,
-				message: "🚫 Geolocation not supported by your browser.",
-				severity: "warning",
+			navigator.geolocation.getCurrentPosition((position) => {
+				const { latitude, longitude } = position.coords;
+				setCurrentPosition({ lat: latitude, lng: longitude });
 			});
 		}
 	}, []);
 
-	const handleRetryLocation = () => {
-		setIsRetrying(true);
-
-		if ("geolocation" in navigator) {
-			navigator.geolocation.getCurrentPosition(
-				(position) => {
-					const { latitude, longitude } = position.coords;
-					setCurrentPosition({ lat: latitude, lng: longitude });
-
-					setSnackbar({
-						open: true,
-						message: "📍 Location found successfully!",
-						severity: "success",
-					});
-					setIsRetrying(false);
-				},
-				(error) => {
-					let errorMessage = "Something went wrong.";
-					if (error.code === error.PERMISSION_DENIED) {
-						errorMessage = "❌ Location permission denied.";
-					} else if (error.code === error.POSITION_UNAVAILABLE) {
-						errorMessage = "⚠️ Location unavailable.";
-					} else if (error.code === error.TIMEOUT) {
-						errorMessage = "⏳ Location request timed out.";
-					}
-
-					setSnackbar({
-						open: true,
-						message: errorMessage,
-						severity: "error",
-					});
-					setIsRetrying(false); // Stop loading
-				}
-			);
-		} else {
-			setSnackbar({
-				open: true,
-				message: "🚫 Geolocation not supported by your browser.",
-				severity: "warning",
-			});
-			setIsRetrying(false);
-		}
-	};
-
-	
-
 	useEffect(() => {
 		if (newMarker) {
 			// Center the map to the searched location
-			setMapCenter({ lat: newMarker.lat, lng: newMarker.lng });
+			setMapCenter({ lat: newMarker.location.lat, lng: newMarker.location.lng });
 		} else if (currentPosition) {
 			// Center the map to user's current location if available
 			setMapCenter(currentPosition);
@@ -167,11 +84,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 		}
 	};
 
-	console.log("center ",currentPosition ,defaultCenter)
-
-	const handleCloseSnackbar = () => {
-		setSnackbar({ ...snackbar, open: false });
-	};
+	// console.log("center ",currentPosition ,defaultCenter)
 
 	if (loadError) {
 		return <Alert severity="error">Error loading maps: {loadError.message}</Alert>;
@@ -198,12 +111,12 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 					<GoogleMap
 						mapContainerStyle={mapStyles}
 						center={mapCenter}
-						zoom={12}
+						zoom={15}
 						onLoad={(map) => (mapRef.current = map)}
 						options={{
-							gestureHandling: 'greedy', // <-- important
+							gestureHandling: "greedy", // <-- important
 							zoomControl: true,
-						  }}
+						}}
 					>
 						{/*Render existing parking spot markers */}
 
@@ -229,34 +142,6 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 							/>
 						)}
 					</GoogleMap>
-
-					<Snackbar
-						open={snackbar.open}
-						autoHideDuration={4000}
-						onClose={handleCloseSnackbar}
-						anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-					>
-						<Alert
-							onClose={handleCloseSnackbar}
-							severity={snackbar.severity}
-							sx={{ width: "100%" }}
-							action={
-								snackbar.severity === "error" && (
-									<Button
-										color="inherit"
-										size="small"
-										onClick={handleRetryLocation}
-										disabled={isRetrying}
-										startIcon={isRetrying ? <CircularProgress size={16} color="inherit" /> : null}
-									>
-										{isRetrying ? "Retrying..." : "Retry"}
-									</Button>
-								)
-							}
-						>
-							{snackbar.message}
-						</Alert>
-					</Snackbar>
 				</>
 			)}
 		</Box>
