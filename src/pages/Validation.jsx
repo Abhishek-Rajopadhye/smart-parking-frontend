@@ -86,9 +86,10 @@ const Validation = () => {
 
 	// Fetch documents on component load
 	useEffect(() => {
-		if(user)
-		fetchDocuments();
-	}, []);
+		if(user.email == "abhishek.rajopadhye21@gmail.com"){
+			fetchDocuments();
+		}
+	}, [user.email]);
 
 	return (
 		<Box sx={{ p: 3 }}>
