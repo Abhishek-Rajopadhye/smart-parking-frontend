@@ -115,7 +115,7 @@ const AppLayout = () => {
 
 		setFilteredMarkers(result);
 	}, [filters, markers]);
-	 console.log("Filters and markers", filters, filteredMarkers);
+	console.log("Filters and markers", filters, filteredMarkers);
 
 	/**
 	 * Retrieves the page title based on the current route.
@@ -167,7 +167,6 @@ const AppLayout = () => {
 		{ label: "Home", path: "/homepage" },
 		{ label: "Profile", path: "/profile" },
 		{ label: "My Bookings", path: "/booking-history" },
-		{ label: "Verify Spot Requests", path: "/validation"}
 	];
 
 	if (!user) {
@@ -217,6 +216,18 @@ const AppLayout = () => {
 								{route.label}
 							</MenuItem>
 						))}
+						{user.email == "abhishek.rajopadhye21@gmail.com" && (
+							<MenuItem
+								key={"/validation"}
+								onClick={() => {
+									handleMenuClose();
+									navigate("/validation");
+								}}
+								selected={"/validation" === location.pathname}
+							>
+								Verify Spot Requests
+							</MenuItem>
+						)}
 						<MenuItem
 							onClick={() => {
 								handleMenuClose();
@@ -231,7 +242,7 @@ const AppLayout = () => {
 				</Toolbar>
 			</AppBar>
 
-			<Box variant="main" sx={{ flex: 1, mt: 8 }}>
+			<Box variant="main" sx={{ flex: 1, mt: 8, width: "100vw" }}>
 				<Routes>
 					{/* <Route path="/spot" element={<Spot />} /> */}
 					<Route path="/profile" element={<Profile />} />
@@ -271,7 +282,7 @@ const AppLayout = () => {
 						}
 					/>
 					<Route path="/spotdetail/:spot_id" element={<DetailInfo />} />
-					<Route path="/validation" element={<Validation/>}/>
+					<Route path="/validation" element={<Validation />} />
 					<Route path="*" element={<Navigate to="/homepage" />} />
 				</Routes>
 			</Box>
