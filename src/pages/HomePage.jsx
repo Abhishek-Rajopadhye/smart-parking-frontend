@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useRef, useEffect, useContext } from "react";
 import {
 	Dialog,
@@ -272,7 +273,7 @@ useEffect(() => {
 			console.error("Error initializing AutocompleteService:", error);
 		}
 	}
-}, [isLoaded]);
+}, [isLoaded, setNewMarker]);
 
 
 	// Search handling

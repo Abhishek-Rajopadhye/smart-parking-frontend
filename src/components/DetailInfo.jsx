@@ -43,7 +43,7 @@ import { AuthContext } from "../context/AuthContext";
 
 const DetailInfo = () => {
 	const { spot_id } = useParams();
-	console.log("spot_id",spot_id);
+	console.log("spot_id", spot_id);
 	const [msg, setMsg] = useState("");
 	const [selectedMarker, setSelectedMarker] = useState([]);
 	const [reviews, setReviews] = useState([]);
@@ -91,10 +91,23 @@ const DetailInfo = () => {
 		fetch(`${BACKEND_URL}/spotdetails/get-spot/${spot_id}`)
 			.then((res) => res.json())
 			.then((data) => {
+				if (typeof data.available_days === "string") {
+					data.available_days = data.available_days.split(",").map((d) => d.trim());
+				}
 				setSelectedMarker(data);
 			})
 			.catch((err) => console.error("Error:", err));
 	}, [spot_id]);
+
+	function formatTime(timeStr) {
+		if (!timeStr) return "";
+		const [h, m] = timeStr.split(":");
+		const hour = parseInt(h, 10);
+		const ampm = hour >= 12 ? "PM" : "AM";
+		const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+		return `${hour12}:${m} ${ampm}`;
+	}
+
 	useEffect(() => {
 		const fetchDetails = async () => {
 			try {
@@ -224,168 +237,168 @@ const DetailInfo = () => {
 	 * This function is used to download the pdf file
 	 * @returns
 	 */
-    const downloadPDF = useCallback(async () => {
-        const doc = new jsPDF();
-        const primaryColor = "#007bff";
-        const lightGray = "#f2f2f2";
-        const darkGray = "#333";
-        const currentDate = new Date().toLocaleDateString("en-IN", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-            timeZone: "Asia/Kolkata",
-        });
+	const downloadPDF = useCallback(async () => {
+		const doc = new jsPDF();
+		const primaryColor = "#007bff";
+		const lightGray = "#f2f2f2";
+		const darkGray = "#333";
+		const currentDate = new Date().toLocaleDateString("en-IN", {
+			day: "2-digit",
+			month: "short",
+			year: "numeric",
+			timeZone: "Asia/Kolkata",
+		});
 
-        // Header with colored background
-        doc.setFillColor(primaryColor);
-        doc.rect(0, 0, 210, 30, "F"); // Full-width colored header
+		// Header with colored background
+		doc.setFillColor(primaryColor);
+		doc.rect(0, 0, 210, 30, "F"); // Full-width colored header
 
-        doc.setFontSize(22);
-        doc.setTextColor(255, 255, 255);
-        doc.setFont("helvetica", "bold");
-        doc.text("Smart Parking", 105, 12, null, null, "center");
+		doc.setFontSize(22);
+		doc.setTextColor(255, 255, 255);
+		doc.setFont("helvetica", "bold");
+		doc.text("Smart Parking", 105, 12, null, null, "center");
 
-        doc.setFontSize(13);
-        doc.setFont("helvetica", "italic");
-        doc.text("Parking Booking Receipt", 105, 22, null, null, "center");
+		doc.setFontSize(13);
+		doc.setFont("helvetica", "italic");
+		doc.text("Parking Booking Receipt", 105, 22, null, null, "center");
 
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(255);
-        doc.text(`Date: ${currentDate}`, 190, 10, { align: "right" });
+		doc.setFont("helvetica", "normal");
+		doc.setTextColor(255);
+		doc.text(`Date: ${currentDate}`, 190, 10, { align: "right" });
 
-        let y = 40;
-        const lineHeight = 10;
+		let y = 40;
+		const lineHeight = 10;
 
-        // Helper: Draw colored section title
-        const drawSectionTitle = (title, yPos) => {
-            doc.setFillColor("#E9DFC3");
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(13);
-            doc.setFont("helvetica", "bold");
-            doc.rect(20, yPos - 6, 170, 10, "F");
-            doc.text(title, 25, yPos + 1);
-            return yPos + 10;
-        };
+		// Helper: Draw colored section title
+		const drawSectionTitle = (title, yPos) => {
+			doc.setFillColor("#E9DFC3");
+			doc.setTextColor(0, 0, 0);
+			doc.setFontSize(13);
+			doc.setFont("helvetica", "bold");
+			doc.rect(20, yPos - 6, 170, 10, "F");
+			doc.text(title, 25, yPos + 1);
+			return yPos + 10;
+		};
 
-        const drawTable = (headers, dataRows, startY) => {
-            // Header
-            doc.setFillColor(lightGray);
-            doc.setTextColor(darkGray);
-            doc.setFontSize(11);
-            doc.setFont("helvetica", "bold");
-            doc.rect(20, startY, 170, lineHeight, "F");
-            headers.forEach((header, i) => {
-                doc.text(header, 25 + i * 85, startY + 6);
-            });
+		const drawTable = (headers, dataRows, startY) => {
+			// Header
+			doc.setFillColor(lightGray);
+			doc.setTextColor(darkGray);
+			doc.setFontSize(11);
+			doc.setFont("helvetica", "bold");
+			doc.rect(20, startY, 170, lineHeight, "F");
+			headers.forEach((header, i) => {
+				doc.text(header, 25 + i * 85, startY + 6);
+			});
 
-            startY += lineHeight;
+			startY += lineHeight;
 
-            doc.setFont("helvetica", "bold");
-            doc.setTextColor(0, 0, 0);
+			doc.setFont("helvetica", "bold");
+			doc.setTextColor(0, 0, 0);
 
-            dataRows.forEach((row) => {
-                const cell1 = String(row[0]);
-                const cell2Lines = doc.splitTextToSize(String(row[1]), 80); // Wrap to 80 width
-                const cellHeight = cell2Lines.length * 8; // Dynamic height based on lines
+			dataRows.forEach((row) => {
+				const cell1 = String(row[0]);
+				const cell2Lines = doc.splitTextToSize(String(row[1]), 80); // Wrap to 80 width
+				const cellHeight = cell2Lines.length * 8; // Dynamic height based on lines
 
-                doc.text(cell1, 25, startY + 6);
-                doc.text(cell2Lines, 110, startY + 6); // Adjust column position for second column
+				doc.text(cell1, 25, startY + 6);
+				doc.text(cell2Lines, 110, startY + 6); // Adjust column position for second column
 
-                doc.rect(20, startY, 170, cellHeight); // Border
-                startY += cellHeight;
-            });
+				doc.rect(20, startY, 170, cellHeight); // Border
+				startY += cellHeight;
+			});
 
-            return startY + 10;
-        };
+			return startY + 10;
+		};
 
-        y = drawSectionTitle("Booking Information", y);
-        y = drawTable(
-            ["Details", "Value"],
-            [
-                ["Spot Name", spot_information.spot_title],
-                ["Address", ["Address", doc.splitTextToSize(spot_information.address, 80)]],
-                ["Total Slots", totalSlots],
-            ],
-            y
-        );
+		y = drawSectionTitle("Booking Information", y);
+		y = drawTable(
+			["Details", "Value"],
+			[
+				["Spot Name", spot_information.spot_title],
+				["Address", ["Address", doc.splitTextToSize(spot_information.address, 80)]],
+				["Total Slots", totalSlots],
+			],
+			y
+		);
 
-        y = drawSectionTitle("Payment Details", y);
-        y = drawTable(
-            ["Details", "Value"],
-            [
-                ["Order ID", paymentDetails.order_id],
-                ["Payment ID", paymentDetails.payment_id],
-                ["Amount Paid", `${paymentDetails.amount}`],
-            ],
-            y
-        );
+		y = drawSectionTitle("Payment Details", y);
+		y = drawTable(
+			["Details", "Value"],
+			[
+				["Order ID", paymentDetails.order_id],
+				["Payment ID", paymentDetails.payment_id],
+				["Amount Paid", `${paymentDetails.amount}`],
+			],
+			y
+		);
 
-        y = drawSectionTitle("Timing", y);
-        y = drawTable(
-            ["Details", "Value"],
-            [
-                ["Start Time", indianStartTime],
-                ["End Time", indianEndTime],
-            ],
-            y
-        );
+		y = drawSectionTitle("Timing", y);
+		y = drawTable(
+			["Details", "Value"],
+			[
+				["Start Time", indianStartTime],
+				["End Time", indianEndTime],
+			],
+			y
+		);
 
-        const hourlyRate = ratePerHour;
-        y = drawSectionTitle("Charges Breakdown", y);
-        y = drawTable(
-            ["Description", "Amount"],
-            [
-                [`${hourlyRate}/hr x ${Math.ceil(totalAmount / ratePerHour)} hrs`, totalAmount],
-                ["Total Amount", totalAmount],
-            ],
-            y
-        );
+		const hourlyRate = ratePerHour;
+		y = drawSectionTitle("Charges Breakdown", y);
+		y = drawTable(
+			["Description", "Amount"],
+			[
+				[`${hourlyRate}/hr x ${Math.ceil(totalAmount / ratePerHour)} hrs`, totalAmount],
+				["Total Amount", totalAmount],
+			],
+			y
+		);
 
-        // Rules Section
-        y = drawSectionTitle("Important Rules & Policies", y);
-        doc.setTextColor(50);
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "bold");
-        const rules = [
-            "1. Cancellations not allowed after start time.",
-            "2. Arrive 5 minutes early to avoid delays.",
-            "3. Vehicles left beyond booking may incur fees.",
-        ];
+		// Rules Section
+		y = drawSectionTitle("Important Rules & Policies", y);
+		doc.setTextColor(50);
+		doc.setFontSize(10);
+		doc.setFont("helvetica", "bold");
+		const rules = [
+			"1. Cancellations not allowed after start time.",
+			"2. Arrive 5 minutes early to avoid delays.",
+			"3. Vehicles left beyond booking may incur fees.",
+		];
 
-        rules.forEach((rule) => {
-            doc.rect(20, y, 170, 6);
-            doc.text(rule, 25, y + 4);
-            y += 8;
-        });
+		rules.forEach((rule) => {
+			doc.rect(20, y, 170, 6);
+			doc.text(rule, 25, y + 4);
+			y += 8;
+		});
 
-        // Footer
-        y += 10;
-        doc.setFont("helvetica", "bold");
-        doc.setTextColor(primaryColor);
-        doc.setFontSize(11);
-        doc.text("Thank you for using Smart Parking!", 105, y, null, null, "center");
+		// Footer
+		y += 10;
+		doc.setFont("helvetica", "bold");
+		doc.setTextColor(primaryColor);
+		doc.setFontSize(11);
+		doc.text("Thank you for using Smart Parking!", 105, y, null, null, "center");
 
-        doc.save("booking_receipt.pdf");
+		doc.save("booking_receipt.pdf");
 
-        const pdfBlob = doc.output("blob");
+		const pdfBlob = doc.output("blob");
 
-        const formData = new FormData();
-        const userEmail = user.email;
-        formData.append("file", pdfBlob, "booking_receipt.pdf");
-        formData.append("email", userEmail);
-        try {
-            const res = await fetch(`${BACKEND_URL}/send-pdf/send-receipt-with-pdf`, {
-                method: "POST",
-                body: formData,
-            });
-            const result = await res.json();
-            if (result.error) {
-                showSnackbar("Failed to send receipt to email", "error");
-            }
-        } catch (err) {
+		const formData = new FormData();
+		const userEmail = user.email;
+		formData.append("file", pdfBlob, "booking_receipt.pdf");
+		formData.append("email", userEmail);
+		try {
+			const res = await fetch(`${BACKEND_URL}/send-pdf/send-receipt-with-pdf`, {
+				method: "POST",
+				body: formData,
+			});
+			const result = await res.json();
+			if (result.error) {
+				showSnackbar("Failed to send receipt to email", "error");
+			}
+		} catch (err) {
 			console.log(err);
-            showSnackbar("Fail to Send Receipt to mail", "error");
-        }
+			showSnackbar("Fail to Send Receipt to mail", "error");
+		}
 	}, [
 		indianEndTime,
 		indianStartTime,
@@ -766,7 +779,7 @@ const DetailInfo = () => {
 
 				<Typography variant="body1" mb={1}>
 					<AccessTimeIcon fontSize="small" sx={{ mr: 1 }} />
-					{selectedMarker.open_time} - {selectedMarker.close_time}
+					{formatTime(selectedMarker.open_time)} - {formatTime(selectedMarker.close_time)}
 				</Typography>
 
 				<Box mb={1} sx={{ display: "flex", flexWrap: "wrap" }}>
@@ -810,7 +823,10 @@ const DetailInfo = () => {
 								minDateTime={new Date()}
 								shouldDisableDate={(date) => {
 									const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-									return !spot_information.available_days.includes(days[date.getDay()]);
+									return (
+										!Array.isArray(spot_information.available_days) ||
+										!spot_information.available_days.includes(days[date.getDay()])
+									);
 								}}
 								slotProps={{
 									textField: {

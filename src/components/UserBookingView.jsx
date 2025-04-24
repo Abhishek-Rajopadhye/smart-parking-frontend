@@ -183,7 +183,7 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 									</TableCell>
 									<TableCell>
 										<Box display="flex" gap={1}>
-											{booking.status === "Pending" && (
+											{booking.status === "Booked" && (
 												<Button
 													onClick={() => handleOpenDialog(booking.id, "cancel")}
 													variant="contained"
@@ -193,7 +193,7 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 													Cancel
 												</Button>
 											)}
-											{booking.status === "Pending" && canCheckIn(booking.start_date_time) && (
+											{booking.status === "Booked" && canCheckIn(booking.start_date_time) && (
 												<Button
 													onClick={() => handleOpenDialog(booking.id, "checkIn")}
 													variant="contained"
@@ -213,7 +213,7 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 													Check Out
 												</Button>
 											)}
-											{(booking.status === "Cancelled" || booking.status === "Completed") && (
+											{(booking.status === "Cancelled" || booking.status === "Completed" || booking.status === "Booked" || booking.status === "Success") && (
 												<Button
 													onClick={() => handleBookAgain(booking.spot_id, booking)}
 													variant="outlined"
