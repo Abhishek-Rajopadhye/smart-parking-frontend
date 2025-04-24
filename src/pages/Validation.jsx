@@ -38,9 +38,10 @@ const Validation = () => {
 	 * Fetches the list of documents from the backend.
 	 */
 	const fetchDocuments = async () => {
-		const response = await axios.get(`${BACKEND_URL}/verfiy-list/`);
+		const response = await axios.get(`${BACKEND_URL}/spots/documents/`);
 		if (response.status === 200) {
 			setRequests(response.data);
+			console.log(response.data);
 		}
 	};
 
@@ -131,9 +132,73 @@ const Validation = () => {
 								>
 									<TableCell>{page * rowsPerPage + index + 1}</TableCell>
 									<TableCell>{request.spot_title}</TableCell>
-									<TableCell>{request.identityProof}</TableCell>
-									<TableCell>{request.ownershipProof}</TableCell>
-									<TableCell>{request.supportingDocument}</TableCell>
+<TableCell>
+										{request.documents?.doc1 ? (
+											<Typography variant="body2">
+												📄 {request.documents.doc1.filename} -{" "}
+												<a
+													href={`${BACKEND_URL}/${request.documents.doc1.url}`}
+													target="_blank"
+													rel="noopener noreferrer"
+													style={{
+														color: "#1976d2",
+														textDecoration: "underline",
+													}}
+												>
+													View
+												</a>
+											</Typography>
+										) : (
+											<Typography variant="body2" color="textSecondary">
+												Not Uploaded
+											</Typography>
+										)}
+									</TableCell>
+
+									<TableCell>
+										{request.documents?.doc2 ? (
+											<Typography variant="body2">
+												📄 {request.documents.doc2.filename} -{" "}
+												<a
+													href={`${BACKEND_URL}/${request.documents.doc2.url}`}
+													target="_blank"
+													rel="noopener noreferrer"
+													style={{
+														color: "#1976d2",
+														textDecoration: "underline",
+													}}
+												>
+													View
+												</a>
+											</Typography>
+										) : (
+											<Typography variant="body2" color="textSecondary">
+												Not Uploaded
+											</Typography>
+										)}
+									</TableCell>
+									<TableCell>
+										{request.documents?.doc3 ? (
+											<Typography variant="body2">
+												📄 {request.documents.doc3.filename} -{" "}
+												<a
+													href={`${BACKEND_URL}/${request.documents.doc3.url}`}
+													target="_blank"
+													rel="noopener noreferrer"
+													style={{
+														color: "#1976d2",
+														textDecoration: "underline",
+													}}
+												>
+													View
+												</a>
+											</Typography>
+										) : (
+											<Typography variant="body2" color="textSecondary">
+												Not Uploaded
+											</Typography>
+										)}
+									</TableCell>
 									<TableCell align="right">
 										<Button
 											variant="contained"

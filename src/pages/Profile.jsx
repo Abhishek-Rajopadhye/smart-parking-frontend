@@ -196,7 +196,7 @@ const Profile = () => {
     if (!user) return <Typography variant="h5">Loading profile...</Typography>;
 
     return (
-        <Container maxWidth="lg" sx={{ mt: 10 }}>
+        <Container maxWidth="lg" sx={{ mt: 10 ,overflowX:"scroll"}}>
             {/* Profile Section */}
             <Card
                 elevation={3}

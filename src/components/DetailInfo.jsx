@@ -43,6 +43,7 @@ import { AuthContext } from "../context/AuthContext";
 
 const DetailInfo = () => {
 	const { spot_id } = useParams();
+	console.log("spot_id",spot_id);
 	const [msg, setMsg] = useState("");
 	const [selectedMarker, setSelectedMarker] = useState([]);
 	const [reviews, setReviews] = useState([]);
@@ -454,7 +455,7 @@ const DetailInfo = () => {
 
 		setTotalAmount(hours * spot_information.hourly_rate * totalSlots);
 		//setOpenDialog(true);
-		const t = `Are You Sure.!! You have to pay ${hours * spot_information.hourly_rate * totalSlots}`;
+		const t = `You have to pay ₹${hours * spot_information.hourly_rate * totalSlots}. Are you sure you want to proceed?`;
 		console.log(totalAmount);
 		console.log(t);
 		setMsg(t);
