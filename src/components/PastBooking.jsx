@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -31,19 +32,22 @@ const PastBooking = ({ user, isMobile }) => {
 	const [loading, setLoading] = useState(true);
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
 	const [selectedMarker, setSelectedMarker] = useState([]);
+	const [previousBookingData, setPreviousBookingData] = useState(null);
 
     console.log("marker",recentBookings);
 	const toggleDialogBooking = () => setDialogBookingOpen(!dialogBookingOpen);
 
-	const handleBooking = async (spot_id) => {
-		if (!spot_id) return;
+	const handleBooking = async (previous_booking) => {
+		if (!previous_booking.spot_id) return;
 		setDialogBookingOpen(!dialogBookingOpen);
 
-     try{   const response = await axios.get(`${BACKEND_URL}/spotdetails/get-spot/${spot_id}`);
+     try{   
+		const response = await axios.get(`${BACKEND_URL}/spotdetails/get-spot/${previous_booking.spot_id}`);
         if(response.status===200){
             const data = response.data;
             setSelectedMarker(data);
         }
+		setPreviousBookingData(previous_booking)
     }catch(err){
         console.error("Error fetching spot details :", err);
     }
@@ -220,7 +224,7 @@ const PastBooking = ({ user, isMobile }) => {
 												variant="contained"
 												size="small"
 												fullWidth
-												onClick={()=>handleBooking(booking.id)}
+												onClick={()=>handleBooking(booking)}
 											>
 												Book Again
 											</Button>
@@ -232,7 +236,7 @@ const PastBooking = ({ user, isMobile }) => {
 					</Grid>
 				)}
 
-				<Booking open={dialogBookingOpen} spot_information={selectedMarker} set_dialog={toggleDialogBooking} />
+				<Booking open={dialogBookingOpen} spot_information={selectedMarker} set_dialog={toggleDialogBooking} previous_booking={previousBookingData}/>
 			</Box>
 		</Container>
 	);
