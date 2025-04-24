@@ -16,6 +16,7 @@ import DetailInfo from "./components/DetailInfo";
 import { MapProvider } from "./context/MapContext";
 import HomePage from "./pages/HomePage";
 import MapSearch from "./pages/MapSearch";
+import Validation from "./pages/Validation";
 
 /**
  * AppLayout component for rendering the main layout of the application.
@@ -66,17 +67,16 @@ const AppLayout = () => {
 			result = result.filter((marker) => filters.available_days.every((day) => marker.available_days.includes(day)));
 		}
 
-		
-
-
-if (filters.hourly_rate) {
-	result = result.filter((marker) =>  marker.hourly_rate >= filters.hourly_rate[0] && marker.hourly_rate <= filters.hourly_rate[1]);
-  }
-// Function to parse time string to minutes since midnight
-function parseTime(timeStr) {
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    return hours * 60 + minutes;
-}
+		if (filters.hourly_rate) {
+			result = result.filter(
+				(marker) => marker.hourly_rate >= filters.hourly_rate[0] && marker.hourly_rate <= filters.hourly_rate[1]
+			);
+		}
+		// Function to parse time string to minutes since midnight
+		function parseTime(timeStr) {
+			const [hours, minutes] = timeStr.split(":").map(Number);
+			return hours * 60 + minutes;
+		}
 
 		// Function to parse time string with AM/PM to minutes since midnight
 		function parseTimeWithAMPM(timeStr) {
@@ -107,9 +107,11 @@ function parseTime(timeStr) {
 				return markerCloseTimeMinutes >= filterCloseTimeMinutes && markerOpenTimeMinutes <= filterCloseTimeMinutes;
 			});
 		}
-if (filters.hourly_rate) {
-	result = result.filter((marker) =>  marker.hourly_rate >= filters.hourly_rate[0] && marker.hourly_rate <= filters.hourly_rate[1]);
-  }
+		if (filters.hourly_rate) {
+			result = result.filter(
+				(marker) => marker.hourly_rate >= filters.hourly_rate[0] && marker.hourly_rate <= filters.hourly_rate[1]
+			);
+		}
 
 		setFilteredMarkers(result);
 	}, [filters, markers]);
@@ -138,6 +140,8 @@ if (filters.hourly_rate) {
 				return "Booking";
 			case "/spotdetail":
 				return "Detailed Info";
+			case "/validation":
+				return "Verify Spot Requests";
 			default:
 				return "App";
 		}
@@ -197,7 +201,7 @@ if (filters.hourly_rate) {
 						{getPageTitle()}
 					</Typography>
 					<IconButton onClick={handleAvatarClick}>
-						<Avatar alt="User Avatar" src={user.profile_picture || ""} />
+						<Avatar alt="Avatar" src={user.profile_picture || ""} />
 					</IconButton>
 					<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
 						{routes.map((route) => (
@@ -212,6 +216,18 @@ if (filters.hourly_rate) {
 								{route.label}
 							</MenuItem>
 						))}
+						{user.email == "abhishek.rajopadhye21@gmail.com" && (
+							<MenuItem
+								key={"/validation"}
+								onClick={() => {
+									handleMenuClose();
+									navigate("/validation");
+								}}
+								selected={"/validation" === location.pathname}
+							>
+								Verify Spot Requests
+							</MenuItem>
+						)}
 						<MenuItem
 							onClick={() => {
 								handleMenuClose();
@@ -226,9 +242,9 @@ if (filters.hourly_rate) {
 				</Toolbar>
 			</AppBar>
 
-			<Box variant="main" sx={{ flex: 1, mt: 8 }}>
+			<Box variant="main" sx={{ flex: 1, mt: 8, width: "100vw" }}>
 				<Routes>
-					<Route path="/spot" element={<Spot />} />
+					{/* <Route path="/spot" element={<Spot />} /> */}
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
 					<Route
@@ -248,6 +264,7 @@ if (filters.hourly_rate) {
 					<Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker} />} />
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
+					<Route path="/addspot" element={<Spot />} />
 					<Route
 						path="/mapsearch"
 						element={
@@ -265,6 +282,7 @@ if (filters.hourly_rate) {
 						}
 					/>
 					<Route path="/spotdetail/:spot_id" element={<DetailInfo />} />
+					<Route path="/validation" element={<Validation />} />
 					<Route path="*" element={<Navigate to="/homepage" />} />
 				</Routes>
 			</Box>

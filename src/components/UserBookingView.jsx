@@ -17,6 +17,9 @@ import {
 import { CurrencyRupee } from "@mui/icons-material";
 import { ConfirmationDialogBox } from "./ConfirmationDialogBox";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
+import axios from "axios";
+import { BACKEND_URL } from "../const";
+import { Booking } from "../pages/Booking";
 
 /**
  * UserBookingView Component
@@ -35,9 +38,14 @@ import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
  */
 const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) => {
 	const [openDialog, setOpenDialog] = useState(false);
+	const [spotInformation, setSpotInformation] = useState(null);
+	const [previousBooking, setPreviousBooking] = useState(null);
+	const [bookAgainOpen, setBookAgainOpen] = useState(false);
 	const [dialogMessage, setDialogMessage] = useState("");
 	const [dialogAction, setDialogAction] = useState(null); // Function to execute on confirmation
 	const [expandedRow, setExpandedRow] = useState(null); // Track which row is expanded
+	const [page, setPage] = useState(0); // Current page
+	const [rowsPerPage, setRowsPerPage] = useState(5); // Rows per page
 
 	/**
 	 * Sorts the booking details in the desired priority order:
@@ -56,13 +64,15 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 			return 0;
 		});
 
-	/**
-	 * Checks if the user can check in for a booking.
-	 * Users can only check in within 15 minutes before the start_date_time.
-	 *
-	 * @param {string} startDateTime - The start date and time of the booking.
-	 * @returns {boolean} True if the user can check in, false otherwise.
-	 */
+	const handleChangePage = (event, newPage) => {
+		setPage(newPage);
+	};
+
+	const handleChangeRowsPerPage = (event) => {
+		setRowsPerPage(parseInt(event.target.value, 10));
+		setPage(0); // Reset to the first page
+	};
+
 	const canCheckIn = (startDateTime) => {
 		const now = new Date();
 		const startTime = new Date(startDateTime);
@@ -70,12 +80,6 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 		return diffInMinutes <= 15 && diffInMinutes >= 0; // Allow check-in within 15 minutes before start time
 	};
 
-	/**
-	 * Handles opening the confirmation dialog.
-	 *
-	 * @param {number} bookingId - The ID of the booking.
-	 * @param {string} actionType - The type of action ("cancel", "checkIn", or "checkOut").
-	 */
 	const handleOpenDialog = (bookingId, actionType) => {
 		if (actionType === "cancel") {
 			setDialogMessage("Are you sure you want to cancel this booking?");
@@ -91,32 +95,42 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 		setOpenDialog(true);
 	};
 
-	/**
-	 * Handles closing the confirmation dialog.
-	 */
 	const handleCloseDialog = () => {
 		setOpenDialog(false);
 		setDialogMessage("");
 		setDialogAction(null);
 	};
 
-	/**
-	 * Toggles the expanded state of a row.
-	 *
-	 * @param {number} bookingId - The ID of the booking to expand or collapse.
-	 */
 	const toggleRowExpansion = (bookingId) => {
 		setExpandedRow((prev) => (prev === bookingId ? null : bookingId));
+	};
+	const toggleBookAgainOpen = () => {
+		setBookAgainOpen(!bookAgainOpen);
+	};
+
+	// Book Again handler
+	const handleBookAgain = async (spotId, booking) => {
+		try {
+			const response = await axios.get(`${BACKEND_URL}/spotdetails/get-spot/${spotId}`);
+			if (response.status === 200) {
+				const spot_information = response.data;
+				setSpotInformation(spot_information);
+				setPreviousBooking(booking);
+				toggleBookAgainOpen();
+			}
+		} catch (error) {
+			console.error("Failed to fetch spot information", error);
+		}
 	};
 
 	return (
 		<Box sx={{ padding: 1 }}>
-			<TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2 }}>
-				<Table sx={{width:"85vw"}}>
+			<TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2, margin: "auto" }}>
+				<Table stickyHeader sx={{ width: "85vw", p:"2px" }}>
 					<TableHead>
 						<TableRow sx={{ backgroundColor: "#f5f5f5" }}>
-							<TableCell />
-							<TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+							<TableCell sx={{ maxWidth: "15px" }} />
+							<TableCell sx={{ fontWeight: "bold", maxWidth: "15px" }}>Name</TableCell>
 							<TableCell sx={{ fontWeight: "bold" }}>Slots Booked</TableCell>
 							<TableCell sx={{ fontWeight: "bold" }}>Cost</TableCell>
 							<TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
@@ -124,117 +138,131 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{sortedBookings.length > 0 ? (
-							sortedBookings.map((booking) => (
-								<Fragment key={booking.id}>
-									<TableRow hover>
-										<TableCell>
-											<IconButton
-												aria-label="expand row"
-												size="small"
-												onClick={() => toggleRowExpansion(booking.id)}
-											>
-												{expandedRow === booking.id ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-											</IconButton>
-										</TableCell>
-										<TableCell>
-											<Typography variant="body1" fontWeight="500">
-												{booking.spot_title}
+						{sortedBookings.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((booking) => (
+							<Fragment key={booking.id}>
+								<TableRow hover onClick={() => toggleRowExpansion(booking.id)}>
+									<TableCell>
+										<IconButton aria-label="expand row" size="small">
+											{expandedRow === booking.id ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+										</IconButton>
+									</TableCell>
+									<TableCell>
+										<Typography variant="body1" fontWeight="500">
+											{booking.spot_title}
+										</Typography>
+										<Collapse in={true} unmountOnExit>
+											<Typography variant="caption" color="text.secondary">
+												{`From: ${booking.start_date_time} - ${booking.end_date_time}`}
 											</Typography>
-											<Collapse in={true} unmountOnExit>
-												<Typography variant="caption" color="text.secondary">
-													{`From: ${booking.start_date_time} - ${booking.end_date_time}`}
+										</Collapse>
+									</TableCell>
+									<TableCell variant="body1" fontWeight="500">
+										{booking.total_slots}
+									</TableCell>
+									<TableCell>
+										<Typography variant="body1" fontWeight="500">
+											<CurrencyRupee fontSize="small" /> {booking.payment_amount}
+										</Typography>
+									</TableCell>
+									<TableCell>
+										<Typography
+											variant="body1"
+											sx={{
+												color:
+													booking.status === "Booked"
+														? "orange"
+														: booking.status === "Checked In"
+														? "blue"
+														: booking.status === "Cancelled"
+														? "red"
+														: "green",
+											}}
+										>
+											{booking.status}
+										</Typography>
+									</TableCell>
+									<TableCell>
+										<Box display="flex" gap={1}>
+											{booking.status === "Booked" && (
+												<Button
+													onClick={() => handleOpenDialog(booking.id, "cancel")}
+													variant="contained"
+													color="error"
+													size="small"
+												>
+													Cancel
+												</Button>
+											)}
+											{booking.status === "Booked" && canCheckIn(booking.start_date_time) && (
+												<Button
+													onClick={() => handleOpenDialog(booking.id, "checkIn")}
+													variant="contained"
+													color="success"
+													size="small"
+												>
+													Check In
+												</Button>
+											)}
+											{booking.status === "Checked In" && (
+												<Button
+													onClick={() => handleOpenDialog(booking.id, "checkOut")}
+													variant="contained"
+													color="primary"
+													size="small"
+												>
+													Check Out
+												</Button>
+											)}
+											{(booking.status === "Cancelled" || booking.status === "Completed" || booking.status === "Booked" || booking.status === "Success") && (
+												<Button
+													onClick={() => handleBookAgain(booking.spot_id, booking)}
+													variant="outlined"
+													color="secondary"
+													size="small"
+												>
+													Book Again
+												</Button>
+											)}
+										</Box>
+									</TableCell>
+								</TableRow>
+								<TableRow>
+									<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+										<Collapse in={expandedRow === booking.id} timeout="auto" unmountOnExit>
+											<Box margin={2}>
+												<Typography variant="subtitle1" gutterBottom>
+													Address:
 												</Typography>
-											</Collapse>
-										</TableCell>
-										<TableCell variant="body1" fontWeight="500">
-											{booking.total_slots}
-										</TableCell>
-										<TableCell>
-											<Typography variant="body1" fontWeight="500">
-												<CurrencyRupee fontSize="small" /> {booking.payment_amount}
-											</Typography>
-										</TableCell>
-										<TableCell>
-											<Typography
-												variant="body1"
-												sx={{
-													color:
-														booking.status === "Pending"
-															? "orange"
-															: booking.status === "Checked In"
-															? "blue"
-															: booking.status === "Cancelled"
-															? "red"
-															: "green",
-												}}
-											>
-												{booking.status}
-											</Typography>
-										</TableCell>
-										<TableCell>
-											<Box display="flex" gap={1}>
-												{booking.status === "Pending" && (
-													<Button
-														onClick={() => handleOpenDialog(booking.id, "cancel")}
-														variant="contained"
-														color="error"
-														size="small"
-													>
-														Cancel
-													</Button>
-												)}
-												{booking.status === "Pending" && canCheckIn(booking.start_date_time) && (
-													<Button
-														onClick={() => handleOpenDialog(booking.id, "checkIn")}
-														variant="contained"
-														color="success"
-														size="small"
-													>
-														Check In
-													</Button>
-												)}
-												{booking.status === "Checked In" && (
-													<Button
-														onClick={() => handleOpenDialog(booking.id, "checkOut")}
-														variant="contained"
-														color="primary"
-														size="small"
-													>
-														Check Out
-													</Button>
-												)}
+												<Typography variant="body2" color="text.secondary">
+													{booking.spot_address}
+												</Typography>
 											</Box>
-										</TableCell>
-									</TableRow>
-									<TableRow>
-										<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-											<Collapse in={expandedRow === booking.id} timeout="auto" unmountOnExit>
-												<Box margin={2}>
-													<Typography variant="subtitle1" gutterBottom>
-														Address:
-													</Typography>
-													<Typography variant="body2" color="text.secondary">
-														{booking.spot_address}
-													</Typography>
-												</Box>
-											</Collapse>
-										</TableCell>
-									</TableRow>
-								</Fragment>
-							))
-						) : (
-							<TableRow>
-								<TableCell colSpan={5}>
-									<Typography variant="body1" align="center" color="text.secondary">
-										No bookings found.
-									</Typography>
-								</TableCell>
-							</TableRow>
-						)}
+										</Collapse>
+									</TableCell>
+								</TableRow>
+							</Fragment>
+						))}
 					</TableBody>
 				</Table>
+				<TablePagination
+					rowsPerPageOptions={[5, 10, 20]}
+					component="div"
+					count={sortedBookings.length}
+					rowsPerPage={rowsPerPage}
+					page={page}
+					onPageChange={handleChangePage}
+					onRowsPerPageChange={handleChangeRowsPerPage}
+				/>
 			</TableContainer>
+
+			{bookAgainOpen && (
+				<Booking
+					open={bookAgainOpen}
+					set_dialog={toggleBookAgainOpen}
+					previous_booking={previousBooking}
+					spot_information={spotInformation}
+				/>
+			)}
 
 			<ConfirmationDialogBox
 				open={openDialog}

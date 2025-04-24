@@ -11,21 +11,24 @@ import {
 	Collapse,
 	IconButton,
 	Box,
+	TablePagination,
 } from "@mui/material";
 import { CurrencyRupee } from "@mui/icons-material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 
 /**
- * Component to display booking details for the spot in a tabular format.
+ * Component to display booking details for the spot in a tabular format with pagination.
  *
  * @component
  * @param {Object} props - The props for the component.
  * @param {Array} props.bookingDetails - An array of booking objects containing details about each booking.
  *
- * @returns {JSX.Element} A table displaying the booking details.
+ * @returns {JSX.Element} A table displaying the booking details with pagination.
  */
 const SpotBookingView = ({ bookingDetails }) => {
 	const [expandedRow, setExpandedRow] = useState(null); // Track which row is expanded
+	const [page, setPage] = useState(0); // Current page
+	const [rowsPerPage, setRowsPerPage] = useState(5); // Rows per page
 
 	/**
 	 * Toggles the expanded state of a row.
@@ -34,6 +37,26 @@ const SpotBookingView = ({ bookingDetails }) => {
 	 */
 	const toggleRowExpansion = (bookingId) => {
 		setExpandedRow((prev) => (prev === bookingId ? null : bookingId));
+	};
+
+	/**
+	 * Handles changing the current page.
+	 *
+	 * @param {Object} event - The event object.
+	 * @param {number} newPage - The new page number.
+	 */
+	const handleChangePage = (event, newPage) => {
+		setPage(newPage);
+	};
+
+	/**
+	 * Handles changing the number of rows per page.
+	 *
+	 * @param {Object} event - The event object.
+	 */
+	const handleChangeRowsPerPage = (event) => {
+		setRowsPerPage(parseInt(event.target.value, 10));
+		setPage(0); // Reset to the first page
 	};
 
 	return (
@@ -49,10 +72,10 @@ const SpotBookingView = ({ bookingDetails }) => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{bookingDetails != [] ? (
-						bookingDetails.map((booking) => (
+					{bookingDetails.length > 0 ? (
+						bookingDetails.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((booking) => (
 							<Fragment key={booking.id}>
-								<TableRow key={booking.id}>
+								<TableRow hover>
 									<TableCell>
 										<IconButton
 											aria-label="expand row"
@@ -90,8 +113,8 @@ const SpotBookingView = ({ bookingDetails }) => {
 										{booking.status}
 									</TableCell>
 								</TableRow>
-								<TableRow key="expanded_row">
-									<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
+								<TableRow>
+									<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
 										<Collapse in={expandedRow === booking.id} timeout="auto" unmountOnExit>
 											<Box margin={1}>
 												<Typography variant="subtitle1" gutterBottom>
@@ -106,11 +129,22 @@ const SpotBookingView = ({ bookingDetails }) => {
 						))
 					) : (
 						<TableRow>
-							<Typography>No bookings found.</Typography>
+							<TableCell colSpan={5}>
+								<Typography align="center">No bookings found.</Typography>
+							</TableCell>
 						</TableRow>
 					)}
 				</TableBody>
 			</Table>
+			<TablePagination
+				rowsPerPageOptions={[5, 10, 20]}
+				component="div"
+				count={bookingDetails.length}
+				rowsPerPage={rowsPerPage}
+				page={page}
+				onPageChange={handleChangePage}
+				onRowsPerPageChange={handleChangeRowsPerPage}
+			/>
 		</TableContainer>
 	);
 };

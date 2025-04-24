@@ -56,7 +56,7 @@ const MapSearch = ({
 						left: 16,
 						zIndex: 1300,
 						bgcolor: "white",
-                        color:"black",
+						color: "black",
 						boxShadow: 3,
 					}}
 				>
@@ -70,6 +70,7 @@ const MapSearch = ({
 				open={drawerOpen}
 				onClose={toggleDrawer}
 				variant="temporary"
+				ModalProps={{ keepMounted: true }}
 				sx={{
 					display: { xs: "block", md: "none" },
 					"& .MuiDrawer-paper": {
@@ -104,7 +105,6 @@ const MapSearch = ({
 								height: "100vh",
 								// overflowY: 'auto',
 								padding: 2,
-
 								backgroundColor: "#f5f5f5",
 							}}
 						>
@@ -125,8 +125,7 @@ const MapSearch = ({
 					<Box
 						sx={{
 							height: "100vh",
-							padding: isMobileOrTablet ? 0 : 2,
-							pt: isMobileOrTablet ? 1 : 2, // account for MenuIcon button
+							pt: isMobileOrTablet ? 1 : 0, // account for MenuIcon button
 							overflow: "hidden",
 						}}
 					>
