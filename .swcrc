@@ -1,0 +1,17 @@
+// .swcrc
+{
+    "jsc": {
+      "parser": {
+        "syntax": "ecmascript",
+        "jsx": true
+        // Set to true if you use TypeScript
+        // "typescript": false
+      },
+      "transform": {
+        "react": {
+          "runtime": "automatic" // or "classic"
+        }
+      }
+    }
+    // Add other SWC options if needed, but these are often sufficient for testing
+  }

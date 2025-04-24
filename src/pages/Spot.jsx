@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   Box,
   Button,
@@ -6,19 +7,11 @@ import {
   Stepper,
   TextField,
   Typography,
-  MenuItem,
-  InputLabel,
-  FormControl,
-  Select,
   Grid,
   Snackbar,
   Alert,
   IconButton,
   Stack,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Dialog,
 } from "@mui/material";
 import { useState } from "react";
 import React, { useContext } from "react";
@@ -51,10 +44,7 @@ const Spot = ({ onCancel }) => {
   const [spotPrice, setSpotPrice] = useState("");
   const [mapOpen, setMapOpen] = useState(false);
   const [location, setLocation] = useState(null);
-  const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
   const [spotTitle, setSpotTitle] = useState("");
   const [spotAddress, setSpotAddress] = useState("");
   const [spotDescription, setSpotDescription] = useState("");
@@ -65,8 +55,6 @@ const Spot = ({ onCancel }) => {
   const [availableSlots, setAvailableSlots] = useState("");
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [showInstructions, setShowInstructions] = useState(true);
   const [openSnackbar, setOpenSnackbar] = useState({
     open: false,
     message: "",
@@ -155,8 +143,6 @@ const Spot = ({ onCancel }) => {
     if (!spotTitle.trim()) return "Spot Title is required";
     if (!spotAddress.trim()) return "Address is required";
     if (location == null) return "Please select a location to proceed";
-    setLatitude(location.lat);
-    setLongitude(location.lng);
     if (!openTime) return "Open Time is required";
     if (!closeTime) return "Close Time is required";
     if (!hourlyRate || hourlyRate <= 0) return "Hourly Rate must be positive";
@@ -247,8 +233,6 @@ const Spot = ({ onCancel }) => {
           setImages([]);
           setImagePreviews([]);
           setLocation(null);
-          setLatitude("");
-          setLongitude("");
           setOpenDays({
             Sun: false,
             Mon: false,
@@ -264,13 +248,12 @@ const Spot = ({ onCancel }) => {
         }
       }
     } catch (error) {
+      console.log(error);
       setOpenSnackbar({
         open: true,
         message: "Error uploading data",
         severity: "error",
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -336,7 +319,6 @@ const Spot = ({ onCancel }) => {
         });
         return;
       }
-      setLoading(true);
 
       let open_days = [];
 
@@ -681,7 +663,7 @@ const Spot = ({ onCancel }) => {
         {activeStep === 2 && (
           <Box display="flex" flexDirection="column" gap={3}>
             {["Identification", "Proof Of Ownership", "Supporting Document"].map((docKey, index) => (
-              <Box key={docKey}>
+              <Box key={index}>
                 <Button variant="contained" component="label">
                   {docKey === "Supporting Document"
                   ? `Optional Document for Proof of Ownership`

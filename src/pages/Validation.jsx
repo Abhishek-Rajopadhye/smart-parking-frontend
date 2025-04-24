@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	Box,
 	Typography,
@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { BACKEND_URL } from "../const";
+import {AuthContext} from "../context/AuthContext"
 
 /**
  * Validation page for displaying and managing document validation requests.
@@ -27,6 +28,7 @@ import { BACKEND_URL } from "../const";
  * @returns {JSX.Element} The Validation page component.
  */
 const Validation = () => {
+	const {user} = useContext(AuthContext);
 	const [requests, setRequests] = useState([]);
 	const [collapseToggle, setCollapseToggle] = useState(null);
 	const [page, setPage] = useState(0); // Current page
@@ -36,9 +38,10 @@ const Validation = () => {
 	 * Fetches the list of documents from the backend.
 	 */
 	const fetchDocuments = async () => {
-		const response = await axios.get(`${BACKEND_URL}/verfiy-list/`);
+		const response = await axios.get(`${BACKEND_URL}/spots/documents/`);
 		if (response.status === 200) {
 			setRequests(response.data);
+			console.log(response.data);
 		}
 	};
 
@@ -84,8 +87,10 @@ const Validation = () => {
 
 	// Fetch documents on component load
 	useEffect(() => {
-		fetchDocuments();
-	}, []);
+		if(user.email == "abhishek.rajopadhye21@gmail.com"){
+			fetchDocuments();
+		}
+	}, [user.email]);
 
 	return (
 		<Box sx={{ p: 3 }}>
@@ -104,6 +109,9 @@ const Validation = () => {
 							</TableCell>
 							<TableCell>
 								<strong>Ownership Proof Document</strong>
+							</TableCell>
+							<TableCell>
+								<strong>Supporting Document(Optional)</strong>
 							</TableCell>
 							<TableCell width="15%">
 								<strong>Actions</strong>
@@ -124,8 +132,73 @@ const Validation = () => {
 								>
 									<TableCell>{page * rowsPerPage + index + 1}</TableCell>
 									<TableCell>{request.spot_title}</TableCell>
-									<TableCell>{request.identityProof}</TableCell>
-									<TableCell>{request.ownershipProof}</TableCell>
+<TableCell>
+										{request.documents?.doc1 ? (
+											<Typography variant="body2">
+												📄 {request.documents.doc1.filename} -{" "}
+												<a
+													href={`${BACKEND_URL}/${request.documents.doc1.url}`}
+													target="_blank"
+													rel="noopener noreferrer"
+													style={{
+														color: "#1976d2",
+														textDecoration: "underline",
+													}}
+												>
+													View
+												</a>
+											</Typography>
+										) : (
+											<Typography variant="body2" color="textSecondary">
+												Not Uploaded
+											</Typography>
+										)}
+									</TableCell>
+
+									<TableCell>
+										{request.documents?.doc2 ? (
+											<Typography variant="body2">
+												📄 {request.documents.doc2.filename} -{" "}
+												<a
+													href={`${BACKEND_URL}/${request.documents.doc2.url}`}
+													target="_blank"
+													rel="noopener noreferrer"
+													style={{
+														color: "#1976d2",
+														textDecoration: "underline",
+													}}
+												>
+													View
+												</a>
+											</Typography>
+										) : (
+											<Typography variant="body2" color="textSecondary">
+												Not Uploaded
+											</Typography>
+										)}
+									</TableCell>
+									<TableCell>
+										{request.documents?.doc3 ? (
+											<Typography variant="body2">
+												📄 {request.documents.doc3.filename} -{" "}
+												<a
+													href={`${BACKEND_URL}/${request.documents.doc3.url}`}
+													target="_blank"
+													rel="noopener noreferrer"
+													style={{
+														color: "#1976d2",
+														textDecoration: "underline",
+													}}
+												>
+													View
+												</a>
+											</Typography>
+										) : (
+											<Typography variant="body2" color="textSecondary">
+												Not Uploaded
+											</Typography>
+										)}
+									</TableCell>
 									<TableCell align="right">
 										<Button
 											variant="contained"
