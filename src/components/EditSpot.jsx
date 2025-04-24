@@ -58,6 +58,7 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 		message: "",
 		severity: "info",
 	});
+	console.log(spot, spot_id);
 
 	useEffect(() => {
 		/**
@@ -67,13 +68,16 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 		 * @returns {Promise<Array>} An array of images in Base64 format.
 		 */
 		const fetchImages = async () => {
-			const imageRes = await axios.get(`${BACKEND_URL}/spotdetails/get-images/${spot_id}`);
-			if (imageRes.status === 200) {
-				return imageRes.data.images;
+			try{
+				const imageRes = await axios.get(`${BACKEND_URL}/spotdetails/get-images/${spot_id}`);
+				if (imageRes.status === 200) {
+					return imageRes.data.images;
+				}
 			}
-			return [];
+			catch{
+				return [];
+			}
 		};
-
 	    /**
 		 * Formats a time string to the "HH:mm" format.
 		 *
@@ -103,7 +107,7 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 				close_time: formatTime(spot.closeTime),
 				hourly_rate: spot.hourlyRate,
 				total_slots: spot.totalSlots,
-				available_days: spot.openDays.split(", ") || [],
+				available_days: spot.openDays.split(",") || [],
 				image: images,
 			});
 		};

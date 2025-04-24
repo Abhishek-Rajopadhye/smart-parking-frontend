@@ -75,6 +75,7 @@ const Profile = () => {
                 });
                 if (response.status === 200) {
                     setUserSpots(response.data);
+                    console.log(response.data)
                     const total = response.data.reduce((acc, spot) => acc + spot.totalEarning, 0);
                     setTotalEarning(total);
                 }
@@ -274,7 +275,7 @@ const Profile = () => {
                                             <strong>Close Time:</strong> {spot.closeTime}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                            <strong>Hourly Rate:</strong> {spot.hourlyRate} Rs.
+                                            <strong>Hourly Rate: ₹</strong> {spot.hourlyRate}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
                                             <strong>Open Days:</strong> {spot.openDays}
