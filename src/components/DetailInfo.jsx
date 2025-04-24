@@ -43,6 +43,7 @@ import { AuthContext } from "../context/AuthContext";
 
 const DetailInfo = () => {
 	const { spot_id } = useParams();
+	console.log("spot_id",spot_id);
 	const [msg, setMsg] = useState("");
 	const [selectedMarker, setSelectedMarker] = useState([]);
 	const [reviews, setReviews] = useState([]);

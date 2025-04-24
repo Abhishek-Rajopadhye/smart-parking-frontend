@@ -1,17 +1,8 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import {
-	Box,
 	Dialog,
 	Grid,
-	Typography,
-	TextField,
-	Button,
-	InputAdornment,
-	FormControl,
-	InputLabel,
-	IconButton,
 	Paper,
-	Popover,
 	Divider,
 	useTheme,
 	useMediaQuery,
@@ -19,6 +10,13 @@ import {
 	Chip,
 	Snackbar,
 	Alert,
+	Button,
+	Card,
+	CardContent,
+	Typography,
+	Box,
+	CardActions,
+	Stack,
 } from "@mui/material";
 import {
 	Search as SearchIcon,
@@ -27,7 +25,6 @@ import {
 	KeyboardArrowDown as KeyboardArrowDownIcon,
 	History as HistoryIcon,
 	TrendingUp as TrendingUpIcon,
-	MyLocation,
 } from "@mui/icons-material";
 
 import { IoLocationSharp } from "react-icons/io5";
@@ -40,6 +37,10 @@ import { Spot } from "./Spot";
 import RecentSearchesSection from "./RecentSearchSection";
 import SearchBar from "../components/SearchBar";
 import { isBefore, addMinutes, setHours, setMinutes } from "date-fns";
+import QuickBooking from "../components/NearByParkings";
+import NearByParkings from "../components/NearByParkings";
+import PastBooking from "../components/PastBooking";
+import { AuthContext } from "../context/AuthContext";
 
 // Popular destinations data
 const popularDestinations = [
@@ -77,55 +78,89 @@ const ErrorMessage = ({ message }) => (
 	</Box>
 );
 
-// Popular destinations section
-const PopularDestinationsSection = ({ onSelect, isMobile }) => (
-	<Box sx={{ mb: 4 }}>
-		<Typography
-			variant={isMobile ? "subtitle1" : "h6"}
-			fontWeight="bold"
-			sx={{ my: isMobile ? 1 : 3, display: "flex", alignItems: "center", color: "gray" }}
-		>
-			<TrendingUpIcon sx={{ mr: 1, fontSize: isMobile ? 20 : 24 }} color="primary" />
-			Popular Destinations
-		</Typography>
-		<Grid container spacing={isMobile ? 1 : 2}>
-			{popularDestinations.map((destination) => (
-				<Grid item xs={6} key={destination.id}>
-					<Paper
-						elevation={0}
-						variant="outlined"
-						sx={{
-							p: isMobile ? 1.5 : 2,
-							cursor: "pointer",
-							transition: "all 0.2s",
-							"&:hover": { transform: "translateY(-2px)", boxShadow: 1 },
-							display: "flex",
-							alignItems: "center",
-							overflow: "hidden",
-							textOverflow: "ellipsis",
-						}}
-						onClick={() => onSelect(destination.address)}
-					>
-						<Typography variant="h5" sx={{ mr: 1 }}>
-							{destination.icon}
-						</Typography>
-						<Box>
-							<Typography variant="body2" noWrap sx={{ maxWidth: isMobile ? "86%" : "10vw" }}>
-								{destination.name}
-							</Typography>
-							<Typography variant="caption" color="text.secondary">
-								{destination.address}
-							</Typography>
-						</Box>
-					</Paper>
-				</Grid>
-			))}
-		</Grid>
-	</Box>
+// Skeleton card that mimics the actual card layout
+const SkeletonCard = () => (
+	<Card
+		sx={{
+			borderRadius: 3,
+			boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+			overflow: "hidden",
+			border: "1px solid",
+			borderColor: "divider",
+		}}
+	>
+		<Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, alignItems: "stretch" }}>
+			<Box
+				sx={{
+					bgcolor: "grey.200",
+					width: { xs: "100%", sm: 100 },
+					height: { xs: 5, sm: "auto" },
+				}}
+			/>
+
+			<CardContent sx={{ flexGrow: 1, py: 2, width: "100%" }}>
+				<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1 }}>
+					<Skeleton variant="text" width="60%" height={28} />
+					<Skeleton variant="rounded" width={80} height={24} />
+				</Box>
+
+				<Skeleton variant="text" width="85%" height={20} sx={{ mb: 1.5 }} />
+
+				<Divider sx={{ my: 1.5 }} />
+
+				<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+					<Skeleton variant="text" width={60} height={24} />
+					<Skeleton variant="text" width={120} height={24} />
+				</Box>
+			</CardContent>
+		</Box>
+	</Card>
 );
+
+// Skeleton component for loading state
+const BookingSkeleton = () => {
+	return (
+	  <Grid container spacing={2}>
+		{[1, 2, 3, 4].map((item) => (
+		  <Grid item xs={12} sm={6} key={item}>
+			<Card variant="outlined" sx={{ height: '100%' }}>
+			  <CardContent>
+				<Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+				  <Skeleton variant="text" width="60%" height={32} />
+				  <Skeleton variant="rectangular" width={60} height={24} />
+				</Box>
+				<Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+				  <Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+				  <Skeleton variant="text" width="90%" height={24} />
+				</Box>
+				<Divider sx={{ my: 1.5 }} />
+				<Grid container spacing={1}>
+				  {[1, 2, 3, 4].map((subItem) => (
+					<Grid item xs={6} key={subItem}>
+					  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+						<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+						<Skeleton variant="text" width="80%" height={24} />
+					  </Box>
+					</Grid>
+				  ))}
+				</Grid>
+				<Box sx={{ mt: 1 }}>
+				  <Skeleton variant="text" width="40%" height={24} />
+				</Box>
+			  </CardContent>
+			  <CardActions sx={{ p: 2, pt: 0 }}>
+				<Skeleton variant="rectangular" width="100%" height={36} />
+			  </CardActions>
+			</Card>
+		  </Grid>
+		))}
+	  </Grid>
+	);
+  };
 
 // Main HomePage component
 const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) => {
+	const { user } = useContext(AuthContext);
 	const { isLoaded, loadError } = useContext(MapContext);
 	const [openAddSpotDialogBox, setOpenAddSpotDialogBox] = useState(false);
 	const [searchAddress, setSearchAddress] = useState("");
@@ -135,8 +170,10 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 	const [startTime, setStartTime] = useState(null);
 	const [myLocationstatus, setStatus] = useState(""); // status: '', 'loading', 'success', 'error'
 	const [mtLocationMessage, setMessage] = useState("");
-	const [openSnackbar,setOpenSnackbar]=useState(false);
+	const [openSnackbar, setOpenSnackbar] = useState(false);
 	const [isAddressValid, setIsAddressValid] = useState(false);
+	const [myCurrentLocation, setMyCurrentLocation] = useState("");
+	const hasFetchedLocation = useRef(false);
 
 	const [recentSearches, setRecentSearches] = useState(() => {
 		const saved = localStorage.getItem("recentSearches");
@@ -158,18 +195,85 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 		if (myLocationstatus) setOpenSnackbar(true);
 	}, [myLocationstatus]);
 
-	// Initialize Google Maps services when loaded
-	useEffect(() => {
-		if (isLoaded && window.google && !autocompleteServiceRef.current) {
-			try {
-				autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
-				const intitalTime =getInitialStartTime();
-				setStartTime(intitalTime);
-			} catch (error) {
-				console.error("Error initializing AutocompleteService:", error);
-			}
+	console.log("current location n  iopn", myCurrentLocation);
+
+	// Initialize Google Maps services when loaded and the current location 
+
+useEffect(() => {
+	if (isLoaded && window.google && !autocompleteServiceRef.current && !hasFetchedLocation.current) {
+		hasFetchedLocation.current = true;
+
+		const storedLocation = localStorage.getItem("userLocation");
+		if (storedLocation) {
+			const parsed = JSON.parse(storedLocation);
+			setMyCurrentLocation(parsed.address);
+			setNewMarker({ name: parsed.address, location: { lat: parsed.lat, lng: parsed.lng } });
+			return;
 		}
-	}, [isLoaded]);
+
+		try {
+			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+			const intitalTime = getInitialStartTime();
+			setStartTime(intitalTime);
+
+			setStatus("loading");
+			setMessage("Detecting location...");
+
+			if (!navigator.geolocation) {
+				setStatus("error");
+				setMessage("Geolocation not supported.");
+				return;
+			}
+
+			navigator.geolocation.getCurrentPosition(
+				(pos) => {
+					const { latitude, longitude } = pos.coords;
+					const geocoder = new window.google.maps.Geocoder();
+					geocoder.geocode({ location: { lat: latitude, lng: longitude } }, (results, status) => {
+						if (status === "OK" && results[0]) {
+							const location = results[0].geometry.location;
+							const currentLocationAddress = results[0].formatted_address;
+
+							setStatus("success");
+							setMessage("Location found!");
+							setIsAddressValid(true);
+							setMyCurrentLocation(currentLocationAddress);
+
+							const newSearchMarker = {
+								name: currentLocationAddress,
+								location: { lat: location.lat(), lng: location.lng() },
+							};
+
+							setNewMarker(newSearchMarker);
+
+							// Save to localStorage
+							localStorage.setItem(
+								"userLocation",
+								JSON.stringify({
+									address: currentLocationAddress,
+									lat: location.lat(),
+									lng: location.lng(),
+								})
+							);
+						} else {
+							setStatus("error");
+							setMessage("Unable to find address.");
+						}
+					});
+				},
+				(err) => {
+					console.error("Location error:", err);
+					setStatus("error");
+					setMessage("Unable to detect location.");
+				},
+				{ enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+			);
+		} catch (error) {
+			console.error("Error initializing AutocompleteService:", error);
+		}
+	}
+}, [isLoaded]);
+
 
 	// Search handling
 	const updateRecentSearches = (newSearch) => {
@@ -240,7 +344,6 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 	};
 
 	const handleUseMyLocation = () => {
-		
 		setStatus("loading");
 		setMessage("Detecting location...");
 
@@ -256,7 +359,6 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 				if (isLoaded && window.google) {
 					const geocoder = new window.google.maps.Geocoder();
 					geocoder.geocode({ location: { lat: latitude, lng: longitude } }, (results, status) => {
-						
 						if (status === "OK" && results[0]) {
 							setStatus("success");
 							setMessage("Location found!");
@@ -272,7 +374,7 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 							setNewMarker(newSearchMarker);
 							setSelectedMarker(newSearchMarker);
 							setSuggestions(false);
-						}else{
+						} else {
 							setStatus("error");
 							setMessage("Unable to find address.");
 						}
@@ -289,7 +391,7 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 	};
 
 	const handleFindParkingClick = () => {
-		if(!isAddressValid){
+		if (!isAddressValid) {
 			alert("Please enter a valid location to search for parking spots.");
 			return;
 		}
@@ -370,21 +472,18 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 
 			{/* Common SnackBAr for both views */}
 			<Snackbar
-			open={openSnackbar}
-			autoHideDuration={3000}
-			onClose={()=>setOpenSnackbar(false)}
-			anchorOrigin={{vertical:"top",horizontal:"center"}}
+				open={openSnackbar}
+				autoHideDuration={3000}
+				onClose={() => setOpenSnackbar(false)}
+				anchorOrigin={{ vertical: "top", horizontal: "center" }}
 			>
 				<Alert
-				onClose={()=> setOpenSnackbar(false)}
-				severity={
-				myLocationstatus === "error" ? "error" : myLocationstatus === "success" ? "success" : "info"
-				}
-				sx={{width:"100%"}}
+					onClose={() => setOpenSnackbar(false)}
+					severity={myLocationstatus === "error" ? "error" : myLocationstatus === "success" ? "success" : "info"}
+					sx={{ width: "100%" }}
 				>
 					{mtLocationMessage}
 				</Alert>
-
 			</Snackbar>
 
 			{/* MOBILE VIEW */}
@@ -416,18 +515,40 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 						<ActionButtons />
 					</Box>
 
-					<Divider sx={{ my: 3 }}>
+					{/* <Divider sx={{ my: 3 }}>
 						<Chip label="Quick Access" />
-					</Divider>
+					</Divider> */}
 
-					{/* Content for the unused 40% space */}
-					<RecentSearchesSection
+					{/* WE will use in the later demo  */}
+
+					{/* <RecentSearchesSection
 						onSelect={(search) => handleSuggestionClick(search)}
 						isMobile={isMobile}
 						recentSearches={recentSearches}
-					/>
-					<PopularDestinationsSection onSelect={(address) => handleSuggestionClick(address)} isMobile={isMobile} />
+					/> */}
 
+					{myCurrentLocation ? (
+						<NearByParkings
+							isMobile={isMobile}
+							origin={myCurrentLocation}
+							onSpotSelect={(spot) => {
+								setSelectedMarker(spot);
+							}}
+						/>
+
+					) : (
+						<Stack spacing={2} sx={{ maxWidth: "100%" }}>
+							{[1, 2, 3].map((item) => (
+								<SkeletonCard key={item} />
+							))}
+						</Stack>
+					)}
+
+					{user?<PastBooking  user={user}/>: <BookingSkeleton/>} 
+
+					
+
+					
 					{/* How Smart Parking Works Section */}
 					<Box sx={{ mt: 5, mb: 3 }}>
 						<Typography variant="h6" fontWeight="bold" textAlign="center" mb={3} color="text.primary">
@@ -475,7 +596,7 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 			{/* DESKTOP VIEW */}
 			{!isMobile && (
 				<Box sx={{ bgcolor: "#fff", p: 8 }}>
-					<Grid container spacing={5} alignItems="center">
+					<Grid container spacing={5} alignItems="flex-start">
 						<Grid item md={6}>
 							<Typography variant="h4" fontWeight="bold" gutterBottom color="text.primary">
 								Parking made easy,
@@ -499,36 +620,53 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 
 							<ActionButtons />
 
-							<PopularDestinationsSection
-								onSelect={(address) => handleSuggestionClick(address)}
-								isMobile={isMobile}
-							/>
+							{user?<PastBooking  user={user} isMobile={isMobile}/>: <BookingSkeleton/>} 
+
 						</Grid>
 
 						{/* Right Image */}
-						<Grid item md={5}>
-							<Divider sx={{ my: 3 }}>
+						<Grid item md={6}>
+							{/* <Divider sx={{ my: 3 }}>
 								<Chip label="Quick Access" />
-							</Divider>
-							<RecentSearchesSection
+							</Divider> */}
+
+							{/* WE will use in the later demo  */}
+
+							{/* <RecentSearchesSection
 								onSelect={(search) => handleSuggestionClick(search)}
 								isMobile={isMobile}
 								recentSearches={recentSearches}
-							/>
-							<Box sx={{ display: "flex", justifyContent: "center" }}>
-								<Box
-									component="img"
-									src={parking}
-									alt="Parking"
-									sx={{
-										width: "80%",
-										borderRadius: 4,
-										objectFit: "cover",
+							/> */}
+							{myCurrentLocation ? (
+								<NearByParkings
+									isMobile={isMobile}
+									origin={myCurrentLocation}
+									onSpotSelect={(spot) => {
+										setSelectedMarker(spot);
 									}}
 								/>
-							</Box>
+							) : (
+								<Stack spacing={2} sx={{ maxWidth: "100%" }}>
+									{[1, 2, 3].map((item) => (
+										<SkeletonCard key={item} />
+									))}
+								</Stack>
+							)}
 						</Grid>
 					</Grid>
+
+					<Box sx={{ display: "flex", justifyContent: "center" }}>
+						<Box
+							component="img"
+							src={parking}
+							alt="Parking"
+							sx={{
+								width: "50%",
+								borderRadius: 4,
+								objectFit: "cover",
+							}}
+						/>
+					</Box>
 
 					{/* How it works */}
 					<Box sx={{ bgcolor: "#fff", py: 10 }}>
