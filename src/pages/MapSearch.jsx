@@ -70,6 +70,7 @@ const MapSearch = ({
 				open={drawerOpen}
 				onClose={toggleDrawer}
 				variant="temporary"
+				ModalProps={{ keepMounted: true }}
 				sx={{
 					display: { xs: "block", md: "none" },
 					"& .MuiDrawer-paper": {

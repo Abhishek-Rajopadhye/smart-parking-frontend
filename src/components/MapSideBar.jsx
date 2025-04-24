@@ -180,6 +180,8 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
     }
   };
 
+
+  
   // Effect to update end times whenever start time changes
   useEffect(() => {
     if (!tempStartTime || !tempDate) return;

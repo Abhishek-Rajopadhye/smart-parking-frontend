@@ -6,7 +6,7 @@ import { useContext } from "react";
 
 const MarkerComponent = ({ marker, setSelectedMarker, isSearchMarker = false }) => {
 	const { user } = useContext(AuthContext);
-	console.log("marker info ",marker);
+//	console.log("marker info ",marker);
 	const position = isSearchMarker
 		? { lat: marker.location.lat, lng: marker.location.lng }
 		: { lat: marker.latitude, lng: marker.longitude };
