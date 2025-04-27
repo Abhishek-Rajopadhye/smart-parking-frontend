@@ -306,6 +306,7 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 
 	useEffect(() => {
 		if (previous_booking) {
+            console.log(previous_booking)
 			setTotalSlots(previous_booking.total_slots);
 
 			const spotDays = spot_information.available_days || [];
@@ -341,7 +342,7 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 				navigate("/booking-history");
 			}, 3000);
 		}
-	}, [paymentStatus, navigate, downloadPDF, showSnackbar, previous_booking, spot_information.available_days]);
+	}, [paymentStatus, navigate, downloadPDF, showSnackbar, previous_booking, spot_information]);
 
 	/**
 	 * This function is used to calculate the amount of the parking slot
