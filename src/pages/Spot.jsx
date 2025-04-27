@@ -242,9 +242,10 @@ const Spot = ({ onCancel }) => {
             Fri: false,
             Sat: false,
           });
-          documents.doc1 = null;
-          documents.doc2 = null;
-          documents.doc3 = null;
+          // 
+          documents.Identification = null;
+          documents.Proof_Of_Ownership = null;
+          documents.Supporting_Document = null;
         }
       }
     } catch (error) {
@@ -259,10 +260,12 @@ const Spot = ({ onCancel }) => {
 
   // Document Uploads
   const [documents, setDocuments] = useState({
-    doc1: null,
-    doc2: null,
-    doc3: null,
+    Identification: null,
+    Proof_Of_Ownership: null,
+    Supporting_Document: null,
   });
+
+  //"Identification", "Proof Of Ownership", "Supporting Document"
 
   const handleDocumentChange = (e, docKey) => {
     const file = e.target.files[0];
@@ -272,8 +275,7 @@ const Spot = ({ onCancel }) => {
       alert("Please upload a valid PDF document");
     }
   };
-
-  const handleNext = () => {
+  const handleNext = async () => {
     if (activeStep === 1) {
       setSpotAdded(false);
       const error = validateForm();
@@ -336,19 +338,28 @@ const Spot = ({ onCancel }) => {
       setCloseTime(new_close_time);
       setTotalSlots(parseInt(totalSlots));
     }
-
+    //"Identification", "Proof Of Ownership", "Supporting Document"
     if (
       activeStep === 2
     ) {
       let msg = "";
-      if(!documents.doc1) msg += "Identification Document, ";
-      else if(!documents.doc2) msg += "Proof of Ownership Document, ";
-      setOpenSnackbar({
-        open: true,
-        message: msg,
-        severity: "error",
-      });
-      return;
+      if(documents.Identification == null) {
+        console.log("1");
+        msg += "Identification Document Required";
+      } 
+      else if(!documents.Proof_Of_Ownership) {
+        console.log("2");
+        msg += "Proof of Ownership Document, ";
+      } 
+      if(msg != ""){
+        setOpenSnackbar({
+          open: true,
+          message: msg,
+          severity: "error",
+        });
+        return;
+      }
+      
     }
 
     if (activeStep < steps.length - 1) setActiveStep((prev) => prev + 1);
@@ -662,7 +673,7 @@ const Spot = ({ onCancel }) => {
         {/* Step 2: Upload Documents */}
         {activeStep === 2 && (
           <Box display="flex" flexDirection="column" gap={3}>
-            {["Identification", "Proof Of Ownership", "Supporting Document"].map((docKey, index) => (
+            {["Identification", "Proof_Of_Ownership", "Supporting_Document"].map((docKey, index) => (
               <Box key={index}>
                 <Button variant="contained" component="label">
                   {docKey === "Supporting Document"
