@@ -42,6 +42,7 @@ const MapSearch = ({
 		setDrawerOpen(!drawerOpen);
 	};
 
+
 	return (
 		<Box sx={{ display: "flex", height: "100vh" }}>
 			{/* Menu button on mobile/tablet */}

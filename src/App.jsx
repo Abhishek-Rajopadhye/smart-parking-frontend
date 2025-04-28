@@ -115,7 +115,9 @@ const AppLayout = () => {
 
 		setFilteredMarkers(result);
 	}, [filters, markers]);
-	console.log("Filters and markers", filters, filteredMarkers);
+	console.log("Filters applied ", filters);
+	console.log("Original markers",markers);
+	console.log(" Filtered Markers ",filteredMarkers);
 
 	/**
 	 * Retrieves the page title based on the current route.

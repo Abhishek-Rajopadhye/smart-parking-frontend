@@ -35,7 +35,7 @@ import parking from "../assets/Images/parkingSpace.jpg";
 import { useNavigate } from "react-router-dom";
 import { MapContext } from "../context/MapContext";
 import { Spot } from "./Spot";
-import RecentSearchesSection from "./RecentSearchSection";
+import RecentSearchesSection from "../components/RecentSearchSection";
 import SearchBar from "../components/SearchBar";
 import { isBefore, addMinutes, setHours, setMinutes } from "date-fns";
 import QuickBooking from "../components/NearByParkings";
@@ -43,13 +43,7 @@ import NearByParkings from "../components/NearByParkings";
 import PastBooking from "../components/PastBooking";
 import { AuthContext } from "../context/AuthContext";
 
-// Popular destinations data
-const popularDestinations = [
-	{ id: 1, name: "City Mall", icon: "🛒", address: "123 Mall Street, City" },
-	{ id: 2, name: "Central Station", icon: "🚂", address: "Main Station Road" },
-	{ id: 3, name: "City Airport", icon: "✈️", address: "Airport Highway" },
-	{ id: 4, name: "Sports Stadium", icon: "🏟️", address: "Stadium Boulevard" },
-];
+
 
 // Loading message component
 const LoadingMessage = () => (
@@ -196,12 +190,28 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 		if (myLocationstatus) setOpenSnackbar(true);
 	}, [myLocationstatus]);
 
-	console.log("current location n  iopn", myCurrentLocation);
 
 	// Initialize Google Maps services when loaded and the current location 
 
+	useEffect(() => {
+		if (isLoaded && window.google && !autocompleteServiceRef.current) {
+		  try {
+			// Initialize the autocomplete service immediately
+			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+			//console.log("Autocomplete service initialized successfully");
+			
+			// Set initial time
+			const intitalTime = getInitialStartTime();
+			setStartTime(intitalTime);
+		  } catch (error) {
+			console.error("Error initializing AutocompleteService:", error);
+		  }
+		}
+	  }, [isLoaded]);
+
+
 useEffect(() => {
-	if (isLoaded && window.google && !autocompleteServiceRef.current && !hasFetchedLocation.current) {
+	if (isLoaded && window.google && !hasFetchedLocation.current) {
 		hasFetchedLocation.current = true;
 
 		const storedLocation = localStorage.getItem("userLocation");
@@ -212,11 +222,7 @@ useEffect(() => {
 			return;
 		}
 
-		try {
-			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
-			const intitalTime = getInitialStartTime();
-			setStartTime(intitalTime);
-
+		
 			setStatus("loading");
 			setMessage("Detecting location...");
 
@@ -269,10 +275,7 @@ useEffect(() => {
 				},
 				{ enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
 			);
-		} catch (error) {
-			console.error("Error initializing AutocompleteService:", error);
-		}
-	}
+		} 
 }, [isLoaded, setNewMarker]);
 
 
@@ -280,39 +283,58 @@ useEffect(() => {
 	const updateRecentSearches = (newSearch) => {
 		if (!searchAddress) return;
 		setRecentSearches((prev) => {
-			const updated = [newSearch, ...prev.filter((item) => item !== newSearch)].slice(0, 5);
+			const updated = [newSearch, ...prev.filter((item) => item !== newSearch)].slice(0, 4);
 			localStorage.setItem("recentSearches", JSON.stringify(updated));
 			return updated;
 		});
 	};
+
 	const handleSearchChange = (event) => {
 		const value = event.target.value;
 		setSearchAddress(value);
-
-		if (!value || !autocompleteServiceRef.current) {
-			setPredictions([]);
-			setSuggestions(value ? true : false);
-			return;
+	  
+		if (!value) {
+		  setPredictions([]);
+		  setSuggestions(false);
+		  return;
 		}
-
+	  
+		if (!autocompleteServiceRef.current) {
+		  console.error("Autocomplete service not initialized yet");
+		  return;
+		}
+	  
+		// Add console log to check if this function is being called
+		//console.log("Fetching predictions for:", value);
+		
+		// Clear previous timeout to implement debouncing
+		if (window.searchTimeout) {
+		  clearTimeout(window.searchTimeout);
+		}
+	  
 		// Debounce the predictions request
-		const timeoutId = setTimeout(() => {
-			autocompleteServiceRef.current.getPlacePredictions(
-				{ input: value, componentRestrictions: { country: "IN" } },
-				(results, status) => {
-					if (results && status === "OK") {
-						setPredictions(results);
-						setSuggestions(true);
-					} else {
-						setPredictions([]);
-						setSuggestions(true);
-					}
-				}
-			);
+		window.searchTimeout = setTimeout(() => {
+		//  console.log("Making autocomplete request for:", value);
+		  
+		  autocompleteServiceRef.current.getPlacePredictions(
+			{ 
+			  input: value, 
+			  componentRestrictions: { country: "IN" } 
+			},
+			(results, status) => {
+			 // console.log("Autocomplete response:", status, results);
+			  
+			  if (status === "OK" && results) {
+				setPredictions(results);
+				setSuggestions(true);
+			  } else {
+				setPredictions([]);
+				setSuggestions(true);
+			  }
+			}
+		  );
 		}, 300);
-
-		return () => clearTimeout(timeoutId);
-	};
+	  };
 
 	const handleSuggestionClick = (description) => {
 		setSearchAddress(description);
@@ -512,6 +534,8 @@ useEffect(() => {
 							isMobile={isMobile}
 							myLocationstatus={myLocationstatus}
 							mtLocationMessage={mtLocationMessage}
+							recentSearches={recentSearches}
+							onSelect={(search) => handleSuggestionClick(search)}
 						/>
 						<ActionButtons />
 					</Box>
@@ -522,11 +546,7 @@ useEffect(() => {
 
 					{/* WE will use in the later demo  */}
 
-					{/* <RecentSearchesSection
-						onSelect={(search) => handleSuggestionClick(search)}
-						isMobile={isMobile}
-						recentSearches={recentSearches}
-					/> */}
+				
 
 					{myCurrentLocation ? (
 						<NearByParkings
@@ -535,6 +555,8 @@ useEffect(() => {
 							onSpotSelect={(spot) => {
 								setSelectedMarker(spot);
 							}}
+							selectedDate={selectedDate}
+							startTime={startTime}
 						/>
 
 					) : (
@@ -617,6 +639,8 @@ useEffect(() => {
 								isMobile={isMobile}
 								mtLocationMessage={mtLocationMessage}
 								myLocationstatus={myLocationstatus}
+								recentSearches={recentSearches}
+								onSelect={(search) => handleSuggestionClick(search)}
 							/>
 
 							<ActionButtons />
