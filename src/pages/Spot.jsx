@@ -186,10 +186,13 @@ const Spot = ({ onCancel }) => {
 			});
 			if (response.status === 200) {
 				const document = new FormData();
+				console.log("Spot ID:", response.data.spot_id);
 				document.append("spot_id", response.data.spot_id);
 				document.append("doc1", documents.doc1);
 				document.append("doc2", documents.doc2);
-				document.append("doc3", documents.doc3);
+				if (documents.doc3) {
+					document.append("doc3", documents.doc3);
+			}
 				const document_response = await axios.post(`${BACKEND_URL}/spots/add-documents`, document, {
 					headers: {
 						"Content-Type": "multipart/form-data",
