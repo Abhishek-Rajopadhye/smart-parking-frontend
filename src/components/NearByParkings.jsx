@@ -25,7 +25,7 @@ import {
   MyLocationOutlined
 } from "@mui/icons-material";
 
-const NearByParkings = ({ origin, onSpotSelect, isMobile }) => {
+const NearByParkings = ({ origin, onSpotSelect, isMobile,selectedDate,startTime }) => {
   const navigate = useNavigate();
   const [spots, setSpots] = useState([]);
   const [sortedMarkers, setSortedMarkers] = useState([]);
@@ -100,12 +100,14 @@ const NearByParkings = ({ origin, onSpotSelect, isMobile }) => {
     navigate("/mapsearch", {
       state: {
         locationName: origin,
+        selectedDate,
+				startTime,
       },
     });
   };
 
   return (
-    <Box sx={{ my: 4, width: "100%" }}>
+    <Box sx={{ my: 4, width: "100%" }}  onClick={() => handleSpotClick()}>
       <Typography
         variant={isMobile ? "subtitle1" : "h6"}
         fontWeight="bold"
