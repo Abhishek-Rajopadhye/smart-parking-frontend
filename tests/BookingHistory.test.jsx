@@ -3,10 +3,9 @@ import React from 'react';
 import { render, screen, waitFor, describe, test, expect, beforeEach, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import jest from "jest";
-import { BookingHistory } from '../BookingHistory';
-import { AuthContext } from '../../context/AuthContext';
+import { BookingHistory } from '../src/pages/BookingHistory';
+import { AuthContext } from "../src/context/AuthContext";
 import axios from 'axios';
-import { BACKEND_URL } from '../../const';
 
 // Mocking modules
 jest.mock('axios');
