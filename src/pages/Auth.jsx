@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { BACKEND_URL } from "../const";

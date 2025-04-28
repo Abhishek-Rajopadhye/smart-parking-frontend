@@ -26,7 +26,6 @@ import { AuthContext } from "../context/AuthContext";
 
 //spot_information is object which hold the all information
 const Booking = ({ spot_information, open, set_dialog, previous_booking = null }) => {
-	console.log(previous_booking);
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext);
 	const [razorpay_signature, setRazorpaySignature] = useState(null);
@@ -521,8 +520,8 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 			}
 			set_dialog();
 		} catch (error) {
-			console.error("Error:", error);
-			// showSnackbar("Failed to cancel booking", "error");
+			console.log(error.msg);
+			showSnackbar("Failed to cancel booking");
 		}
 	};
 

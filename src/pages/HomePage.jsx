@@ -3,12 +3,10 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import {
 	Dialog,
 	Grid,
-	Paper,
 	Divider,
 	useTheme,
 	useMediaQuery,
 	Skeleton,
-	Chip,
 	Snackbar,
 	Alert,
 	Button,
@@ -19,31 +17,18 @@ import {
 	CardActions,
 	Stack,
 } from "@mui/material";
-import {
-	Search as SearchIcon,
-	CalendarToday as CalendarIcon,
-	Clear as ClearIcon,
-	KeyboardArrowDown as KeyboardArrowDownIcon,
-	History as HistoryIcon,
-	TrendingUp as TrendingUpIcon,
-} from "@mui/icons-material";
 
 import { IoLocationSharp } from "react-icons/io5";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import parking from "../assets/Images/parkingSpace.jpg";
+import parking from "../assets/images/parkingSpace.jpg";
 import { useNavigate } from "react-router-dom";
 import { MapContext } from "../context/MapContext";
 import { Spot } from "./Spot";
-import RecentSearchesSection from "../components/RecentSearchSection";
 import SearchBar from "../components/SearchBar";
-import { isBefore, addMinutes, setHours, setMinutes } from "date-fns";
-import QuickBooking from "../components/NearByParkings";
+import { addMinutes, setMinutes } from "date-fns";
 import NearByParkings from "../components/NearByParkings";
 import PastBooking from "../components/PastBooking";
 import { AuthContext } from "../context/AuthContext";
-
-
 
 // Loading message component
 const LoadingMessage = () => (

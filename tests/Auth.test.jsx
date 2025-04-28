@@ -1,27 +1,28 @@
+/* eslint-disable no-undef */
+
 import React from "react";
-import { render, screen, waitFor, describe, test, expect, beforeEach } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import jest from "jest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { describe, test, expect, beforeEach } from "vitest";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Auth } from "../src/pages/Auth";
 import { AuthContext } from "../src/context/AuthContext";
 
 // Mocking modules
-jest.mock("react-router-dom", () => ({
-	useNavigate: jest.fn(),
+vi.mock("react-router-dom", () => ({
+	useNavigate: vi.fn(),
 }));
-jest.mock("axios");
-jest.mock("../../const", () => ({
+vi.mock("axios");
+vi.mock("../src/const", () => ({
 	BACKEND_URL: "http://mocked-backend-url",
 }));
 
-const mockNavigate = jest.fn();
+const mockNavigate = vi.fn();
 useNavigate.mockImplementation(() => mockNavigate);
 
 describe("Auth", () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// Clear localStorage before each test
 		localStorage.clear();
 	});
