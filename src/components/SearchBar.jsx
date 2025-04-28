@@ -11,11 +11,13 @@ import {
 	Skeleton,
 	Snackbar,
 	Alert,
+	Divider,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { MyLocationOutlined } from "@mui/icons-material";
+import RecentSearchesSection from "./RecentSearchSection";
 
 const SearchBar = ({
 	searchAddress,
@@ -29,6 +31,8 @@ const SearchBar = ({
 	isMobile,
 	myLocationstatus,
 	mtLocationMessage,
+	recentSearches,
+	onSelect
 }) => {
 
 	const getMessage = () => {
@@ -37,6 +41,8 @@ const SearchBar = ({
 		if (myLocationstatus === "error") return mtLocationMessage;
 		return "";
 	};
+	const shouldShowRecentSearches = suggestions && !searchAddress && recentSearches.length > 0;
+
 	return (
 		<Box sx={{ position: "relative", width: "100%", mb: 2, mt: isMobile ? 5 : 0 }}>
 			<FormControl fullWidth variant="outlined">
@@ -120,6 +126,9 @@ const SearchBar = ({
 						<Typography fontWeight="medium">Use My Current Location</Typography>
 						
 					</Box>
+					{shouldShowRecentSearches && (
+						<RecentSearchesSection onSelect={onSelect} recentSearches={recentSearches}/>
+					)}
 
 					{searchAddress && predictions.length > 0
 						? predictions.map((prediction, index) => (
