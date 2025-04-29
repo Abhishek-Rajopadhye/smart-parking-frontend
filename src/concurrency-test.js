@@ -1,13 +1,13 @@
 import axios from 'axios';
 
 
-const USERS = 20;  // Simulate 20 concurrent users
+const USERS = 20;
 const URL = 'http://localhost:8000/bookings/book-spot';
 
 async function sendRequest(userIndex) {
   const data = {
     user_id: "111919577987638512190",
-    spot_id: 7,
+    spot_id: 17,
     total_slots: 1,
     total_amount: 120,
     start_date_time: "2025-04-25T10:00:00+05:30",
