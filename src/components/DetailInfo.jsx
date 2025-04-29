@@ -22,7 +22,6 @@ import { ConfirmationDialogBox } from "./ConfirmationDialogBox";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
-import { useRef } from "react";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import PhoneIcon from "@mui/icons-material/Phone";
@@ -55,7 +54,6 @@ const DetailInfo = () => {
 	const spot_information = selectedMarker;
 	console.log(spot_information);
 	const { user } = useContext(AuthContext);
-	const { sessionType } = useContext(AuthContext);
 	const [razorpay_order_id, setRazorpayOrderId] = useState(null);
 	const [totalSlots, setTotalSlots] = useState(1);
 	const [startTime, setStartTime] = useState(null);
@@ -142,18 +140,6 @@ const DetailInfo = () => {
 		setAddReviewDialogOpen(false);
 	};
 
-	const scrollRef = useRef();
-
-	const scroll = (direction) => {
-		const { current } = scrollRef;
-		const scrollAmount = 300;
-		if (current) {
-			current.scrollBy({
-				left: direction === "left" ? -scrollAmount : scrollAmount,
-				behavior: "smooth",
-			});
-		}
-	};
 	// Handle previous image navigation
 	const handlePrev = () => {
 		setCurrentImageIndex((prev) => (prev === 0 ? spotImages.length - 1 : prev - 1));
@@ -621,6 +607,14 @@ const DetailInfo = () => {
 		toggleDialogBooking();
 	};
 
+	const deleteReview = async (review) =>{
+		const response = await axios.delete(`${BACKEND_URL}/reviews/${review.id}`);
+		if(response.status == 200){
+			const revRes = await axios.get(`${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`)
+			setReviews(revRes.data);
+		}
+	}
+
 	return (
 		<Box
 			sx={{
@@ -800,75 +794,78 @@ const DetailInfo = () => {
 						<Typography>No Available Days</Typography>
 					)}
 				</Box>
+				{selectedMarker.verification_status == 1 && (
+					<>
+						<Typography variant="body1" mb={2}>
+							<LocalParkingIcon fontSize="small" sx={{ mr: 1 }} />
+							Available Slots: {selectedMarker.available_slots}
+						</Typography>
+						<LocalizationProvider dateAdapter={AdapterDateFns}>
+							<Grid container spacing={2}>
+								<Grid item xs={12}>
+									<TextField
+										fullWidth
+										label="Total Slots"
+										type="number"
+										value={totalSlots}
+										onChange={(e) => setTotalSlots(Number(e.target.value))}
+									/>
+								</Grid>
 
-				<Typography variant="body1" mb={2}>
-					<LocalParkingIcon fontSize="small" sx={{ mr: 1 }} />
-					Available Slots: {selectedMarker.available_slots}
-				</Typography>
-				<LocalizationProvider dateAdapter={AdapterDateFns}>
-					<Grid container spacing={2}>
-						<Grid item xs={12}>
-							<TextField
-								fullWidth
-								label="Total Slots"
-								type="number"
-								value={totalSlots}
-								onChange={(e) => setTotalSlots(Number(e.target.value))}
-							/>
-						</Grid>
+								<Grid item xs={12}>
+									<DateTimePicker
+										label="Start Time"
+										value={startTime}
+										onChange={setStartTime}
+										minDateTime={new Date()}
+										shouldDisableDate={(date) => {
+											const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+											return (
+												!Array.isArray(spot_information.available_days) ||
+												!spot_information.available_days.includes(days[date.getDay()])
+											);
+										}}
+										slotProps={{
+											textField: {
+												fullWidth: true,
+												variant: "outlined",
+											},
+										}}
+									/>
+								</Grid>
 
-						<Grid item xs={12}>
-							<DateTimePicker
-								label="Start Time"
-								value={startTime}
-								onChange={setStartTime}
-								minDateTime={new Date()}
-								shouldDisableDate={(date) => {
-									const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-									return (
-										!Array.isArray(spot_information.available_days) ||
-										!spot_information.available_days.includes(days[date.getDay()])
-									);
-								}}
-								slotProps={{
-									textField: {
-										fullWidth: true,
-										variant: "outlined",
-									},
-								}}
-							/>
-						</Grid>
-
-						<Grid item xs={12}>
-							<DateTimePicker
-								label="End Time"
-								value={endTime}
-								onChange={setEndTime}
-								minDateTime={new Date()}
-								shouldDisableDate={(date) => {
-									const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-									return !spot_information.available_days.includes(days[date.getDay()]);
-								}}
-								slotProps={{
-									textField: {
-										fullWidth: true,
-										variant: "outlined",
-									},
-								}}
-							/>
-						</Grid>
-					</Grid>
-				</LocalizationProvider>
-				<Button
-					variant="contained"
-					color="success"
-					fullWidth
-					size="large"
-					onClick={calculateAmount}
-					sx={{ mt: 2, borderRadius: 2 }}
-				>
-					Book Now
-				</Button>
+								<Grid item xs={12}>
+									<DateTimePicker
+										label="End Time"
+										value={endTime}
+										onChange={setEndTime}
+										minDateTime={new Date()}
+										shouldDisableDate={(date) => {
+											const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+											return !spot_information.available_days.includes(days[date.getDay()]);
+										}}
+										slotProps={{
+											textField: {
+												fullWidth: true,
+												variant: "outlined",
+											},
+										}}
+									/>
+								</Grid>
+							</Grid>
+						</LocalizationProvider>
+						<Button
+							variant="contained"
+							color="success"
+							fullWidth
+							size="large"
+							onClick={calculateAmount}
+							sx={{ mt: 2, borderRadius: 2 }}
+						>
+							Book Now
+						</Button>
+					</>
+				)}
 			</Paper>
 
 			{/* Reviews */}
@@ -909,7 +906,7 @@ const DetailInfo = () => {
 					) : (
 						reviews.map((review, i) => (
 							<Box key={i} sx={{ my: 1 }}>
-								<ReviewCard review={review} />
+								<ReviewCard review={review} handleDeleteReview={() => deleteReview(review)}/>
 							</Box>
 						))
 					)}
