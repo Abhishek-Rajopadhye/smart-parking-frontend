@@ -34,24 +34,22 @@ const PastBooking = ({ user, isMobile }) => {
 	const [selectedMarker, setSelectedMarker] = useState([]);
 	const [previousBookingData, setPreviousBookingData] = useState(null);
 
-
 	const toggleDialogBooking = () => setDialogBookingOpen(!dialogBookingOpen);
 
 	const handleBooking = async (previous_booking) => {
 		if (!previous_booking.spot_id) return;
 		setDialogBookingOpen(!dialogBookingOpen);
 
-     try{   
-		const response = await axios.get(`${BACKEND_URL}/spotdetails/get-spot/${previous_booking.spot_id}`);
-        if(response.status===200){
-            const data = response.data;
-            setSelectedMarker(data);
-        }
-		setPreviousBookingData(previous_booking)
-    }catch(err){
-        console.error("Error fetching spot details :", err);
-    }
-			
+		try {
+			const response = await axios.get(`${BACKEND_URL}/spotdetails/get-spot/${previous_booking.spot_id}`);
+			if (response.status === 200) {
+				const data = response.data;
+				setSelectedMarker(data);
+			}
+			setPreviousBookingData(previous_booking);
+		} catch (err) {
+			console.error("Error fetching spot details :", err);
+		}
 	};
 
 	useEffect(() => {
@@ -61,7 +59,7 @@ const PastBooking = ({ user, isMobile }) => {
 				const response = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
 				if (response.status === 200) {
 					// Sort by latest and pick top 4
-					const sorted = response.data.sort((a, b) => (b.id) - (a.id)).slice(0, 4);
+					const sorted = response.data.sort((a, b) => b.id - a.id).slice(0, 4);
 					setRecentBookings(sorted);
 				}
 			} catch (error) {
@@ -74,7 +72,6 @@ const PastBooking = ({ user, isMobile }) => {
 		if (user?.id) fetchDetailsUserBookings();
 	}, [user?.id]);
 
-	
 	// Format date and time to be more readable
 	const formatDateTime = (dateTimeStr) => {
 		try {
@@ -114,14 +111,19 @@ const PastBooking = ({ user, isMobile }) => {
 	return (
 		<Container>
 			<Box sx={{ mb: 3, mt: 2 }}>
-				<Typography variant="h5" component="h2" 
-				sx={{   mb: 2, 
-					display: "flex", 
-					alignItems: "center", 
-					color: "GrayText",
-					borderBottom: "2px solid",
-					borderColor: "primary.light",
-					pb: 1}}>
+				<Typography
+					variant="h5"
+					component="h2"
+					sx={{
+						mb: 2,
+						display: "flex",
+						alignItems: "center",
+						color: "GrayText",
+						borderBottom: "2px solid",
+						borderColor: "primary.light",
+						pb: 1,
+					}}
+				>
 					<HistoryOutlined sx={{ mr: 1 }} />
 					Recent Bookings
 				</Typography>
@@ -231,7 +233,7 @@ const PastBooking = ({ user, isMobile }) => {
 												variant="contained"
 												size="small"
 												fullWidth
-												onClick={()=>handleBooking(booking)}
+												onClick={() => handleBooking(booking)}
 											>
 												Book Now
 											</Button>
@@ -243,7 +245,12 @@ const PastBooking = ({ user, isMobile }) => {
 					</Grid>
 				)}
 
-				<Booking open={dialogBookingOpen} spot_information={selectedMarker} set_dialog={toggleDialogBooking} previous_booking={previousBookingData}/>
+				<Booking
+					open={dialogBookingOpen}
+					spot_information={selectedMarker}
+					set_dialog={toggleDialogBooking}
+					previous_booking={previousBookingData}
+				/>
 			</Box>
 		</Container>
 	);

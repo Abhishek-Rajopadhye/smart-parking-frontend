@@ -53,17 +53,12 @@ const AddReview = ({ openDialog, onClose, spot_id }) => {
 	 * Initializes the form data with the logged-in user's ID.
 	 */
 	useEffect(() => {
-		setFormData({
-			id: null,
-			user_id: user.id,
-			spot_id: spot_id,
-			review_description: "",
-			rating_score: 0,
-			images: [],
-			owner_reply: null,
-			created_at: null,
-		});
-	}, [setFormData, spot_id, user]);
+		setFormData((prevData) => ({
+			...prevData,
+			["user_id"]: user.id,
+		}));
+		console.log(formData);
+	}, [formData,setFormData, spot_id, user]);
 
 	/**
 	 * Handles the submission of the review form.
@@ -77,6 +72,7 @@ const AddReview = ({ openDialog, onClose, spot_id }) => {
 		try {
 			setFormData((prevData) => ({
 				...prevData,
+				["spot_id"]:spot_id,
 				["created_at"]: new Date().toISOString(),
 			}));
 			const response = await axios.post(`${BACKEND_URL}/reviews/`, formData, {
@@ -172,7 +168,7 @@ const AddReview = ({ openDialog, onClose, spot_id }) => {
 
 	return (
 		<>
-			<Dialog component="form" open={openDialog} onSubmit={handleSubmit}>
+			<Dialog component="form" open={openDialog}>
 				<DialogTitle>Add Review</DialogTitle>
 				<DialogContent>
 					<Box>
@@ -241,7 +237,7 @@ const AddReview = ({ openDialog, onClose, spot_id }) => {
 					<Button color="error" onClick={onClose}>
 						Cancel
 					</Button>
-					<Button type="submit" variant="contained" color="primary">
+					<Button type="submit" variant="contained" color="primary" onClick={(event) => {handleSubmit(event)}}>
 						Submit Review
 					</Button>
 				</DialogActions>

@@ -1,14 +1,33 @@
 /* eslint-disable no-unused-vars */
+/**
+ * HomePage Component for  Parking Application
+ *
+ * This component is the main landing page for the parking app,display
+ * search functionality, nearby parking options, user past booking and
+ * informational content about how the website work
+ *
+ * Features:
+ * -Location search with autocomlete suggestions
+ * -Current location detection
+ * -Navigatin to parking spots
+ * -Past booking history for logged-in users
+ * -Responsive design with different layouts for mobile and desktop
+ *
+ * @component
+ * @param {function } props.setSeletedMarker -function to set the seleted marker on the map
+ * @param {function } props.setNewMarker - function to set a new search marker on the map
+ * @param {Object} props.newMarker - Current Search marker
+ * @param {Function} props.setFilters - Function to update search filters
+ */
+
 import React, { useState, useRef, useEffect, useContext } from "react";
 import {
 	Dialog,
 	Grid,
-	Paper,
 	Divider,
 	useTheme,
 	useMediaQuery,
 	Skeleton,
-	Chip,
 	Snackbar,
 	Alert,
 	Button,
@@ -19,33 +38,25 @@ import {
 	CardActions,
 	Stack,
 } from "@mui/material";
-import {
-	Search as SearchIcon,
-	CalendarToday as CalendarIcon,
-	Clear as ClearIcon,
-	KeyboardArrowDown as KeyboardArrowDownIcon,
-	History as HistoryIcon,
-	TrendingUp as TrendingUpIcon,
-} from "@mui/icons-material";
 
 import { IoLocationSharp } from "react-icons/io5";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import parking from "../assets/Images/parkingSpace.jpg";
 import { useNavigate } from "react-router-dom";
 import { MapContext } from "../context/MapContext";
-import { Spot } from "./Spot";
-import RecentSearchesSection from "../components/RecentSearchSection";
+import { AddSpotUser } from "./AddSpotUser";
 import SearchBar from "../components/SearchBar";
-import { isBefore, addMinutes, setHours, setMinutes } from "date-fns";
-import QuickBooking from "../components/NearByParkings";
+import { addMinutes, setMinutes } from "date-fns";
 import NearByParkings from "../components/NearByParkings";
 import PastBooking from "../components/PastBooking";
 import { AuthContext } from "../context/AuthContext";
 
-
-
-// Loading message component
+/**
+ * Displays a loading indicator with message while the app initializes
+ *
+ * @component
+ * @returns {JSX.Element} Loading message UI
+ */
 const LoadingMessage = () => (
 	<Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
 		<Box sx={{ textAlign: "center" }}>
@@ -58,7 +69,12 @@ const LoadingMessage = () => (
 	</Box>
 );
 
-// Error message component
+/**
+ * @component
+ * @param {object } props -Component props
+ * @param {string} props.message - Error message to display
+ * @returns  {JSX.Element} Error message UI with retry option
+ */
 const ErrorMessage = ({ message }) => (
 	<Box sx={{ p: 3, textAlign: "center" }}>
 		<Typography variant="h6" color="error">
@@ -73,7 +89,12 @@ const ErrorMessage = ({ message }) => (
 	</Box>
 );
 
-// Skeleton card that mimics the actual card layout
+/**
+ * Skeleton placeholder for parking spot cards during loading
+ *
+ * @component
+ * @returns {JSX.Element} Skeleton UI for a parking spot card
+ */
 const SkeletonCard = () => (
 	<Card
 		sx={{
@@ -112,48 +133,100 @@ const SkeletonCard = () => (
 	</Card>
 );
 
-// Skeleton component for loading state
+/**
+ * Skeleton placeholder for booking history during loading
+ *
+ * @component
+ * @returns {JSX.Element} Skeleton UI for booking history section
+ */
 const BookingSkeleton = () => {
 	return (
-	  <Grid container spacing={2}>
-		{[1, 2, 3, 4].map((item) => (
-		  <Grid item xs={12} sm={6} key={item}>
-			<Card variant="outlined" sx={{ height: '100%' }}>
-			  <CardContent>
-				<Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-				  <Skeleton variant="text" width="60%" height={32} />
-				  <Skeleton variant="rectangular" width={60} height={24} />
-				</Box>
-				<Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-				  <Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
-				  <Skeleton variant="text" width="90%" height={24} />
-				</Box>
-				<Divider sx={{ my: 1.5 }} />
-				<Grid container spacing={1}>
-				  {[1, 2, 3, 4].map((subItem) => (
-					<Grid item xs={6} key={subItem}>
-					  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-						<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
-						<Skeleton variant="text" width="80%" height={24} />
-					  </Box>
+		<React.Fragment>
+			<Grid container spacing={2}>
+				{[1, 2, 3, 4].map((item) => (
+					<Grid item xs={12} sm={6} key={item}>
+						<Card variant="outlined" sx={{ height: "100%" }}>
+							<CardContent>
+								<Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+									<Skeleton variant="text" width="60%" height={32} />
+									<Skeleton variant="rectangular" width={60} height={24} />
+								</Box>
+								<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+									<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+									<Skeleton variant="text" width="90%" height={24} />
+								</Box>
+								<Divider sx={{ my: 1.5 }} />
+								<Grid container spacing={1}>
+									{[1, 2, 3, 4].map((subItem) => (
+										<Grid item xs={6} key={subItem}>
+											<Box sx={{ display: "flex", alignItems: "center" }}>
+												<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+												<Skeleton variant="text" width="80%" height={24} />
+											</Box>
+										</Grid>
+									))}
+								</Grid>
+								<Box sx={{ mt: 1 }}>
+									<Skeleton variant="text" width="40%" height={24} />
+								</Box>
+							</CardContent>
+							<CardActions sx={{ p: 2, pt: 0 }}>
+								<Skeleton variant="rectangular" width="100%" height={36} />
+							</CardActions>
+						</Card>
 					</Grid>
-				  ))}
-				</Grid>
-				<Box sx={{ mt: 1 }}>
-				  <Skeleton variant="text" width="40%" height={24} />
-				</Box>
-			  </CardContent>
-			  <CardActions sx={{ p: 2, pt: 0 }}>
-				<Skeleton variant="rectangular" width="100%" height={36} />
-			  </CardActions>
-			</Card>
-		  </Grid>
-		))}
-	  </Grid>
+				))}
+			</Grid>
+			<Grid container spacing={2}>
+				{[1, 2, 3, 4].map((item) => (
+					<Grid item xs={12} sm={6} key={item}>
+						<Card variant="outlined" sx={{ height: "100%" }}>
+							<CardContent>
+								<Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+									<Skeleton variant="text" width="60%" height={32} />
+									<Skeleton variant="rectangular" width={60} height={24} />
+								</Box>
+								<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+									<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+									<Skeleton variant="text" width="90%" height={24} />
+								</Box>
+								<Divider sx={{ my: 1.5 }} />
+								<Grid container spacing={1}>
+									{[1, 2, 3, 4].map((subItem) => (
+										<Grid item xs={6} key={subItem}>
+											<Box sx={{ display: "flex", alignItems: "center" }}>
+												<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+												<Skeleton variant="text" width="80%" height={24} />
+											</Box>
+										</Grid>
+									))}
+								</Grid>
+								<Box sx={{ mt: 1 }}>
+									<Skeleton variant="text" width="40%" height={24} />
+								</Box>
+							</CardContent>
+							<CardActions sx={{ p: 2, pt: 0 }}>
+								<Skeleton variant="rectangular" width="100%" height={36} />
+							</CardActions>
+						</Card>
+					</Grid>
+				))}
+			</Grid>
+		</React.Fragment>
 	);
-  };
+};
 
-// Main HomePage component
+/**
+ * Main HomePage component for the Parking application
+ *
+ * @component
+ * @param {Object} props - component props
+ * @param {Function} props.setSelectedMarker - function to set the selected marker on the map
+ * @param {Function} props.setNewMarker - Function to set a new marker on the map
+ * @param {Object} props.newMarker - Current new marker object
+ * @param {Function} props.setFilters - Function to update search filters
+ * @returns {JSX.Element} HomePage UI with search, nearby parkings,past bookings and how the website work
+ */
 const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) => {
 	const { user } = useContext(AuthContext);
 	const { isLoaded, loadError } = useContext(MapContext);
@@ -169,60 +242,59 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 	const [isAddressValid, setIsAddressValid] = useState(false);
 	const [myCurrentLocation, setMyCurrentLocation] = useState("");
 	const hasFetchedLocation = useRef(false);
-
 	const [recentSearches, setRecentSearches] = useState(() => {
 		const saved = localStorage.getItem("recentSearches");
 		return saved ? JSON.parse(saved) : [];
 	});
-
 	const autocompleteServiceRef = useRef(null);
 	const navigate = useNavigate();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+	/**
+	 * Calculates the initial start time rounded to the nearest 30 minutes
+	 *
+	 * @returns {Date } Rounded start time
+	 *
+	 */
 	const getInitialStartTime = () => {
 		const now = new Date();
 		const roundedMinutes = now.getMinutes() <= 30 ? 30 : 60;
 		return setMinutes(addMinutes(now, roundedMinutes - (now.getMinutes() % 30)), 0);
 	};
 
+	// Show snackbar when location status changes
 	useEffect(() => {
 		if (myLocationstatus) setOpenSnackbar(true);
 	}, [myLocationstatus]);
 
-
-	// Initialize Google Maps services when loaded and the current location 
-
+	// Initialize Google Maps services
 	useEffect(() => {
 		if (isLoaded && window.google && !autocompleteServiceRef.current) {
-		  try {
-			// Initialize the autocomplete service immediately
-			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
-			//console.log("Autocomplete service initialized successfully");
-			
-			// Set initial time
-			const intitalTime = getInitialStartTime();
-			setStartTime(intitalTime);
-		  } catch (error) {
-			console.error("Error initializing AutocompleteService:", error);
-		  }
+			try {
+				autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+				// Set initial time
+				const intitalTime = getInitialStartTime();
+				setStartTime(intitalTime);
+			} catch (error) {
+				console.error("Error initializing AutocompleteService:", error);
+			}
 		}
-	  }, [isLoaded]);
+	}, [isLoaded]);
 
+	// Initialize current location
+	useEffect(() => {
+		if (isLoaded && window.google && !hasFetchedLocation.current) {
+			hasFetchedLocation.current = true;
 
-useEffect(() => {
-	if (isLoaded && window.google && !hasFetchedLocation.current) {
-		hasFetchedLocation.current = true;
+			const storedLocation = localStorage.getItem("userLocation");
+			if (storedLocation) {
+				const parsed = JSON.parse(storedLocation);
+				setMyCurrentLocation(parsed.address);
+				setNewMarker({ name: parsed.address, location: { lat: parsed.lat, lng: parsed.lng } });
+				return;
+			}
 
-		const storedLocation = localStorage.getItem("userLocation");
-		if (storedLocation) {
-			const parsed = JSON.parse(storedLocation);
-			setMyCurrentLocation(parsed.address);
-			setNewMarker({ name: parsed.address, location: { lat: parsed.lat, lng: parsed.lng } });
-			return;
-		}
-
-		
 			setStatus("loading");
 			setMessage("Detecting location...");
 
@@ -275,11 +347,15 @@ useEffect(() => {
 				},
 				{ enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
 			);
-		} 
-}, [isLoaded, setNewMarker]);
+		}
+	}, [isLoaded, setNewMarker]);
 
-
-	// Search handling
+	/**
+	 * Updates the recent search history with a new search item
+	 *
+	 * @param {string} newSearch - the new searched address to  add
+	 * @returns
+	 */
 	const updateRecentSearches = (newSearch) => {
 		if (!searchAddress) return;
 		setRecentSearches((prev) => {
@@ -289,53 +365,61 @@ useEffect(() => {
 		});
 	};
 
+	/**
+	 * Handles input changes in the seach bar with debouncing
+	 *
+	 * @param {object} event  -Input change event
+	 * @returns
+	 */
 	const handleSearchChange = (event) => {
 		const value = event.target.value;
 		setSearchAddress(value);
-	  
+
 		if (!value) {
-		  setPredictions([]);
-		  setSuggestions(false);
-		  return;
+			setPredictions([]);
+			setSuggestions(false);
+			return;
 		}
-	  
+
 		if (!autocompleteServiceRef.current) {
-		  console.error("Autocomplete service not initialized yet");
-		  return;
+			console.error("Autocomplete service not initialized yet");
+			return;
 		}
-	  
+
 		// Add console log to check if this function is being called
 		//console.log("Fetching predictions for:", value);
-		
+
 		// Clear previous timeout to implement debouncing
 		if (window.searchTimeout) {
-		  clearTimeout(window.searchTimeout);
+			clearTimeout(window.searchTimeout);
+			clearTimeout(window.searchTimeout);
 		}
-	  
+
 		// Debounce the predictions request
 		window.searchTimeout = setTimeout(() => {
-		//  console.log("Making autocomplete request for:", value);
-		  
-		  autocompleteServiceRef.current.getPlacePredictions(
-			{ 
-			  input: value, 
-			  componentRestrictions: { country: "IN" } 
-			},
-			(results, status) => {
-			 // console.log("Autocomplete response:", status, results);
-			  
-			  if (status === "OK" && results) {
-				setPredictions(results);
-				setSuggestions(true);
-			  } else {
-				setPredictions([]);
-				setSuggestions(true);
-			  }
-			}
-		  );
+			autocompleteServiceRef.current.getPlacePredictions(
+				{
+					input: value,
+					componentRestrictions: { country: "IN" },
+				},
+				(results, status) => {
+					if (status === "OK" && results) {
+						setPredictions(results);
+						setSuggestions(true);
+					} else {
+						setPredictions([]);
+						setSuggestions(true);
+					}
+				}
+			);
 		}, 300);
-	  };
+	};
 
+	/**
+	 * Handles selection of location suggestion
+	 *
+	 * @param {string} description - the seleted address description
+	 */
 	const handleSuggestionClick = (description) => {
 		setSearchAddress(description);
 		setIsAddressValid(true);
@@ -359,6 +443,9 @@ useEffect(() => {
 		}
 	};
 
+	/**
+	 * Clears the search input and resets related states
+	 */
 	const handleClearSearch = () => {
 		setSearchAddress("");
 		setIsAddressValid(false);
@@ -366,6 +453,10 @@ useEffect(() => {
 		setPredictions([]);
 	};
 
+	/**
+	 *
+	 * Gets the user current location using geolocation
+	 */
 	const handleUseMyLocation = () => {
 		setStatus("loading");
 		setMessage("Detecting location...");
@@ -412,7 +503,10 @@ useEffect(() => {
 			{ enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
 		);
 	};
-
+	/**
+	 * Handles the find parking button click and nivgates to the map search screen
+	 *
+	 */
 	const handleFindParkingClick = () => {
 		if (!isAddressValid) {
 			alert("Please enter a valid location to search for parking spots.");
@@ -442,10 +536,19 @@ useEffect(() => {
 	};
 
 	// Error and loading states
-	if (loadError) return <ErrorMessage message={loadError} />;
-	if (!isLoaded) return <LoadingMessage />;
+	if (loadError) {
+		return <ErrorMessage message={loadError} />;
+	}
+	if (!isLoaded) {
+		return <LoadingMessage />;
+	}
 
-	// Shared action buttons
+	/**
+	 * Common action buttons used in both mobile and desktop views
+	 *
+	 * @component
+	 * @returns {JSX.Element} Action buttons for finding parking and adding spots
+	 */
 	const ActionButtons = () => (
 		<>
 			<Button
@@ -488,12 +591,12 @@ useEffect(() => {
 
 	return (
 		<>
-			{/* Common Dialog for both views */}
+			{/*  Dialog for both views */}
 			<Dialog open={openAddSpotDialogBox} onClose={() => setOpenAddSpotDialogBox(false)}>
-				<Spot onCancel={() => setOpenAddSpotDialogBox(false)} />
+				<AddSpotUser onCancel={() => setOpenAddSpotDialogBox(false)} />
 			</Dialog>
 
-			{/* Common SnackBAr for both views */}
+			{/*  SnackBAr for both views */}
 			<Snackbar
 				open={openSnackbar}
 				autoHideDuration={3000}
@@ -540,14 +643,6 @@ useEffect(() => {
 						<ActionButtons />
 					</Box>
 
-					{/* <Divider sx={{ my: 3 }}>
-						<Chip label="Quick Access" />
-					</Divider> */}
-
-					{/* WE will use in the later demo  */}
-
-				
-
 					{myCurrentLocation ? (
 						<NearByParkings
 							isMobile={isMobile}
@@ -558,7 +653,6 @@ useEffect(() => {
 							selectedDate={selectedDate}
 							startTime={startTime}
 						/>
-
 					) : (
 						<Stack spacing={2} sx={{ maxWidth: "100%" }}>
 							{[1, 2, 3].map((item) => (
@@ -567,11 +661,8 @@ useEffect(() => {
 						</Stack>
 					)}
 
-					{user?<PastBooking  user={user}/>: <BookingSkeleton/>} 
+					{user ? <PastBooking user={user} /> : <BookingSkeleton />}
 
-					
-
-					
 					{/* How Smart Parking Works Section */}
 					<Box sx={{ mt: 5, mb: 3 }}>
 						<Typography variant="h6" fontWeight="bold" textAlign="center" mb={3} color="text.primary">
@@ -645,23 +736,11 @@ useEffect(() => {
 
 							<ActionButtons />
 
-							{user?<PastBooking  user={user} isMobile={isMobile}/>: <BookingSkeleton/>} 
-
+							{user ? <PastBooking user={user} isMobile={isMobile} /> : <BookingSkeleton />}
 						</Grid>
 
-						{/* Right Image */}
+						{/* Right Side - Nearby Parkings */}
 						<Grid item md={6}>
-							{/* <Divider sx={{ my: 3 }}>
-								<Chip label="Quick Access" />
-							</Divider> */}
-
-							{/* WE will use in the later demo  */}
-
-							{/* <RecentSearchesSection
-								onSelect={(search) => handleSuggestionClick(search)}
-								isMobile={isMobile}
-								recentSearches={recentSearches}
-							/> */}
 							{myCurrentLocation ? (
 								<NearByParkings
 									isMobile={isMobile}

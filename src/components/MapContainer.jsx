@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState, useMemo } from "react";
 import { Box, Alert } from "@mui/material";
-import { GoogleMap } from "@react-google-maps/api";
+import { GoogleMap ,Marker} from "@react-google-maps/api";
 import { MarkerComponent } from "./MarkerComponent";
 import { InfoWindowComponent } from "./InfoWindowComponent";
-
+import { MarkerClusterer } from "@react-google-maps/api";
 import { CircularProgress } from "@mui/material";
 import { MapContext } from "../context/MapContext";
 
@@ -118,6 +118,21 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 							zoomControl: true,
 						}}
 					>
+
+						{/* <MarkerClusterer 
+						
+						>{(clusterer)=>
+							filteredMarkers
+							? filteredMarkers.map((marker, index) => (
+									<MarkerComponent key={index} marker={marker} setSelectedMarker={setSelectedMarker} clusterer={clusterer} />
+							  ))
+							: markers.map((marker, index) => (
+									<MarkerComponent key={index} marker={marker} setSelectedMarker={setSelectedMarker} clusterer={clusterer}/>
+							  ))
+						}
+							
+							 </MarkerClusterer> */}
+						
 						{/*Render existing parking spot markers */}
 
 						{filteredMarkers
