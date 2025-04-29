@@ -82,11 +82,7 @@ const AppLayout = () => {
 		function parseTimeWithAMPM(timeStr) {
 			const [time, meridiem] = timeStr.split(" ");
 			const [hours, minutes] = time.split(":").map(Number);
-			if (meridiem === "PM" && hours !== 12) {
-				return (hours + 12) * 60 + minutes;
-			} else if (meridiem === "AM" && hours === 12) {
-				return 0 * 60 + minutes;
-			}
+			
 			return hours * 60 + minutes;
 		}
 
