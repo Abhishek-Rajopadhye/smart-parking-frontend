@@ -1,5 +1,14 @@
-/* eslint-disable no-unused-vars */
-import { useContext, useEffect, useState } from "react";
+/**
+ * PastBooking Component
+ *
+ * Displays a user's recent booking history with options to rebook previous parking spots.
+ * Shows booking details including location, date/time, payment amount, and duration.
+ *
+ * @file PastBooking.jsx
+ *
+ */
+
+import { useEffect, useState } from "react";
 import axios from "axios";
 import {
 	Card,
@@ -14,7 +23,6 @@ import {
 	Container,
 	CardActions,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import {
 	HistoryOutlined,
 	AccessTimeOutlined,
@@ -24,18 +32,35 @@ import {
 	CheckCircle,
 } from "@mui/icons-material";
 import { BACKEND_URL } from "../const";
-import { AuthContext } from "../context/AuthContext";
 import { Booking } from "../pages/Booking";
 
+/**
+ * PastBooking Component
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.user - Current user object with ID
+ * @param {boolean} props.isMobile - Whether the component is being rendered on a mobile device
+ * @returns {React.ReactElement} The PastBooking component
+ */
 const PastBooking = ({ user, isMobile }) => {
+	// State for bookings and UI control
 	const [recentBookings, setRecentBookings] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
 	const [selectedMarker, setSelectedMarker] = useState([]);
 	const [previousBookingData, setPreviousBookingData] = useState(null);
 
+	/**
+	 * Toggles booking dialog visibility
+	 */
 	const toggleDialogBooking = () => setDialogBookingOpen(!dialogBookingOpen);
 
+	/**
+	 * Handles the rebook action for a previous booking
+	 * Fetches parking spot details and opens booking dialog
+	 *
+	 * @param {Object} previous_booking - Previous booking data
+	 */
 	const handleBooking = async (previous_booking) => {
 		if (!previous_booking.spot_id) return;
 		setDialogBookingOpen(!dialogBookingOpen);
@@ -52,8 +77,13 @@ const PastBooking = ({ user, isMobile }) => {
 		}
 	};
 
+	/**
+	 * Fetches user's booking history
+	 */
 	useEffect(() => {
 		const fetchDetailsUserBookings = async () => {
+			if (!user?.id) return;
+
 			try {
 				setLoading(true);
 				const response = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
@@ -69,10 +99,15 @@ const PastBooking = ({ user, isMobile }) => {
 			}
 		};
 
-		if (user?.id) fetchDetailsUserBookings();
+		fetchDetailsUserBookings();
 	}, [user?.id]);
 
-	// Format date and time to be more readable
+	/**
+	 * Format date and time to be more readable
+	 *
+	 * @param {string} dateTimeStr - Date time string
+	 * @returns {Object} Formatted date and time
+	 */
 	const formatDateTime = (dateTimeStr) => {
 		try {
 			const [date, time] = dateTimeStr.split(", ");
@@ -82,7 +117,13 @@ const PastBooking = ({ user, isMobile }) => {
 		}
 	};
 
-	// Calculate total duration in hours
+	/**
+	 * Calculate total duration in hours between two dates
+	 *
+	 * @param {string} start - Start date time
+	 * @param {string} end - End date time
+	 * @returns {number|string} Duration in hours or "N/A"
+	 */
 	const calculateDuration = (start, end) => {
 		try {
 			const startDate = new Date(start.replace(/(\d+)\/(\d+)\/(\d+)/, "$2/$1/$3"));
@@ -93,8 +134,12 @@ const PastBooking = ({ user, isMobile }) => {
 			return "N/A";
 		}
 	};
-
-	// Helper function to determine status color
+	/**
+	 * Get color based on booking status
+	 *
+	 * @param {string} status - Booking status
+	 * @returns {string} Material-UI color name
+	 */
 	const getStatusColor = (status) => {
 		switch (status?.toLowerCase()) {
 			case "completed":
@@ -111,6 +156,7 @@ const PastBooking = ({ user, isMobile }) => {
 	return (
 		<Container>
 			<Box sx={{ mb: 3, mt: 2 }}>
+				{/* Header Section  */}
 				<Typography
 					variant="h5"
 					component="h2"
@@ -149,7 +195,9 @@ const PastBooking = ({ user, isMobile }) => {
 							return (
 								<Grid item xs={12} sm={12} key={booking.id}>
 									<Card variant="outlined" sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+										{/* Card Component */}
 										<CardContent sx={{ flex: "1 0 auto" }}>
+											{/* Spot title and status color  */}
 											<Box
 												sx={{
 													display: "flex",
@@ -169,6 +217,7 @@ const PastBooking = ({ user, isMobile }) => {
 												/>
 											</Box>
 
+											{/* spot address  */}
 											<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
 												<LocationOnOutlined fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
 												<Typography variant="body2" color="text.secondary">
@@ -199,6 +248,7 @@ const PastBooking = ({ user, isMobile }) => {
 														</Typography>
 													</Box>
 												</Grid>
+
 												<Grid item xs={6}>
 													<Box sx={{ display: "flex", alignItems: "center" }}>
 														<PaymentOutlined

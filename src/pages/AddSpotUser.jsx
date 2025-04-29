@@ -610,4 +610,4 @@ const AddSpotUser = ({ onCancel }) => {
 	);
 };
 
-export { AddSpotUser };
+export default { AddSpotUser };
