@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { BACKEND_URL } from "../const";
@@ -14,7 +14,7 @@ import { BACKEND_URL } from "../const";
  * @returns {JSX.Element} The Auth page component.
  */
 const Auth = () => {
-	const { user } = useContext(AuthContext);
+	const { user, sessionType } = useContext(AuthContext);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -22,12 +22,16 @@ const Auth = () => {
 		const token = params.get("token");
 		const user_id = params.get("user_id");
 		if (token) {
-			localStorage.setItem("token", String(token));
-			localStorage.setItem("user_id", String(user_id));
+			localStorage.setItem("token", token);
+			localStorage.setItem("user_id", user_id);
 			axios.put(`${BACKEND_URL}/bookings/user/${user_id}`);
-			navigate("/homepage");
+			if (sessionType == "User") {
+				navigate("/homepage");
+			} else {
+				navigate("/ownerdashboard");
+			}
 		}
-	}, [navigate]);
+	}, [navigate, sessionType]);
 
 	if (!user) {
 		return (
