@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect, useContext, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
@@ -62,8 +61,8 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 	 * It will check the selected time is between open time and close time
 	 * It will check the selected time is between open time and close time
 	 *
-	 * @param {*} selectedDate
-	 * @param {*} msg
+	 * @param {*} selectedDate - selected date and time
+	 * @param {*} msg - message to set the start or end time
 	 * @returns boolean
 	 */
 	const validateDateTime = (selectedDate, msg) => {
@@ -105,16 +104,18 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 		return true;
 	};
 	/**
-	 *  This function is used to convert the date and time to string
-	 * @param {*} date
-	 * @returns
+	 * This function is used to check the date is valid or not
+	 * @param {*} date - date to check
+	 * @returns boolean
 	 */
 	const dateTimeToString = (date) => {
 		return date.toISOString().replace("T", " ").slice(0, 19);
 	};
 
 	/**
-	 * This function is used to download the pdf file
+	 * This function is used to download the pdf of the booking receipt
+	 * It will create a pdf with the booking details and send it to the user email
+	 * It will also show the snackbar message if the pdf is sent successfully or not
 	 * @returns
 	 */
 	const downloadPDF = useCallback(async () => {
@@ -290,7 +291,12 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 		totalSlots,
 		user.email,
 	]);
-
+	/**
+	 * function is used to get the closest valid date
+	 * @param {*} baseDate - previous booking date
+	 * @param {*} availableDays - available days of the spot
+	 * @returns closest valid date else return base date
+	 */
 	function getClosestValidDate(baseDate, availableDays) {
 		const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 		let date = new Date(baseDate);
@@ -303,9 +309,15 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 		}
 		return baseDate; // fallback, should not happen if availableDays is valid
 	}
-
+	/**
+	 * This function is used to set the start and end time of the booking
+	 * It will set the start time and end time to the closest valid date
+	 * It will also set the total slots to the previous booking
+	 * It will also set the payment status to false after the payment is successful
+	 */
 	useEffect(() => {
 		if (previous_booking) {
+			console.log(previous_booking);
 			setTotalSlots(previous_booking.total_slots);
 
 			const spotDays = spot_information.available_days || [];
@@ -342,11 +354,10 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 
 	/**
 	 * This function is used to calculate the amount of the parking slot
-	 * It will check the start time and end time and calculate the amount
-	 * If the start time is greater than end time then it will show the error message
-	 * If the total slot is less than 0 then it will show the error message
+	 * Check if the payment status is true then it will return
+	 * Check start time and end time valid or not
+	 * If total slots is less than 0 then it will show the error message
 	 * If the start time and end time is not selected then it will show the error message
-	 *
 	 * @returns boolean
 	 */
 	const calculateAmount = () => {
@@ -504,7 +515,16 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 			}
 		}
 	};
-
+	
+	/**
+	 * Handles the cancellation of a booking.
+	 * - If the user cancels after starting the booking process,
+	 *   it releases the reserved slots back to availability.
+	 * - Sends a request to update the total available slots in the backend.
+	 * - Resets local booking-related states like start time, end time, and flags.
+	 * @param {*} e - on click cancel button
+	 * @returns
+	 */
 	const handleCancel = async () => {
 		if (buttonDisabled) return;
 		try {

@@ -1,22 +1,22 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useContext, useEffect, useRef } from "react";
-import { 
-  Box, 
-  Paper, 
-  Typography, 
-  TextField, 
-  Button, 
-  InputAdornment, 
-  IconButton, 
-  Slider,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem
+import {
+	Box,
+	Paper,
+	Typography,
+	TextField,
+	Button,
+	InputAdornment,
+	IconButton,
+	Slider,
+	FormControl,
+	InputLabel,
+	Select,
+	MenuItem,
 } from "@mui/material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Search as SearchIcon } from "@mui/icons-material";
+import { MyLocationOutlined, Search as SearchIcon } from "@mui/icons-material";
 import { DatePicker } from "@mui/x-date-pickers";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -27,448 +27,481 @@ import { getLatLng } from "react-places-autocomplete";
 import MarkerCard from "./MarkerCard";
 import { isBefore, addMinutes, setHours, setMinutes, format, isToday } from "date-fns";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
+import SearchBar from "./SearchBar";
+import RecentSearchesSection from "./RecentSearchSection";
 
 const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilters, filteredMarkers }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [searchLocation, setSearchLocation] = useState("");
-  const [latlng, setLatLng] = useState(null);
-  const [startTime, setStartTime] = useState(null);
-  const [endTime, setEndTime] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [suggestions, setSuggestions] = useState(false);
-  const { isLoaded, loadError } = useContext(MapContext);
-  const [predictions, setPredictions] = useState([]);
-  const autocompleteServiceRef = useRef(null);
-  const [tempLocation, setTempLocation] = useState("");
-  const [tempDate, setTempDate] = useState(new Date());
-  const [tempStartTime, setTempStartTime] = useState(null);
-  const [tempEndTime, setTempEndTime] = useState(null);
-  const [parkingPrice, setParkingPrice] = useState([0, 250]);
-  const [availableStartTimes, setAvailableStartTimes] = useState([]);
-  const [availableEndTimes, setAvailableEndTimes] = useState([]);
+	const navigate = useNavigate();
+	const location = useLocation();
+	const [searchLocation, setSearchLocation] = useState("");
+	const [latlng, setLatLng] = useState(null);
+	const [startTime, setStartTime] = useState(null);
+	const [endTime, setEndTime] = useState(null);
+	const [selectedDate, setSelectedDate] = useState(new Date());
+	const [suggestions, setSuggestions] = useState(false);
+	const { isLoaded, loadError } = useContext(MapContext);
+	const [predictions, setPredictions] = useState([]);
+	const autocompleteServiceRef = useRef(null);
+	const [tempLocation, setTempLocation] = useState("");
+	const [tempDate, setTempDate] = useState(new Date());
+	const [tempStartTime, setTempStartTime] = useState(null);
+	const [tempEndTime, setTempEndTime] = useState(null);
+	const [parkingPrice, setParkingPrice] = useState([0, 250]);
+	const [availableStartTimes, setAvailableStartTimes] = useState([]);
+	const [availableEndTimes, setAvailableEndTimes] = useState([]);
 
-  useEffect(() => {
-    if (isLoaded && window.google && !autocompleteServiceRef.current) {
-      autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
-    }
+	const [recentSearches, setRecentSearches] = useState(() => {
+		const saved = localStorage.getItem("recentSearches");
+		return saved ? JSON.parse(saved) : [];
+	});
 
-    if (location?.state) {
-      const { locationName, startTime, endTime, selectedDate } = location.state;
-      setSearchLocation(locationName);
-      setTempLocation(locationName);
-      setStartTime(startTime);
-      setTempStartTime(startTime);
-      setEndTime(endTime);
-      setTempEndTime(endTime);
-      setSelectedDate(selectedDate);
-      setTempDate(selectedDate);
-    }
-  }, [isLoaded, location]);
+	const showRecentSearches = suggestions && !tempLocation && recentSearches.length > 0;
 
-  // Generate time slots in 30-minute intervals
-  const generateTimeSlots = (date, isStartTime = true, referenceTime = null) => {
-    if (!date) return [];
-    
-    const slots = [];
-    const today = new Date();
-    const isDateToday = isToday(date);
-    
-    let startHour = 0;
-    let startMinute = 0;
-    
-    // If it's today and we're generating start times, begin from the current time (rounded up)
-    if (isDateToday && isStartTime) {
-      const currentHour = today.getHours();
-      const currentMinute = today.getMinutes();
-      
-      // Round up to nearest 30 minutes
-      if (currentMinute <= 30) {
-        startHour = currentHour;
-        startMinute = 30;
-      } else {
-        startHour = currentHour + 1;
-        startMinute = 0;
-      }
-    }
-    
-    // If it's for end times and we have a reference time (start time)
-    if (!isStartTime && referenceTime) {
-      startHour = referenceTime.getHours();
-      startMinute = referenceTime.getMinutes();
-      
-      // Move to next slot for minimum end time
-      if (startMinute === 0) {
-        startMinute = 30;
-      } else {
-        startHour += 1;
-        startMinute = 0;
-      }
-    }
-    
-    // Generate slots from the determined start time until midnight
-    for (let hour = startHour; hour < 24; hour++) {
-      for (let minute = (hour === startHour ? startMinute : 0); minute < 60; minute += 30) {
-        const timeSlot = new Date(date);
-        timeSlot.setHours(hour, minute, 0, 0);
-        
-        const formattedTime = format(timeSlot, "h:mm a");
-        slots.push({
-          label: formattedTime,
-          value: timeSlot
-        });
-      }
-    }
-    
-    return slots;
-  };
+	// Search handling
+	const updateRecentSearches = (newSearch) => {
+		setRecentSearches((prev) => {
+			const updated = [newSearch, ...prev.filter((item) => item !== newSearch)].slice(0, 4);
+			localStorage.setItem("recentSearches", JSON.stringify(updated));
+			return updated;
+		});
+	};
 
-  // Update time slots when date changes
-  useEffect(() => {
-    if (!tempDate) return;
-    
-    // Generate start time slots
-    const startTimeSlots = generateTimeSlots(tempDate, true);
-    setAvailableStartTimes(startTimeSlots);
-    
-    // If we have no current start time but have slots available, set a default
-    if (startTimeSlots.length > 0 && !tempStartTime) {
-      const defaultStart = startTimeSlots[0].value;
-      setTempStartTime(defaultStart);
-      
-      // Generate end time slots based on this default start time
-      const endTimeSlots = generateTimeSlots(tempDate, false, defaultStart);
-      setAvailableEndTimes(endTimeSlots);
-      
-      // Set default end time
-      if (endTimeSlots.length > 0) {
-        setTempEndTime(endTimeSlots[0].value);
-      }
-    } 
-    else if (tempStartTime) {
-      // If we already have a start time, update end time options
-      const endTimeSlots = generateTimeSlots(tempDate, false, tempStartTime);
-      setAvailableEndTimes(endTimeSlots);
-      
-      // Reset end time if it's no longer valid
-      const endTimeIsValid = endTimeSlots.some(slot => 
-        slot.value.getHours() === tempEndTime?.getHours() && 
-        slot.value.getMinutes() === tempEndTime?.getMinutes()
-      );
-      
-      if (!endTimeIsValid && endTimeSlots.length > 0) {
-        setTempEndTime(endTimeSlots[0].value);
-      }
-    }
-  }, [tempDate]);
+	useEffect(() => {
+		if (isLoaded && window.google && !autocompleteServiceRef.current) {
+			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+		}
 
-  // Handle start time change with proper end time updates
-  const handleStartTimeChange = (newStartTime) => {
-    if (!newStartTime) return;
-    
-    setTempStartTime(newStartTime);
-    
-    // Immediately regenerate end time options based on the new start time
-    const endTimeSlots = generateTimeSlots(tempDate, false, newStartTime);
-    setAvailableEndTimes(endTimeSlots);
-    
-    // Reset end time if it's before the start time or if there's no current end time
-    const currentEndTimeValid = tempEndTime && isBefore(newStartTime, tempEndTime);
-    
-    if (!currentEndTimeValid && endTimeSlots.length > 0) {
-      setTempEndTime(endTimeSlots[0].value);
-    }
-  };
+		if (location?.state) {
+			const { locationName, startTime, endTime, selectedDate } = location.state;
+			setSearchLocation(locationName);
+			setTempLocation(locationName);
+			setStartTime(startTime);
+			setTempStartTime(startTime);
+			setEndTime(endTime);
+			setTempEndTime(endTime);
+			setSelectedDate(selectedDate);
+			setTempDate(selectedDate);
+		}
+	}, [isLoaded, location]);
 
+	// Generate time slots in 30-minute intervals
+	const generateTimeSlots = (date, isStartTime = true, referenceTime = null) => {
+		if (!date) return [];
 
-  
-  // Effect to update end times whenever start time changes
-  useEffect(() => {
-    if (!tempStartTime || !tempDate) return;
-    
-    const endTimeSlots = generateTimeSlots(tempDate, false, tempStartTime);
-    setAvailableEndTimes(endTimeSlots);
-    
-    // Check if current end time is still valid
-    if (tempEndTime) {
-      const endTimeValid = endTimeSlots.some(slot => 
-        slot.value.getHours() === tempEndTime.getHours() && 
-        slot.value.getMinutes() === tempEndTime.getMinutes()
-      );
-      
-      // If not valid, set to first available slot
-      if (!endTimeValid && endTimeSlots.length > 0) {
-        setTempEndTime(endTimeSlots[0].value);
-      }
-    } else if (endTimeSlots.length > 0) {
-      // If no end time is set, set default
-      setTempEndTime(endTimeSlots[0].value);
-    }
-  }, [tempStartTime, tempDate]);
+		const slots = [];
+		const today = new Date();
+		const isDateToday = isToday(date);
 
-  if (loadError) return <div>Error loading Google Maps</div>;
-  if (!isLoaded) return <div>Loading Google Maps...</div>;
+		let startHour = 0;
+		let startMinute = 0;
 
-  /**
-   * Handles changes to the parking price slider.
-   *
-   * @param {Object} event - The slider change event.
-   * @param {Array} value - The updated price range.
-   */
-  const handlePrice = (event, value) => {
-    setParkingPrice(value);
-  };
+		// If it's today and we're generating start times, begin from the current time (rounded up)
+		if (isDateToday && isStartTime) {
+			const currentHour = today.getHours();
+			const currentMinute = today.getMinutes();
 
-  /**
-   * Handles changes to the search input field.
-   *
-   * Updates the autocomplete suggestions based on the input value.
-   *
-   * @param {Object} event - The input change event.
-   */
-  const handleSearchChange = (event) => {
-    const value = event.target.value;
-    setTempLocation(value);
+			// Round up to nearest 30 minutes
+			if (currentMinute <= 30) {
+				startHour = currentHour;
+				startMinute = 30;
+			} else {
+				startHour = currentHour + 1;
+				startMinute = 0;
+			}
+		}
 
-    if (!value || !autocompleteServiceRef.current) {
-      setPredictions([]);
-      setSuggestions(false);
-      return;
-    }
+		// If it's for end times and we have a reference time (start time)
+		if (!isStartTime && referenceTime) {
+			startHour = referenceTime.getHours();
+			startMinute = referenceTime.getMinutes();
 
-    autocompleteServiceRef.current.getPlacePredictions(
-      { input: value, componentRestrictions: { country: "IN" } },
-      (results) => {
-        if (results) {
-          setPredictions(results);
-          setSuggestions(true);
-        } else {
-          setPredictions([]);
-          setSuggestions(false);
-        }
-      }
-    );
-  };
+			// Move to next slot for minimum end time
+			if (startMinute === 0) {
+				startMinute = 30;
+			} else {
+				startHour += 1;
+				startMinute = 0;
+			}
+		}
 
-  /**
-   * Handles the selection of an autocomplete suggestion.
-   *
-   * @param {string} description - The selected location description.
-   */
-  const handleSuggestionClick = (description) => {
-    setTempLocation(description);
-    setSuggestions(false);
-    setPredictions([]);
-  };
+		// Generate slots from the determined start time until midnight
+		for (let hour = startHour; hour < 24; hour++) {
+			for (let minute = hour === startHour ? startMinute : 0; minute < 60; minute += 30) {
+				const timeSlot = new Date(date);
+				timeSlot.setHours(hour, minute, 0, 0);
 
-  /**
-   * Clears the search input field and resets suggestions.
-   */
-  const handleClearSearch = () => {
-    setTempLocation("");
-    setSuggestions(false);
-    setPredictions([]);
-    setNewMarker(null);
-  };
+				const formattedTime = format(timeSlot, "h:mm a");
+				slots.push({
+					label: formattedTime,
+					value: timeSlot,
+				});
+			}
+		}
 
-  /**
-   * Updates the search filters and triggers a map update.
-   */
-  const handleUpdateSearch = () => {
-    setSearchLocation(tempLocation);
-    setSelectedDate(tempDate);
-    setStartTime(tempStartTime);
-    setEndTime(tempEndTime);
+		return slots;
+	};
 
-    const weekDay = tempDate.toLocaleDateString("en-US", { weekday: "short" });
+	// Update time slots when date changes
+	useEffect(() => {
+		if (!tempDate) return;
 
-    if (tempDate) {
-      setFilters((prev) => ({ ...prev, available_days: [weekDay] }));
-    }
-    if (tempStartTime) {
-      setFilters((prev) => ({
-        ...prev,
-        open_time: `${tempStartTime?.getHours()}:${tempStartTime?.getMinutes().toString().padStart(2, "0")}`,
-      }));
-    }
-    if (tempEndTime) {
-      setFilters((prev) => ({
-        ...prev,
-        close_time: `${tempEndTime?.getHours()}:${tempEndTime?.getMinutes().toString().padStart(2, "0")}`,
-      }));
-    }
-    if (parkingPrice) {
-      setFilters((prev) => ({ ...prev, hourly_rate: parkingPrice }));
-    }
+		// Generate start time slots
+		const startTimeSlots = generateTimeSlots(tempDate, true);
+		setAvailableStartTimes(startTimeSlots);
 
-    const geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode({ address: tempLocation }, async (results, status) => {
-      if (status === "OK" && results[0]) {
-        const latLng = await getLatLng(results[0]);
-        setLatLng(latLng);
+		// If we have no current start time but have slots available, set a default
+		if (startTimeSlots.length > 0 && !tempStartTime) {
+			const defaultStart = startTimeSlots[0].value;
+			setTempStartTime(defaultStart);
 
-        const newSearchMarker = { name: tempLocation, location: latLng };
-        setNewMarker(newSearchMarker);
-        setSelectedMarker(newSearchMarker);
+			// Generate end time slots based on this default start time
+			const endTimeSlots = generateTimeSlots(tempDate, false, defaultStart);
+			setAvailableEndTimes(endTimeSlots);
 
-        if (mapRef.current) {
-          mapRef.current.panTo(latLng);
-          mapRef.current.setZoom(14);
-        }
-      }
-    });
-  };
+			// Set default end time
+			if (endTimeSlots.length > 0) {
+				setTempEndTime(endTimeSlots[0].value);
+			}
+		} else if (tempStartTime) {
+			// If we already have a start time, update end time options
+			const endTimeSlots = generateTimeSlots(tempDate, false, tempStartTime);
+			setAvailableEndTimes(endTimeSlots);
 
-  return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Paper elevation={3} sx={{ p: 2, height: "100vh", borderRadius: 0, overflowY: "auto" }}>
-        {/* Search Location */}
-        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
-          Book Parking Near
-        </Typography>
-        <TextField
-          fullWidth
-          placeholder="Search location"
-          value={tempLocation}
-          onChange={handleSearchChange}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon color="action" />
-              </InputAdornment>
-            ),
-            endAdornment: tempLocation && (
-              <InputAdornment position="end">
-                <IconButton size="small" onClick={handleClearSearch}>
-                  <ClearIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          autoComplete="off"
-        />
-        {/* Suggestions */}
-        {suggestions && predictions.length > 0 && (
-          <Paper sx={{ position: "absolute", zIndex: 1100, mt: 0.5 }}>
-            {predictions.map((prediction, index) => (
-              <Box
-                key={index}
-                onClick={() => handleSuggestionClick(prediction.description)}
-                sx={{ p: 1.5, cursor: "pointer", "&:hover": { backgroundColor: "#f5f5f5" } }}
-              >
-                <Typography variant="body2">{prediction.description}</Typography>
-              </Box>
-            ))}
-          </Paper>
-        )}
-        {/* Date Picker */}
-        <DatePicker
-          value={tempDate}
-          onChange={(newDate) => {
-            setTempDate(newDate);
-            // Reset time selections when date changes
-            setTempStartTime(null);
-            setTempEndTime(null);
-          }}
-          disablePast
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              InputProps: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <CalendarTodayIcon fontSize="small" />
-                  </InputAdornment>
-                ),
-              },
-            },
-          }}
-          sx={{ mt: 2 }}
-        />
-        {/* Time Pickers */}
-        <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>
-          Enter After
-        </Typography>
-        <FormControl fullWidth>
-          <Select
-            value={tempStartTime || ""}
-            onChange={(e) => handleStartTimeChange(e.target.value)}
-            displayEmpty
-            renderValue={(selected) => {
-              if (!selected) return <Typography color="text.secondary">Select start time</Typography>;
-              return format(selected, "h:mm a");
-            }}
-            startAdornment={
-              <InputAdornment position="start">
-                <AccessTimeIcon fontSize="small" />
-              </InputAdornment>
-            }
-          >
-            {availableStartTimes.map((slot, index) => (
-              <MenuItem key={`start-${index}`} value={slot.value}>
-                {slot.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+			// Reset end time if it's no longer valid
+			const endTimeIsValid = endTimeSlots.some(
+				(slot) =>
+					slot.value.getHours() === tempEndTime?.getHours() && slot.value.getMinutes() === tempEndTime?.getMinutes()
+			);
 
-        <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>
-          Exit Before
-        </Typography>
-        <FormControl fullWidth>
-          <Select
-            value={tempEndTime || ""}
-            onChange={(e) => setTempEndTime(e.target.value)}
-            displayEmpty
-            disabled={!tempStartTime}
-            renderValue={(selected) => {
-              if (!selected) return <Typography color="text.secondary">Select end time</Typography>;
-              return format(selected, "h:mm a");
-            }}
-            startAdornment={
-              <InputAdornment position="start">
-                <AccessTimeIcon fontSize="small" />
-              </InputAdornment>
-            }
-          >
-            {availableEndTimes.map((slot, index) => (
-              <MenuItem key={`end-${index}`} value={slot.value}>
-                {slot.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+			if (!endTimeIsValid && endTimeSlots.length > 0) {
+				setTempEndTime(endTimeSlots[0].value);
+			}
+		}
+	}, [tempDate]);
 
-        {/* Price Range */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 3 }}>
-          <CurrencyRupeeIcon sx={{ color: "green" }} />
-          <Typography variant="h6">Price Range</Typography>
-        </Box>
-        <Slider
-          value={parkingPrice}
-          onChange={handlePrice}
-          aria-label="Price Range"
-          valueLabelDisplay="auto"
-          max={500}
-          sx={{ color: "primary.main" }}
-        />
-        {/* Update Search */}
-        <Button 
-          variant="contained" 
-          fullWidth 
-          onClick={handleUpdateSearch} 
-          sx={{ mt: 3 }}
-          disabled={!tempLocation || !tempDate || !tempStartTime || !tempEndTime}
-        >
-          Update Search
-        </Button>
-        {/* Marker Cards */}
-        <Box sx={{ mt: 3 }}>
-          <MarkerCard markers={filteredMarkers} origin={searchLocation} latlng={latlng} />
-        </Box>
-      </Paper>
-    </LocalizationProvider>
-  );
+	// Handle start time change with proper end time updates
+	const handleStartTimeChange = (newStartTime) => {
+		if (!newStartTime) return;
+
+		setTempStartTime(newStartTime);
+
+		// Immediately regenerate end time options based on the new start time
+		const endTimeSlots = generateTimeSlots(tempDate, false, newStartTime);
+		setAvailableEndTimes(endTimeSlots);
+
+		// Reset end time if it's before the start time or if there's no current end time
+		const currentEndTimeValid = tempEndTime && isBefore(newStartTime, tempEndTime);
+
+		if (!currentEndTimeValid && endTimeSlots.length > 0) {
+			setTempEndTime(endTimeSlots[0].value);
+		}
+	};
+
+	// Effect to update end times whenever start time changes
+	useEffect(() => {
+		if (!tempStartTime || !tempDate) return;
+
+		const endTimeSlots = generateTimeSlots(tempDate, false, tempStartTime);
+		setAvailableEndTimes(endTimeSlots);
+
+		// Check if current end time is still valid
+		if (tempEndTime) {
+			const endTimeValid = endTimeSlots.some(
+				(slot) =>
+					slot.value.getHours() === tempEndTime.getHours() && slot.value.getMinutes() === tempEndTime.getMinutes()
+			);
+
+			// If not valid, set to first available slot
+			if (!endTimeValid && endTimeSlots.length > 0) {
+				setTempEndTime(endTimeSlots[0].value);
+			}
+		} else if (endTimeSlots.length > 0) {
+			// If no end time is set, set default
+			setTempEndTime(endTimeSlots[0].value);
+		}
+	}, [tempStartTime, tempDate]);
+
+	if (loadError) return <div>Error loading Google Maps</div>;
+	if (!isLoaded) return <div>Loading Google Maps...</div>;
+
+	/**
+	 * Handles changes to the parking price slider.
+	 *
+	 * @param {Object} event - The slider change event.
+	 * @param {Array} value - The updated price range.
+	 */
+	const handlePrice = (event, value) => {
+		setParkingPrice(value);
+	};
+
+	/**
+	 * Handles changes to the search input field.
+	 *
+	 * Updates the autocomplete suggestions based on the input value.
+	 *
+	 * @param {Object} event - The input change event.
+	 */
+	const handleSearchChange = (event) => {
+		const value = event.target.value;
+		setTempLocation(value);
+
+		if (!value || !autocompleteServiceRef.current) {
+			setPredictions([]);
+			setSuggestions(false);
+			return;
+		}
+
+		autocompleteServiceRef.current.getPlacePredictions(
+			{ input: value, componentRestrictions: { country: "IN" } },
+			(results) => {
+				if (results) {
+					setPredictions(results);
+					setSuggestions(true);
+				} else {
+					setPredictions([]);
+					setSuggestions(false);
+				}
+			}
+		);
+	};
+
+	/**
+	 * Handles the selection of an autocomplete suggestion.
+	 *
+	 * @param {string} description - The selected location description.
+	 */
+	const handleSuggestionClick = (description) => {
+		setTempLocation(description);
+		setSuggestions(false);
+		setPredictions([]);
+	};
+
+	/**
+	 * Clears the search input field and resets suggestions.
+	 */
+	const handleClearSearch = () => {
+		setTempLocation("");
+		setSuggestions(false);
+		setPredictions([]);
+		setNewMarker(null);
+	};
+
+	/**
+	 * Updates the search filters and triggers a map update.
+	 */
+	const handleUpdateSearch = () => {
+		setSearchLocation(tempLocation);
+		setSelectedDate(tempDate);
+		setStartTime(tempStartTime);
+		setEndTime(tempEndTime);
+		updateRecentSearches(tempLocation);
+
+		const weekDay = tempDate.toLocaleDateString("en-US", { weekday: "short" });
+
+		if (tempDate) {
+			setFilters((prev) => ({ ...prev, available_days: [weekDay] }));
+		}
+		if (tempStartTime) {
+			setFilters((prev) => ({
+				...prev,
+				open_time: `${tempStartTime?.getHours()}:${tempStartTime?.getMinutes().toString().padStart(2, "0")}`,
+			}));
+		}
+		if (tempEndTime) {
+			setFilters((prev) => ({
+				...prev,
+				close_time: `${tempEndTime?.getHours()}:${tempEndTime?.getMinutes().toString().padStart(2, "0")}`,
+			}));
+		}
+		if (parkingPrice) {
+			setFilters((prev) => ({ ...prev, hourly_rate: parkingPrice }));
+		}
+
+		const geocoder = new window.google.maps.Geocoder();
+		geocoder.geocode({ address: tempLocation }, async (results, status) => {
+			if (status === "OK" && results[0]) {
+				const latLng = await getLatLng(results[0]);
+				setLatLng(latLng);
+
+				const newSearchMarker = { name: tempLocation, location: latLng };
+				setNewMarker(newSearchMarker);
+				setSelectedMarker(newSearchMarker);
+
+				if (mapRef.current) {
+					mapRef.current.panTo(latLng);
+					mapRef.current.setZoom(14);
+				}
+			}
+		});
+	};
+
+	return (
+		<LocalizationProvider dateAdapter={AdapterDateFns}>
+			<Paper elevation={3} sx={{ p: 2, height: "100vh", borderRadius: 0, overflowY: "auto" }}>
+				{/* Search Location */}
+				<Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+					Book Parking Near
+				</Typography>
+				<TextField
+					fullWidth
+					placeholder="Search location"
+					value={tempLocation}
+					onChange={handleSearchChange}
+					onFocus={() => setSuggestions(true)}
+					onBlur={() => setTimeout(() => setSuggestions(false), 150)} // Delay to allow click
+					InputProps={{
+						startAdornment: (
+							<InputAdornment position="start">
+								<SearchIcon color="action" />
+							</InputAdornment>
+						),
+						endAdornment: tempLocation && (
+							<InputAdornment position="end">
+								<IconButton size="small" onClick={handleClearSearch}>
+									<ClearIcon />
+								</IconButton>
+							</InputAdornment>
+						),
+					}}
+					autoComplete="off"
+				/>
+
+				{suggestions && (
+					<Paper>
+						{showRecentSearches && (
+							<RecentSearchesSection
+								recentSearches={recentSearches}
+								onSelect={(search) => handleSuggestionClick(search)}
+							/>
+						)}
+						{tempLocation && predictions.length > 0
+							? predictions.map((prediction, index) => (
+									<Box
+										key={index}
+										onClick={() => handleSuggestionClick(prediction.description)}
+										sx={{ p: 1.5, cursor: "pointer", "&:hover": { backgroundColor: "#f5f5f5" } }}
+									>
+										<Typography variant="body2">{prediction.description}</Typography>
+									</Box>
+							  ))
+							: tempLocation && (
+									<Box sx={{ p: 2, textAlign: "center" }}>
+										<Typography variant="body2" color="text.secondary">
+											No locations found. Try a different search term.
+										</Typography>
+									</Box>
+							  )}
+					</Paper>
+				)}
+
+				{/* Date Picker */}
+				<DatePicker
+					value={tempDate}
+					onChange={(newDate) => {
+						setTempDate(newDate);
+						// Reset time selections when date changes
+						setTempStartTime(null);
+						setTempEndTime(null);
+					}}
+					disablePast
+					slotProps={{
+						textField: {
+							fullWidth: true,
+							InputProps: {
+								endAdornment: (
+									<InputAdornment position="end">
+										<CalendarTodayIcon fontSize="small" />
+									</InputAdornment>
+								),
+							},
+						},
+					}}
+					sx={{ mt: 2 }}
+				/>
+				{/* Time Pickers */}
+				<Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>
+					Enter After
+				</Typography>
+				<FormControl fullWidth>
+					<Select
+						value={tempStartTime || ""}
+						onChange={(e) => handleStartTimeChange(e.target.value)}
+						displayEmpty
+						renderValue={(selected) => {
+							if (!selected) return <Typography color="text.secondary">Select start time</Typography>;
+							return format(selected, "h:mm a");
+						}}
+						startAdornment={
+							<InputAdornment position="start">
+								<AccessTimeIcon fontSize="small" />
+							</InputAdornment>
+						}
+					>
+						{availableStartTimes.map((slot, index) => (
+							<MenuItem key={`start-${index}`} value={slot.value}>
+								{slot.label}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+
+				<Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>
+					Exit Before
+				</Typography>
+				<FormControl fullWidth>
+					<Select
+						value={tempEndTime || ""}
+						onChange={(e) => setTempEndTime(e.target.value)}
+						displayEmpty
+						disabled={!tempStartTime}
+						renderValue={(selected) => {
+							if (!selected) return <Typography color="text.secondary">Select end time</Typography>;
+							return format(selected, "h:mm a");
+						}}
+						startAdornment={
+							<InputAdornment position="start">
+								<AccessTimeIcon fontSize="small" />
+							</InputAdornment>
+						}
+					>
+						{availableEndTimes.map((slot, index) => (
+							<MenuItem key={`end-${index}`} value={slot.value}>
+								{slot.label}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+
+				{/* Price Range */}
+				<Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 3 }}>
+					<CurrencyRupeeIcon sx={{ color: "green" }} />
+					<Typography variant="h6">Price Range</Typography>
+				</Box>
+				<Slider
+					value={parkingPrice}
+					onChange={handlePrice}
+					aria-label="Price Range"
+					valueLabelDisplay="auto"
+					max={500}
+					sx={{ color: "primary.main" }}
+				/>
+				{/* Update Search */}
+				<Button
+					variant="contained"
+					fullWidth
+					onClick={handleUpdateSearch}
+					sx={{ mt: 3 }}
+					disabled={!tempLocation || !tempDate || !tempStartTime || !tempEndTime}
+				>
+					Update Search
+				</Button>
+				{/* Marker Cards */}
+				<Box sx={{ mt: 3 }}>
+					<MarkerCard markers={filteredMarkers} origin={searchLocation} latlng={latlng} />
+				</Box>
+			</Paper>
+		</LocalizationProvider>
+	);
 };
 
 export default MapSidebar;

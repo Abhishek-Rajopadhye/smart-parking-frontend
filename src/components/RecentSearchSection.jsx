@@ -3,7 +3,7 @@ import { History as HistoryIcon, Search as SearchIcon } from "@mui/icons-materia
 import { MyLocationOutlined, HistoryOutlined } from "@mui/icons-material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 // Recent searches section
-const RecentSearchesSection = ({ onSelect, recentSearches }) => (
+const RecentSearchesSection = ({ onSelect, recentSearches,isMobile }) => (
 	<>
 		<Divider />
 		<Box sx={{ p: 1.5 }}>
