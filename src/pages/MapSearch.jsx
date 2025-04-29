@@ -17,6 +17,7 @@ const MapSearch = ({
 	mapRef,
 	filteredMarkers,
 	setFilters,
+	
 }) => {
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const theme = useTheme();
@@ -41,7 +42,6 @@ const MapSearch = ({
 	const toggleDrawer = () => {
 		setDrawerOpen(!drawerOpen);
 	};
-
 
 	return (
 		<Box sx={{ display: "flex", height: "100vh" }}>
@@ -103,7 +103,7 @@ const MapSearch = ({
 					<Grid item md={3}>
 						<Box
 							sx={{
-								height: "100vh",
+								
 								// overflowY: 'auto',
 								padding: 2,
 								backgroundColor: "#f5f5f5",

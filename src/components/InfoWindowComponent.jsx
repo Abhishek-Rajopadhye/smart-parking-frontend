@@ -123,7 +123,7 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
 							<Box sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>
 								<CurrencyRupeeIcon sx={{ mr: 1, color: "green" }} fontSize="small" />
 								<Typography variant="body2" fontWeight="medium">
-									₹{selectedMarker.hourly_rate} per hour
+									{selectedMarker.hourly_rate} /per hour
 								</Typography>
 							</Box>
 
@@ -131,7 +131,7 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
 							<Box sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>
 								<AccessTimeFilledIcon sx={{ mr: 1, color: "#ff9800" }} fontSize="small" />
 								<Typography variant="body2">
-									{selectedMarker.open_time} to {selectedMarker.close_time}
+									{selectedMarker.open_time.slice(0,5)} to {selectedMarker.close_time.slice(0,5)}
 								</Typography>
 							</Box>
 						</>

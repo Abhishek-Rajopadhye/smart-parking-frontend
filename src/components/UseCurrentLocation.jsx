@@ -32,6 +32,7 @@ export const UseCurrentLocation = () => {
 			},
 			(error) => {
 				setStatus("error");
+				console.log(error);
 				setErrorMsg("Unable to detect location.");
 			}
 		);

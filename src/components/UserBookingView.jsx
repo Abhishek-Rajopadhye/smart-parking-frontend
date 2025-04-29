@@ -126,7 +126,7 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 	return (
 		<Box sx={{ padding: 1 }}>
 			<TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2, margin: "auto" }}>
-				<Table stickyHeader sx={{ width: "85vw", p:"2px" }}>
+				<Table stickyHeader sx={{ width: "85vw", p: "2px" }}>
 					<TableHead>
 						<TableRow sx={{ backgroundColor: "#f5f5f5" }}>
 							<TableCell sx={{ maxWidth: "15px" }} />
@@ -213,7 +213,9 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 													Check Out
 												</Button>
 											)}
-											{(booking.status === "Cancelled" || booking.status === "Completed" || booking.status === "Success") && (
+											{(booking.status === "Cancelled" ||
+												booking.status === "Completed" ||
+												booking.status === "Success") && (
 												<Button
 													onClick={() => handleBookAgain(booking.spot_id, booking)}
 													variant="outlined"
