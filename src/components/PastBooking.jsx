@@ -50,9 +50,12 @@ const PastBooking = ({ user, isMobile }) => {
 	const [selectedMarker, setSelectedMarker] = useState([]);
 	const [previousBookingData, setPreviousBookingData] = useState(null);
 
+<<<<<<< HEAD
 	/**
 	 * Toggles booking dialog visibility
 	 */
+=======
+>>>>>>> b43ab8af247811bdef1a4797a4afe5cdcab8dced
 	const toggleDialogBooking = () => setDialogBookingOpen(!dialogBookingOpen);
 
 	/**
@@ -102,12 +105,16 @@ const PastBooking = ({ user, isMobile }) => {
 		fetchDetailsUserBookings();
 	}, [user?.id]);
 
+<<<<<<< HEAD
 	/**
 	 * Format date and time to be more readable
 	 *
 	 * @param {string} dateTimeStr - Date time string
 	 * @returns {Object} Formatted date and time
 	 */
+=======
+	// Format date and time to be more readable
+>>>>>>> b43ab8af247811bdef1a4797a4afe5cdcab8dced
 	const formatDateTime = (dateTimeStr) => {
 		try {
 			const [date, time] = dateTimeStr.split(", ");
@@ -156,7 +163,10 @@ const PastBooking = ({ user, isMobile }) => {
 	return (
 		<Container>
 			<Box sx={{ mb: 3, mt: 2 }}>
+<<<<<<< HEAD
 				{/* Header Section  */}
+=======
+>>>>>>> b43ab8af247811bdef1a4797a4afe5cdcab8dced
 				<Typography
 					variant="h5"
 					component="h2"

@@ -13,6 +13,11 @@ import GoogleIcon from "@mui/icons-material/Google";
 const Login = () => {
 	const { login } = useContext(AuthContext);
 
+	const handleLogin = (type) => {
+		sessionStorage.setItem("sessionType", type);
+		login("google");
+	};
+
 	return (
 		<Container
 			maxWidth="sm"
@@ -45,7 +50,7 @@ const Login = () => {
 					variant="contained"
 					color="primary"
 					fullWidth
-					onClick={() => login("google")}
+					onClick={() => handleLogin("User")}
 					sx={{
 						marginBottom: 2,
 						padding: 1.5,
@@ -53,7 +58,22 @@ const Login = () => {
 						textTransform: "none",
 					}}
 				>
-					Login with Google
+					Login as User
+					<GoogleIcon sx={{ ml: 2 }} />
+				</Button>
+				<Button
+					variant="contained"
+					color="secondary"
+					fullWidth
+					onClick={() => handleLogin("Owner")}
+					sx={{
+						marginBottom: 2,
+						padding: 1.5,
+						fontSize: "1rem",
+						textTransform: "none",
+					}}
+				>
+					Login as Owner
 					<GoogleIcon sx={{ ml: 2 }} />
 				</Button>
 			</Paper>
