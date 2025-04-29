@@ -164,7 +164,7 @@ const AddSpotUser = ({ onCancel }) => {
 	const handleSubmit = async () => {
 		if (spotAdded) return;
 		const formData = new FormData();
-		formData.append("owner_id", user.id);
+		formData.append("owner_id", "community");
 		formData.append("spot_title", spotTitle);
 		formData.append("spot_address", spotAddress);
 		formData.append("spot_description", spotDescription);
@@ -177,7 +177,7 @@ const AddSpotUser = ({ onCancel }) => {
 		formData.append("longitude", location.lng);
 		formData.append("available_days", openDay.join(","));
 		formData.append("image", images);
-
+    formData.append("verification_status", 3);
 		try {
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot`, formData, {
 				headers: {
