@@ -251,7 +251,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 	//   console.log("Sorted log",sortedMarkers);
 
 	return (
-		<Box sx={{ p: 2, bgcolor: "#f9f9f9",height: "calc(100vh - 64px)" }} ref={listContainerRef}>
+		<Box sx={{ p: 2, bgcolor: "#f9f9f9" }} ref={listContainerRef}>
 			<FormControl fullWidth size="small" sx={{ mb: 2 }}>
 				<InputLabel>Sort by</InputLabel>
 				<Select value={sortType} label="Sort by" onChange={handleSortChange}>
@@ -345,7 +345,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 						height: 60,
 					}}
 				>
-					{loading && <CircularProgress size={30} />}
+					{loading && <MarkerSkeleton/> }
 				</Box>
 			)}
 
