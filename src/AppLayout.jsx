@@ -8,7 +8,7 @@ import { Profile } from "./pages/Profile";
 import { Booking } from "./pages/Booking";
 import { BookingHistory } from "./pages/BookingHistory";
 import { Auth } from "./pages/Auth";
-import { Spot } from "./pages/Spot";
+import { AddSpotUser } from "./pages/AddSpotUser"
 import DetailInfo from "./components/DetailInfo";
 import HomePage from "./pages/HomePage";
 import MapSearch from "./pages/MapSearch";
@@ -101,7 +101,7 @@ const AppLayout = () => {
                 return "Profile";
             case "/booking-history":
                 return "My Bookings";
-            case "/spot":
+            case "/addspotuser":
                 return "Add Spot";
             case "/homepage":
                 return "Home";
@@ -266,7 +266,7 @@ const AppLayout = () => {
                     <Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker} />} />
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
-                    <Route path="/addspot" element={<Spot />} />
+                    <Route path="/addspotuser" element={<AddSpotUser />} />
                     <Route
                         path="/mapsearch"
                         element={
