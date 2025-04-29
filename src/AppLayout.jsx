@@ -13,6 +13,7 @@ import DetailInfo from "./components/DetailInfo";
 import HomePage from "./pages/HomePage";
 import MapSearch from "./pages/MapSearch";
 import Validation from "./pages/Validation";
+import AddSpotUser from "./pages/AddSpotUser";
 import OwnerDashboard from "./pages/OwnerDashboard"; // <-- Add this import
 
 const AppLayout = () => {
