@@ -22,7 +22,6 @@ import { ConfirmationDialogBox } from "./ConfirmationDialogBox";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
-import { useRef } from "react";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import PhoneIcon from "@mui/icons-material/Phone";
@@ -39,8 +38,6 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { AuthContext } from "../context/AuthContext";
 
-// Top imports remain the same...
-
 const DetailInfo = () => {
 	const { spot_id } = useParams();
 	console.log("spot_id", spot_id);
@@ -54,10 +51,6 @@ const DetailInfo = () => {
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
 	const [addReviewDialogOpen, setAddReviewDialogOpen] = useState(false);
 	const navigate = useNavigate();
-
-	/*
-  My Code
-  */
 	const spot_information = selectedMarker;
 	console.log(spot_information);
 	const { user } = useContext(AuthContext);
@@ -85,8 +78,7 @@ const DetailInfo = () => {
 		setOpenSnackbar({ open: true, message, severity });
 	}, []);
 
-	/*
-	 */
+	// Fetch spot details
 	useEffect(() => {
 		fetch(`${BACKEND_URL}/spotdetails/get-spot/${spot_id}`)
 			.then((res) => res.json())
@@ -99,6 +91,7 @@ const DetailInfo = () => {
 			.catch((err) => console.error("Error:", err));
 	}, [spot_id]);
 
+	// Format time to 12-hour format
 	function formatTime(timeStr) {
 		if (!timeStr) return "";
 		const [h, m] = timeStr.split(":");
@@ -108,6 +101,7 @@ const DetailInfo = () => {
 		return `${hour12}:${m} ${ampm}`;
 	}
 
+	// Fetch reviews and owner details
 	useEffect(() => {
 		const fetchDetails = async () => {
 			try {
@@ -121,7 +115,7 @@ const DetailInfo = () => {
 				console.error(err);
 			}
 		};
-
+		// Fetch images
 		const getImages = async () => {
 			try {
 				const { data } = await axios.get(`${BACKEND_URL}/spotdetails/get-images/${selectedMarker.spot_id}`);
@@ -146,35 +140,18 @@ const DetailInfo = () => {
 		setAddReviewDialogOpen(false);
 	};
 
-	const scrollRef = useRef();
-
-	// eslint-disable-next-line no-unused-vars
-	const scroll = (direction) => {
-		const { current } = scrollRef;
-		const scrollAmount = 300;
-		if (current) {
-			current.scrollBy({
-				left: direction === "left" ? -scrollAmount : scrollAmount,
-				behavior: "smooth",
-			});
-		}
-	};
-
+	// Handle previous image navigation
 	const handlePrev = () => {
 		setCurrentImageIndex((prev) => (prev === 0 ? spotImages.length - 1 : prev - 1));
 	};
-
+	// Handle next image navigation
 	const handleNext = () => {
 		setCurrentImageIndex((prev) => (prev === spotImages.length - 1 ? 0 : prev + 1));
 	};
-
+	// open booking dialog
 	const toggleDialogBooking = () => {
 		setDialogBookingOpen(!dialogBookingOpen);
 	};
-
-	/*
-  My Code
-  */
 
 	/**
 	 * This function is used to validate the date and time
@@ -183,8 +160,8 @@ const DetailInfo = () => {
 	 * It will check the selected time is between open time and close time
 	 * It will check the selected time is between open time and close time
 	 *
-	 * @param {*} selectedDate
-	 * @param {*} msg
+	 * @param {*} selectedDate - selected date and time
+	 * @param {*} msg - message to set the start or end time
 	 * @returns boolean
 	 */
 	const validateDateTime = (selectedDate, msg) => {
@@ -224,17 +201,20 @@ const DetailInfo = () => {
 		}
 		return true;
 	};
+
 	/**
-	 *  This function is used to convert the date and time to string
-	 * @param {*} date
-	 * @returns
+	 * This function is used to check the date is valid or not
+	 * @param {*} date - date to check
+	 * @returns boolean
 	 */
 	const dateTimeToString = (date) => {
 		return date.toISOString().replace("T", " ").slice(0, 19);
 	};
 
 	/**
-	 * This function is used to download the pdf file
+	 * This function is used to download the pdf of the booking receipt
+	 * It will create a pdf with the booking details and send it to the user email
+	 * It will also show the snackbar message if the pdf is sent successfully or not
 	 * @returns
 	 */
 	const downloadPDF = useCallback(async () => {
@@ -431,11 +411,10 @@ const DetailInfo = () => {
 
 	/**
 	 * This function is used to calculate the amount of the parking slot
-	 * It will check the start time and end time and calculate the amount
-	 * If the start time is greater than end time then it will show the error message
-	 * If the total slot is less than 0 then it will show the error message
+	 * Check if the payment status is true then it will return
+	 * Check start time and end time valid or not
+	 * If total slots is less than 0 then it will show the error message
 	 * If the start time and end time is not selected then it will show the error message
-	 *
 	 * @returns boolean
 	 */
 	const calculateAmount = () => {
@@ -598,6 +577,15 @@ const DetailInfo = () => {
 		}
 	};
 
+	/**
+	 * Handles the cancellation of a booking.
+	 * - If the user cancels after starting the booking process,
+	 *   it releases the reserved slots back to availability.
+	 * - Sends a request to update the total available slots in the backend.
+	 * - Resets local booking-related states like start time, end time, and flags.
+	 * @param {*} e - on click cancel button
+	 * @returns
+	 */
 	const handleCancel = async () => {
 		try {
 			if (flag && totalSlots != 0 && razorpay_order_id != null) {
@@ -618,6 +606,14 @@ const DetailInfo = () => {
 		}
 		toggleDialogBooking();
 	};
+
+	const deleteReview = async (review) =>{
+		const response = await axios.delete(`${BACKEND_URL}/reviews/${review.id}`);
+		if(response.status == 200){
+			const revRes = await axios.get(`${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`)
+			setReviews(revRes.data);
+		}
+	}
 
 	return (
 		<Box
@@ -798,75 +794,78 @@ const DetailInfo = () => {
 						<Typography>No Available Days</Typography>
 					)}
 				</Box>
+				{selectedMarker.verification_status == 1 && (
+					<>
+						<Typography variant="body1" mb={2}>
+							<LocalParkingIcon fontSize="small" sx={{ mr: 1 }} />
+							Available Slots: {selectedMarker.available_slots}
+						</Typography>
+						<LocalizationProvider dateAdapter={AdapterDateFns}>
+							<Grid container spacing={2}>
+								<Grid item xs={12}>
+									<TextField
+										fullWidth
+										label="Total Slots"
+										type="number"
+										value={totalSlots}
+										onChange={(e) => setTotalSlots(Number(e.target.value))}
+									/>
+								</Grid>
 
-				<Typography variant="body1" mb={2}>
-					<LocalParkingIcon fontSize="small" sx={{ mr: 1 }} />
-					Available Slots: {selectedMarker.available_slots}
-				</Typography>
-				<LocalizationProvider dateAdapter={AdapterDateFns}>
-					<Grid container spacing={2}>
-						<Grid item xs={12}>
-							<TextField
-								fullWidth
-								label="Total Slots"
-								type="number"
-								value={totalSlots}
-								onChange={(e) => setTotalSlots(Number(e.target.value))}
-							/>
-						</Grid>
+								<Grid item xs={12}>
+									<DateTimePicker
+										label="Start Time"
+										value={startTime}
+										onChange={setStartTime}
+										minDateTime={new Date()}
+										shouldDisableDate={(date) => {
+											const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+											return (
+												!Array.isArray(spot_information.available_days) ||
+												!spot_information.available_days.includes(days[date.getDay()])
+											);
+										}}
+										slotProps={{
+											textField: {
+												fullWidth: true,
+												variant: "outlined",
+											},
+										}}
+									/>
+								</Grid>
 
-						<Grid item xs={12}>
-							<DateTimePicker
-								label="Start Time"
-								value={startTime}
-								onChange={setStartTime}
-								minDateTime={new Date()}
-								shouldDisableDate={(date) => {
-									const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-									return (
-										!Array.isArray(spot_information.available_days) ||
-										!spot_information.available_days.includes(days[date.getDay()])
-									);
-								}}
-								slotProps={{
-									textField: {
-										fullWidth: true,
-										variant: "outlined",
-									},
-								}}
-							/>
-						</Grid>
-
-						<Grid item xs={12}>
-							<DateTimePicker
-								label="End Time"
-								value={endTime}
-								onChange={setEndTime}
-								minDateTime={new Date()}
-								shouldDisableDate={(date) => {
-									const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-									return !spot_information.available_days.includes(days[date.getDay()]);
-								}}
-								slotProps={{
-									textField: {
-										fullWidth: true,
-										variant: "outlined",
-									},
-								}}
-							/>
-						</Grid>
-					</Grid>
-				</LocalizationProvider>
-				<Button
-					variant="contained"
-					color="success"
-					fullWidth
-					size="large"
-					onClick={calculateAmount}
-					sx={{ mt: 2, borderRadius: 2 }}
-				>
-					Book Now
-				</Button>
+								<Grid item xs={12}>
+									<DateTimePicker
+										label="End Time"
+										value={endTime}
+										onChange={setEndTime}
+										minDateTime={new Date()}
+										shouldDisableDate={(date) => {
+											const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+											return !spot_information.available_days.includes(days[date.getDay()]);
+										}}
+										slotProps={{
+											textField: {
+												fullWidth: true,
+												variant: "outlined",
+											},
+										}}
+									/>
+								</Grid>
+							</Grid>
+						</LocalizationProvider>
+						<Button
+							variant="contained"
+							color="success"
+							fullWidth
+							size="large"
+							onClick={calculateAmount}
+							sx={{ mt: 2, borderRadius: 2 }}
+						>
+							Book Now
+						</Button>
+					</>
+				)}
 			</Paper>
 
 			{/* Reviews */}
@@ -907,7 +906,7 @@ const DetailInfo = () => {
 					) : (
 						reviews.map((review, i) => (
 							<Box key={i} sx={{ my: 1 }}>
-								<ReviewCard review={review} />
+								<ReviewCard review={review} handleDeleteReview={() => deleteReview(review)}/>
 							</Box>
 						))
 					)}

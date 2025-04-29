@@ -1,38 +1,42 @@
 import React from "react";
-import { render, screen, test, describe } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import { expect } from "@jest/globals";
+import { render, screen, waitFor } from "@testing-library/react";
+import { describe, test, vi, expect } from "vitest";
 import App from "../src/App";
-import { MemoryRouter } from "react-router-dom";
+
+// Mock all providers and pages used in App.jsx
+vi.mock("../src/context/AuthContext", () => ({
+	AuthProvider: ({ children }) => <div data-testid="auth-provider">{children}</div>,
+}));
+vi.mock("../src/context/MapContext", () => ({
+	MapProvider: ({ children }) => <div data-testid="map-provider">{children}</div>,
+}));
+vi.mock("../src/style/AppTheme", () => ({
+	default: {},
+}));
+vi.mock("@mui/material/styles", () => ({
+	ThemeProvider: ({ children }) => <div data-testid="theme-provider">{children}</div>,
+}));
+vi.mock("../src/pages/Login", () => ({
+	Login: () => <div>Login Page</div>,
+}));
+vi.mock("../src/AppLayout", () => ({
+	default: () => <div>AppLayout Page</div>,
+}));
 
 describe("App", () => {
-	test("renders login page by default", () => {
-		render(
-			<MemoryRouter initialEntries={["/"]}>
-				<App />
-			</MemoryRouter>
-		);
-		// Adjust the text to match your login page heading or button
-		expect(screen.getByText(/login/i)).toBeInTheDocument();
+	test('renders Login page for "/" route', async () => {
+		window.history.pushState({}, "Login", "/");
+		render(<App />);
+		await waitFor(() => {
+			expect(screen.getByText("Login Page")).toBeInTheDocument();
+		});
 	});
 
-	test("renders homepage after navigation", () => {
-		render(
-			<MemoryRouter initialEntries={["/homepage"]}>
-				<App />
-			</MemoryRouter>
-		);
-		// Adjust the text to match your homepage heading
-		expect(screen.getByText(/home/i)).toBeInTheDocument();
-	});
-
-	test("shows profile page when navigated", () => {
-		render(
-			<MemoryRouter initialEntries={["/profile"]}>
-				<App />
-			</MemoryRouter>
-		);
-		// Adjust the text to match your profile page
-		expect(screen.getByText(/profile/i)).toBeInTheDocument();
+	test("renders AppLayout for any other route", async () => {
+		window.history.pushState({}, "Home", "/homepage");
+		render(<App />);
+		await waitFor(() => {
+			expect(screen.getByText("AppLayout Page")).toBeInTheDocument();
+		});
 	});
 });

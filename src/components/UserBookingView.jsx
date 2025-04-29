@@ -46,7 +46,7 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 	const [expandedRow, setExpandedRow] = useState(null); // Track which row is expanded
 	const [page, setPage] = useState(0); // Current page
 	const [rowsPerPage, setRowsPerPage] = useState(5); // Rows per page
-
+	console.log(bookingDetails);
 	/**
 	 * Sorts the booking details in the desired priority order:
 	 * 1. Checked In bookings (chronologically).
@@ -126,7 +126,7 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 	return (
 		<Box sx={{ padding: 1 }}>
 			<TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2, margin: "auto" }}>
-				<Table stickyHeader sx={{ width: "85vw", p:"2px" }}>
+				<Table stickyHeader sx={{ width: "85vw", p: "2px" }}>
 					<TableHead>
 						<TableRow sx={{ backgroundColor: "#f5f5f5" }}>
 							<TableCell sx={{ maxWidth: "15px" }} />
@@ -213,14 +213,16 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 													Check Out
 												</Button>
 											)}
-											{(booking.status === "Cancelled" || booking.status === "Completed" || booking.status === "Booked" || booking.status === "Success") && (
+											{(booking.status === "Cancelled" ||
+												booking.status === "Completed" ||
+												booking.status === "Success") && (
 												<Button
 													onClick={() => handleBookAgain(booking.spot_id, booking)}
 													variant="outlined"
 													color="secondary"
 													size="small"
 												>
-													Book Again
+													Book Now
 												</Button>
 											)}
 										</Box>

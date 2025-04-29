@@ -16,6 +16,7 @@ const AuthContext = createContext();
  */
 const AuthProvider = ({ children }) => {
 	const [user, setUser] = useState(null);
+	const [sessionType, setSessionType] = useState(null);
 
 	/**
 	 * Fetches the user's profile from the backend and updates the user state.
@@ -24,6 +25,7 @@ const AuthProvider = ({ children }) => {
 		const fetchProfile = async () => {
 			const token = localStorage.getItem("token");
 			const user_id = String(localStorage.getItem("user_id"));
+			const session_type = String(sessionStorage.getItem("session_type"));
 			try {
 				const response = await axios.get(`${BACKEND_URL}/users/profile/${user_id}`, {
 					headers: { Authorization: `Bearer ${token}` },
@@ -31,6 +33,7 @@ const AuthProvider = ({ children }) => {
 				const data = response.data;
 				data.id = user_id;
 				setUser(data);
+				setSessionType(session_type);
 			} catch (error) {
 				setUser(null);
 				console.error("Error fetching profile:", error);
@@ -43,7 +46,7 @@ const AuthProvider = ({ children }) => {
 	/**
 	 * Redirects the user to the OAuth login page for the specified provider.
 	 *
-	 * @param {string} provider - The OAuth provider (e.g., "google", "facebook").
+	 * @param {string} provider - The OAuth provider (e.g., "google", "github" etc.).
 	 */
 	const login = (provider) => {
 		window.location.href = `${BACKEND_URL}/api/v1/auth/${provider}/login`;
@@ -54,10 +57,13 @@ const AuthProvider = ({ children }) => {
 	 */
 	const logout = () => {
 		localStorage.removeItem("token");
+		localStorage.removeItem("user_id");
+		sessionStorage.removeItem("session_type");
 		setUser(null);
+		setSessionType(null);
 	};
 
-	return <AuthContext.Provider value={{ user, setUser, login, logout }}>{children}</AuthContext.Provider>;
+	return <AuthContext.Provider value={{ user, setUser, login, logout, sessionType }}>{children}</AuthContext.Provider>;
 };
 
 export { AuthContext, AuthProvider };
