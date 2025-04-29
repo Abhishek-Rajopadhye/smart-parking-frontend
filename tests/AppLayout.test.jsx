@@ -1,17 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
-import { describe, test, vi, expect } from "vitest";
+import { describe, test, vi, expect, beforeEach } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import AppLayout from "../src/AppLayout";
 import { AuthContext } from "../src/context/AuthContext";
-
-vi.spyOn(React, "useContext").mockImplementation((ctx) => {
-	if (ctx === AuthContext) {
-		return { user: { id: "1", email: "test@example.com", profile_picture: "" }, logout: vi.fn() };
-	}
-	return {};
-});
 
 // Mock all pages/components used in AppLayout routes
 vi.mock("../src/pages/Profile", () => ({ Profile: () => <div>Profile Page</div> }));
@@ -23,6 +16,7 @@ vi.mock("../src/pages/Spot", () => ({ Spot: () => <div>Spot Page</div> }));
 vi.mock("../src/components/DetailInfo", () => ({ default: () => <div>Detail Info Page</div> }));
 vi.mock("../src/pages/MapSearch", () => ({ default: () => <div>Map Search Page</div> }));
 vi.mock("../src/pages/Validation", () => ({ default: () => <div>Validation Page</div> }));
+vi.mock("../src/pages/OwnerDashboard", () => ({ default: () => <div>Owner Dashboard Page</div> }));
 
 // Mock MUI components used in AppLayout
 vi.mock("@mui/material", async () => {
@@ -43,6 +37,10 @@ vi.mock("@mui/material", async () => {
 });
 
 describe("AppLayout", () => {
+	beforeEach(() => {
+		sessionStorage.clear();
+	});
+
 	test("renders AppBar and HomePage by default", async () => {
 		render(
 			<MemoryRouter initialEntries={["/homepage"]}>
@@ -114,5 +112,35 @@ describe("AppLayout", () => {
 		await waitFor(() => {
 			expect(screen.getByText(/Validation Page/i)).toBeInTheDocument();
 		});
+	});
+
+	test("renders OwnerDashboard when sessionType is Owner", async () => {
+		sessionStorage.setItem("sessionType", "Owner");
+		render(
+			<MemoryRouter initialEntries={["/ownerdashboard"]}>
+				<AuthContext.Provider
+					value={{
+						user: { id: "1", email: "test@example.com", profile_picture: "" },
+						logout: vi.fn(),
+					}}
+				>
+					<AppLayout />
+				</AuthContext.Provider>
+			</MemoryRouter>
+		);
+		await waitFor(() => {
+			expect(screen.getByText(/Owner Dashboard Page/i)).toBeInTheDocument();
+		});
+	});
+
+	test("renders loading when user is not available", () => {
+		render(
+			<MemoryRouter>
+				<AuthContext.Provider value={{ user: null, logout: vi.fn() }}>
+					<AppLayout />
+				</AuthContext.Provider>
+			</MemoryRouter>
+		);
+		expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
 	});
 });
