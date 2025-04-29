@@ -34,7 +34,7 @@ const PastBooking = ({ user, isMobile }) => {
 	const [selectedMarker, setSelectedMarker] = useState([]);
 	const [previousBookingData, setPreviousBookingData] = useState(null);
 
-    console.log("marker",recentBookings);
+
 	const toggleDialogBooking = () => setDialogBookingOpen(!dialogBookingOpen);
 
 	const handleBooking = async (previous_booking) => {
@@ -114,7 +114,14 @@ const PastBooking = ({ user, isMobile }) => {
 	return (
 		<Container>
 			<Box sx={{ mb: 3, mt: 2 }}>
-				<Typography variant="h5" component="h2" sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+				<Typography variant="h5" component="h2" 
+				sx={{   mb: 2, 
+					display: "flex", 
+					alignItems: "center", 
+					color: "GrayText",
+					borderBottom: "2px solid",
+					borderColor: "primary.light",
+					pb: 1}}>
 					<HistoryOutlined sx={{ mr: 1 }} />
 					Recent Bookings
 				</Typography>
@@ -226,7 +233,7 @@ const PastBooking = ({ user, isMobile }) => {
 												fullWidth
 												onClick={()=>handleBooking(booking)}
 											>
-												Book Again
+												Book Now
 											</Button>
 										</CardActions>
 									</Card>

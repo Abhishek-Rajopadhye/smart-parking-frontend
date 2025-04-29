@@ -25,6 +25,7 @@ import { AuthContext } from "../context/AuthContext";
 
 //spot_information is object which hold the all information
 const Booking = ({ spot_information, open, set_dialog, previous_booking = null }) => {
+	console.log(previous_booking);
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext);
 	const [razorpay_signature, setRazorpaySignature] = useState(null);
@@ -321,21 +322,18 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 			setTotalSlots(previous_booking.total_slots);
 
 			const spotDays = spot_information.available_days || [];
-			const currentDate = new Date();
+			const now = new Date();
 
-			// Set start time
-			let startDateTime = new Date(previous_booking.start_date_time);
-			startDateTime.setFullYear(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+			// Set start time: current time, but on the closest valid date
+			let startDateTime = new Date(now);
 			let validStartDate = getClosestValidDate(startDateTime, spotDays);
-			// Keep the original time
-			validStartDate.setHours(startDateTime.getHours(), startDateTime.getMinutes(), 0, 0);
+			// Keep the current time
+			validStartDate.setHours(now.getHours(), now.getMinutes(), 0, 0);
 			setStartTime(validStartDate);
 
-			// Set end time
-			let endDateTime = new Date(previous_booking.end_date_time);
-			endDateTime.setFullYear(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-			let validEndDate = getClosestValidDate(endDateTime, spotDays);
-			validEndDate.setHours(endDateTime.getHours(), endDateTime.getMinutes(), 0, 0);
+			// Set end time: 1 hour after start time
+			let validEndDate = new Date(validStartDate);
+			validEndDate.setHours(validEndDate.getHours() + 1);
 			setEndTime(validEndDate);
 		}
 		if (paymentStatus) {
