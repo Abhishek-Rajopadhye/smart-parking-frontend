@@ -39,11 +39,11 @@ const ReviewCard = ({ review, handleDeleteReview, handleEditReview }) => {
 	const [deleteConfirmationMessage, setDeleteConfirmationMessage] = useState(null);
 	const [editReviewDialogOpen, setEditReviewDialogOpen] = useState(false);
 
-    /**
-     * Formats the review creation date to a readable format.
-     *
-     * Updates the `formattedDate` state with the formatted date string.
-     */
+	/**
+	 * Formats the review creation date to a readable format.
+	 *
+	 * Updates the `formattedDate` state with the formatted date string.
+	 */
 	useEffect(() => {
 		if (review.created_at) {
 			const date = new Date(review.created_at);
@@ -55,20 +55,20 @@ const ReviewCard = ({ review, handleDeleteReview, handleEditReview }) => {
 	}, [review]);
 
 	/**
-     * Handles the delete button click.
-     *
-     * Opens the confirmation dialog to confirm the deletion of the review.
-     */
+	 * Handles the delete button click.
+	 *
+	 * Opens the confirmation dialog to confirm the deletion of the review.
+	 */
 	const onDeleteClick = () => {
 		setDeleteConfirmationMessage("Are you sure you want to delete this review?");
 		setDeleteConfirmationOpen(true);
 	};
 
 	/**
-     * Handles the confirmation of review deletion.
-     *
-     * Closes the confirmation dialog and calls the `handleDeleteReview` function.
-     */
+	 * Handles the confirmation of review deletion.
+	 *
+	 * Closes the confirmation dialog and calls the `handleDeleteReview` function.
+	 */
 	const onDeleteConfirmation = () => {
 		setDeleteConfirmationOpen(false);
 		setDeleteConfirmationMessage(null);
