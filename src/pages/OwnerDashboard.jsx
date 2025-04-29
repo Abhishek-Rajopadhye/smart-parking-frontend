@@ -7,9 +7,8 @@ import axios from "axios";
 import { CurrencyRupee } from "@mui/icons-material";
 import { BACKEND_URL } from "../const";
 import { SpotBookingView } from "../components/SpotBookingView";
-import { ConfirmationDialogBox } from "../components/ConfirmationDialogBox";
-import { MapContainer } from "../components/MapContainer";
-import { Spot } from "./Spot";
+
+
 
 const OwnerDashboard = () => {
 	const { user, setUser } = useContext(AuthContext);
