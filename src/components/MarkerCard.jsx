@@ -12,9 +12,37 @@ import {
 	CardActions,
 	FormControl,
 	InputLabel,
+	CircularProgress,
+	Skeleton,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Booking } from "../pages/Booking";
+
+
+// Skeleton placeholder for marker card
+const MarkerSkeleton = () => (
+	<Card
+	  sx={{ 
+		display: "flex",
+		mb: 2,
+		borderRadius: 3,
+		flexDirection: { xs: "column", sm: "row" },
+		boxShadow: 1,
+		overflow: "hidden"
+	  }}
+	>
+	  <Skeleton variant="rectangular" width={100} height={100} />
+  
+	  <Box sx={{ flex: 1, p: 1.5 }}>
+		<Skeleton width="70%" height={20} sx={{ mb: 1 }} />
+		<Skeleton width="50%" height={20} />
+		<Box sx={{ mt: 2 }}>
+		  <Skeleton width="40%" height={30} />
+		</Box>
+	  </Box>
+	</Card>
+  );
+  
 
 const MarkerCard = ({ markers, origin, latlng }) => {
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
@@ -25,7 +53,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 	const [page, setPage] = useState(1);
 	const [loading, setLoading] = useState(false);
 	const loaderRef = useRef(null);
-	const ITEMS_PER_PAGE = 10;
+	const ITEMS_PER_PAGE = 2;
 	const listContainerRef = useRef(null);
 
 	// console.log("booking marker", markers);
@@ -79,7 +107,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 							rawDistance: element?.distance?.value || Infinity,
 						};
 					});
-					const sortedListOfMarkers = (updated, sortType);
+					const sortedListOfMarkers = sortMarkers(updated, sortType);
 					setSortedMarkers(sortedListOfMarkers);
 
 					// Initialize visible markers with first page
@@ -218,13 +246,12 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 	const handleSortChange = (event) => {
 		const newType = event.target.value;
 		setSortType(newType);
-		setSortedMarkers(sortMarkers(sortedMarkers, newType));
 	};
 
 	//   console.log("Sorted log",sortedMarkers);
 
 	return (
-		<Box sx={{ p: 2, bgcolor: "#f9f9f9" }} ref={listContainerRef}>
+		<Box sx={{ p: 2, bgcolor: "#f9f9f9",height: "calc(100vh - 64px)" }} ref={listContainerRef}>
 			<FormControl fullWidth size="small" sx={{ mb: 2 }}>
 				<InputLabel>Sort by</InputLabel>
 				<Select value={sortType} label="Sort by" onChange={handleSortChange}>
@@ -243,12 +270,12 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 						key={spot.spot_id}
 						sx={{ display: "flex", mb: 2, borderRadius: 3, flexDirection: "column", boxShadow: 2 }}
 					>
-						<CardMedia
+						{/* <CardMedia
 							component="img"
 							image={spot.image || "/placeholder.jpg"}
 							alt={spot.spot_title}
 							sx={{ width: 100, height: 100, borderRadius: "12px 0 0 12px" }}
-						/>
+						/> */}
 
 						<CardContent sx={{ pb: 1 }}>
 							<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
