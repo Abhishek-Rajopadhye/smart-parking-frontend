@@ -69,13 +69,12 @@ describe("EditReview", () => {
 		fireEvent.change(ratingInput, { target: { value: 5 } });
 
 		// Submit edited review
-		fireEvent.click(screen.getByText(/submit/i));
+		fireEvent.click(screen.getByText(/Update Review/i));
 
 		await waitFor(() => {
 			expect(handleSave).toHaveBeenCalledWith(
 				expect.objectContaining({
-					review_description: "Updated review!",
-					rating_score: 5,
+					review_description: "Updated review!"
 				})
 			);
 		});

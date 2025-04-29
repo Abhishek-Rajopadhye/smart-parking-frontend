@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * HomePage Component for  Parking Application
  *
@@ -494,8 +495,12 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 	};
 
 	// Error and loading states
-	if (loadError) return <ErrorMessage message={loadError} />;
-	if (!isLoaded) return <LoadingMessage />;
+	if (loadError) {
+		return <ErrorMessage message={loadError} />;
+	}
+	if (!isLoaded) {
+		return <LoadingMessage />;
+	}
 
 	/**
 	 * Common action buttons used in both mobile and desktop views

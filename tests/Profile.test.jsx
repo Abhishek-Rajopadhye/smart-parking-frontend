@@ -129,9 +129,9 @@ describe("Profile Page", () => {
 			expect(screen.getByText("Test User")).toBeInTheDocument();
 			expect(screen.getByText("test@example.com")).toBeInTheDocument();
 			expect(screen.getByText("Ph.No: 1234567890")).toBeInTheDocument();
+			expect(screen.getByText("Total Earnings:")).toBeInTheDocument();
 			expect(screen.getByText("Test Spot 1")).toBeInTheDocument();
 			expect(screen.getByText("A nice spot")).toBeInTheDocument();
-			expect(screen.getByText("Earnings:")).toBeInTheDocument();
 		});
 	});
 
@@ -156,6 +156,9 @@ describe("Profile Page", () => {
 				<Profile />
 			</AuthContext.Provider>
 		);
+		await waitFor(() => {
+			expect(screen.getByText("Test Spot 1")).toBeInTheDocument();
+		});
 		fireEvent.click(screen.getByText("Edit"));
 		expect(screen.getByTestId("edit-spot-modal")).toBeInTheDocument();
 		fireEvent.click(screen.getByText("Close"));
@@ -170,6 +173,9 @@ describe("Profile Page", () => {
 				<Profile />
 			</AuthContext.Provider>
 		);
+		await waitFor(() => {
+			expect(screen.getByText("Test Spot 1")).toBeInTheDocument();
+		});
 		fireEvent.click(screen.getByText("View Bookings"));
 		await waitFor(() => {
 			expect(screen.getByTestId("spot-booking-view")).toBeInTheDocument();
@@ -182,6 +188,9 @@ describe("Profile Page", () => {
 				<Profile />
 			</AuthContext.Provider>
 		);
+		await waitFor(() => {
+			expect(screen.getByText("Test Spot 1")).toBeInTheDocument();
+		});
 		fireEvent.click(screen.getByText("Delete"));
 		expect(screen.getByTestId("confirmation-dialog")).toBeInTheDocument();
 		fireEvent.click(screen.getByText("Confirm"));

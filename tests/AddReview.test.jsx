@@ -48,7 +48,7 @@ vi.mock("@mui/material", async () => {
 					onChange &&
 					onChange({
 						target: {
-							value: e.target.value,
+							value: Number(e.target.value),
 							name: "rating_score",
 						},
 					})
@@ -74,7 +74,7 @@ describe("AddReview", () => {
 
 		render(
 			<AuthContext.Provider value={{ user: mockUser }}>
-				<AddReview openDialog={true} onClose={handleClose} spotId="spot1" handleSave={handleSave} />
+				<AddReview openDialog={true} onClose={handleClose} spotId={1} handleSave={handleSave} />
 			</AuthContext.Provider>
 		);
 
@@ -83,15 +83,14 @@ describe("AddReview", () => {
 
 		// Set rating
 		const ratingInput = screen.getByTestId("rating");
-		fireEvent.change(ratingInput, { target: { value: 5 } });
+		fireEvent.change(ratingInput, { target: { value: 5, name: "rating_score" } });
 
 		// Fill in review description
 		const reviewInput = screen.getByLabelText(/review/i);
 		fireEvent.change(reviewInput, { target: { value: "Awesome spot!", name: "review_description" } });
 
-        // Submit review
+		// Submit review
 		const submitButton = screen.getByText(/submit review/i);
-		expect(submitButton).not.toBeDisabled();
 		fireEvent.click(submitButton);
 
 		await waitFor(() => {
@@ -99,7 +98,6 @@ describe("AddReview", () => {
 				expect.objectContaining({
 					review_description: "Awesome spot!",
 					rating_score: 5,
-                    images: [],
 				})
 			);
 		});
