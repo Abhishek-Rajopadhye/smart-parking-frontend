@@ -33,7 +33,7 @@ const mockUser = {
 	name: "Test User",
 	email: "test@example.com",
 	phone: "1234567890",
-	profile_picture: "",
+	profile_picture: "https://lh3.googleusercontent.com/a/ACg8ocJNzzn9l7Fec2eOaEZwiWFRjeLBEc_IyLLy-0ql_g9Yw9oHiA=s96-c",
 };
 
 describe("EditProfileModal", () => {
@@ -46,8 +46,9 @@ describe("EditProfileModal", () => {
 				<EditProfileModal open={true} handleClose={handleClose} user={mockUser} handleSave={handleSave} />
 			</AuthContext.Provider>
 		);
-
-		expect(screen.getByTestId("dialog")).toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.getByTestId("dialog")).toBeInTheDocument();
+		});
 
 		// Edit name
 		const nameInput = screen.getByLabelText(/name/i);
@@ -58,7 +59,7 @@ describe("EditProfileModal", () => {
 		fireEvent.change(phoneInput, { target: { value: "9876543210" } });
 
 		// Submit edited profile
-		fireEvent.click(screen.getByText(/save/i));
+		fireEvent.click(screen.getByText("Save"));
 
 		await waitFor(() => {
 			expect(handleSave).toHaveBeenCalledWith(

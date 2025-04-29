@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * HomePage Component for  Parking Application
  *
@@ -40,12 +41,11 @@ import {
 
 import { IoLocationSharp } from "react-icons/io5";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import parking from "../assets/images/parkingSpace.jpg";
+import parking from "../assets/Images/parkingSpace.jpg";
 import { useNavigate } from "react-router-dom";
 import { MapContext } from "../context/MapContext";
-import { Spot } from "./Spot";
+import { AddSpotUser } from "./AddSpotUser";
 import SearchBar from "../components/SearchBar";
-import { addMinutes, setMinutes } from "date-fns";
 import { addMinutes, setMinutes } from "date-fns";
 import NearByParkings from "../components/NearByParkings";
 import PastBooking from "../components/PastBooking";
@@ -141,78 +141,79 @@ const SkeletonCard = () => (
  */
 const BookingSkeleton = () => {
 	return (
-		<Grid container spacing={2}>
-			{[1, 2, 3, 4].map((item) => (
-				<Grid item xs={12} sm={6} key={item}>
-					<Card variant="outlined" sx={{ height: "100%" }}>
-						<CardContent>
-							<Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-								<Skeleton variant="text" width="60%" height={32} />
-								<Skeleton variant="rectangular" width={60} height={24} />
-							</Box>
-							<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-								<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
-								<Skeleton variant="text" width="90%" height={24} />
-							</Box>
-							<Divider sx={{ my: 1.5 }} />
-							<Grid container spacing={1}>
-								{[1, 2, 3, 4].map((subItem) => (
-									<Grid item xs={6} key={subItem}>
-										<Box sx={{ display: "flex", alignItems: "center" }}>
-											<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
-											<Skeleton variant="text" width="80%" height={24} />
-										</Box>
-									</Grid>
-								))}
-							</Grid>
-							<Box sx={{ mt: 1 }}>
-								<Skeleton variant="text" width="40%" height={24} />
-							</Box>
-						</CardContent>
-						<CardActions sx={{ p: 2, pt: 0 }}>
-							<Skeleton variant="rectangular" width="100%" height={36} />
-						</CardActions>
-					</Card>
-				</Grid>
-			))}
-		</Grid>
-		<Grid container spacing={2}>
-			{[1, 2, 3, 4].map((item) => (
-				<Grid item xs={12} sm={6} key={item}>
-					<Card variant="outlined" sx={{ height: "100%" }}>
-						<CardContent>
-							<Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-								<Skeleton variant="text" width="60%" height={32} />
-								<Skeleton variant="rectangular" width={60} height={24} />
-							</Box>
-							<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-								<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
-								<Skeleton variant="text" width="90%" height={24} />
-							</Box>
-							<Divider sx={{ my: 1.5 }} />
-							<Grid container spacing={1}>
-								{[1, 2, 3, 4].map((subItem) => (
-									<Grid item xs={6} key={subItem}>
-										<Box sx={{ display: "flex", alignItems: "center" }}>
-											<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
-											<Skeleton variant="text" width="80%" height={24} />
-										</Box>
-									</Grid>
-								))}
-							</Grid>
-							<Box sx={{ mt: 1 }}>
-								<Skeleton variant="text" width="40%" height={24} />
-							</Box>
-						</CardContent>
-						<CardActions sx={{ p: 2, pt: 0 }}>
-							<Skeleton variant="rectangular" width="100%" height={36} />
-						</CardActions>
-					</Card>
-				</Grid>
-			))}
-		</Grid>
+		<React.Fragment>
+			<Grid container spacing={2}>
+				{[1, 2, 3, 4].map((item) => (
+					<Grid item xs={12} sm={6} key={item}>
+						<Card variant="outlined" sx={{ height: "100%" }}>
+							<CardContent>
+								<Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+									<Skeleton variant="text" width="60%" height={32} />
+									<Skeleton variant="rectangular" width={60} height={24} />
+								</Box>
+								<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+									<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+									<Skeleton variant="text" width="90%" height={24} />
+								</Box>
+								<Divider sx={{ my: 1.5 }} />
+								<Grid container spacing={1}>
+									{[1, 2, 3, 4].map((subItem) => (
+										<Grid item xs={6} key={subItem}>
+											<Box sx={{ display: "flex", alignItems: "center" }}>
+												<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+												<Skeleton variant="text" width="80%" height={24} />
+											</Box>
+										</Grid>
+									))}
+								</Grid>
+								<Box sx={{ mt: 1 }}>
+									<Skeleton variant="text" width="40%" height={24} />
+								</Box>
+							</CardContent>
+							<CardActions sx={{ p: 2, pt: 0 }}>
+								<Skeleton variant="rectangular" width="100%" height={36} />
+							</CardActions>
+						</Card>
+					</Grid>
+				))}
+			</Grid>
+			<Grid container spacing={2}>
+				{[1, 2, 3, 4].map((item) => (
+					<Grid item xs={12} sm={6} key={item}>
+						<Card variant="outlined" sx={{ height: "100%" }}>
+							<CardContent>
+								<Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+									<Skeleton variant="text" width="60%" height={32} />
+									<Skeleton variant="rectangular" width={60} height={24} />
+								</Box>
+								<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+									<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+									<Skeleton variant="text" width="90%" height={24} />
+								</Box>
+								<Divider sx={{ my: 1.5 }} />
+								<Grid container spacing={1}>
+									{[1, 2, 3, 4].map((subItem) => (
+										<Grid item xs={6} key={subItem}>
+											<Box sx={{ display: "flex", alignItems: "center" }}>
+												<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+												<Skeleton variant="text" width="80%" height={24} />
+											</Box>
+										</Grid>
+									))}
+								</Grid>
+								<Box sx={{ mt: 1 }}>
+									<Skeleton variant="text" width="40%" height={24} />
+								</Box>
+							</CardContent>
+							<CardActions sx={{ p: 2, pt: 0 }}>
+								<Skeleton variant="rectangular" width="100%" height={36} />
+							</CardActions>
+						</Card>
+					</Grid>
+				))}
+			</Grid>
+		</React.Fragment>
 	);
-};
 };
 
 /**
@@ -285,14 +286,6 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 	useEffect(() => {
 		if (isLoaded && window.google && !hasFetchedLocation.current) {
 			hasFetchedLocation.current = true;
-
-			const storedLocation = localStorage.getItem("userLocation");
-			if (storedLocation) {
-				const parsed = JSON.parse(storedLocation);
-				setMyCurrentLocation(parsed.address);
-				setNewMarker({ name: parsed.address, location: { lat: parsed.lat, lng: parsed.lng } });
-				return;
-			}
 
 			const storedLocation = localStorage.getItem("userLocation");
 			if (storedLocation) {
@@ -382,27 +375,19 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 		const value = event.target.value;
 		setSearchAddress(value);
 
-
 		if (!value) {
-			setPredictions([]);
-			setSuggestions(false);
-			return;
 			setPredictions([]);
 			setSuggestions(false);
 			return;
 		}
 
-
 		if (!autocompleteServiceRef.current) {
-			console.error("Autocomplete service not initialized yet");
-			return;
 			console.error("Autocomplete service not initialized yet");
 			return;
 		}
 
 		// Add console log to check if this function is being called
 		//console.log("Fetching predictions for:", value);
-
 
 		// Clear previous timeout to implement debouncing
 		if (window.searchTimeout) {
@@ -428,7 +413,6 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 				}
 			);
 		}, 300);
-	};
 	};
 
 	/**
@@ -552,8 +536,12 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 	};
 
 	// Error and loading states
-	if (loadError) return <ErrorMessage message={loadError} />;
-	if (!isLoaded) return <LoadingMessage />;
+	if (loadError) {
+		return <ErrorMessage message={loadError} />;
+	}
+	if (!isLoaded) {
+		return <LoadingMessage />;
+	}
 
 	/**
 	 * Common action buttons used in both mobile and desktop views
@@ -605,7 +593,7 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 		<>
 			{/*  Dialog for both views */}
 			<Dialog open={openAddSpotDialogBox} onClose={() => setOpenAddSpotDialogBox(false)}>
-				<Spot onCancel={() => setOpenAddSpotDialogBox(false)} />
+				<AddSpotUser onCancel={() => setOpenAddSpotDialogBox(false)} />
 			</Dialog>
 
 			{/*  SnackBAr for both views */}
@@ -672,8 +660,6 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 							))}
 						</Stack>
 					)}
-
-					{user ? <PastBooking user={user} /> : <BookingSkeleton />}
 
 					{user ? <PastBooking user={user} /> : <BookingSkeleton />}
 
@@ -750,7 +736,6 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 
 							<ActionButtons />
 
-							{user ? <PastBooking user={user} isMobile={isMobile} /> : <BookingSkeleton />}
 							{user ? <PastBooking user={user} isMobile={isMobile} /> : <BookingSkeleton />}
 						</Grid>
 

@@ -51,7 +51,6 @@ const SearchBar = ({
 	myLocationstatus,
 	recentSearches,
 	onSelect,
-	onSelect,
 }) => {
 	// Display recent searches only when there no active search and we have search history
 	const shouldShowRecentSearches = suggestions && !searchAddress && recentSearches.length > 0;
