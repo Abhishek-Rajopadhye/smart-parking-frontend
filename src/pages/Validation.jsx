@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { BACKEND_URL } from "../const";
-import {AuthContext} from "../context/AuthContext"
+import { AuthContext } from "../context/AuthContext";
 
 /**
  * Validation page for displaying and managing document validation requests.
@@ -28,7 +28,7 @@ import {AuthContext} from "../context/AuthContext"
  * @returns {JSX.Element} The Validation page component.
  */
 const Validation = () => {
-	const {user} = useContext(AuthContext);
+	const { user } = useContext(AuthContext);
 	const [requests, setRequests] = useState([]);
 	const [collapseToggle, setCollapseToggle] = useState(null);
 	const [page, setPage] = useState(0); // Current page
@@ -87,7 +87,7 @@ const Validation = () => {
 
 	// Fetch documents on component load
 	useEffect(() => {
-		if(user.email == "abhishek.rajopadhye21@gmail.com"){
+		if (user.email == "abhishek.rajopadhye21@gmail.com") {
 			fetchDocuments();
 		}
 	}, [user.email]);
@@ -132,7 +132,7 @@ const Validation = () => {
 								>
 									<TableCell>{page * rowsPerPage + index + 1}</TableCell>
 									<TableCell>{request.spot_title}</TableCell>
-<TableCell>
+									<TableCell>
 										{request.documents?.doc1 ? (
 											<Typography variant="body2">
 												📄 {request.documents.doc1.filename} -{" "}

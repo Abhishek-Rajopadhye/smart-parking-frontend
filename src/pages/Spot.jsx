@@ -192,7 +192,7 @@ const Spot = ({ onCancel }) => {
 				document.append("doc2", documents.doc2);
 				if (documents.doc3) {
 					document.append("doc3", documents.doc3);
-			}
+				}
 				const document_response = await axios.post(`${BACKEND_URL}/spots/add-documents`, document, {
 					headers: {
 						"Content-Type": "multipart/form-data",

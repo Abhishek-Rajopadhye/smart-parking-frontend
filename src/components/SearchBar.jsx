@@ -30,17 +30,10 @@ const SearchBar = ({
 	suggestions,
 	isMobile,
 	myLocationstatus,
-	mtLocationMessage,
 	recentSearches,
-	onSelect
+	onSelect,
 }) => {
 
-	const getMessage = () => {
-		if (myLocationstatus === "loading") return "Detecting location...";
-		if (myLocationstatus === "success") return "Location found!";
-		if (myLocationstatus === "error") return mtLocationMessage;
-		return "";
-	};
 	const shouldShowRecentSearches = suggestions && !searchAddress && recentSearches.length > 0;
 
 	return (
@@ -68,7 +61,7 @@ const SearchBar = ({
 					InputProps={{
 						startAdornment: (
 							<InputAdornment position="start" sx={{ position: "absolute", left: "10px" }}>
-								{ (myLocationstatus === "loading")  ? (
+								{myLocationstatus === "loading" ? (
 									<Skeleton variant="circular" width={24} height={24} />
 								) : (
 									<SearchIcon color="action" />
@@ -124,11 +117,8 @@ const SearchBar = ({
 					>
 						<MyLocationOutlined sx={{ mr: 1.5 }} color="primary" />
 						<Typography fontWeight="medium">Use My Current Location</Typography>
-						
 					</Box>
-					{shouldShowRecentSearches && (
-						<RecentSearchesSection onSelect={onSelect} recentSearches={recentSearches}/>
-					)}
+					{shouldShowRecentSearches && <RecentSearchesSection onSelect={onSelect} recentSearches={recentSearches} />}
 
 					{searchAddress && predictions.length > 0
 						? predictions.map((prediction, index) => (

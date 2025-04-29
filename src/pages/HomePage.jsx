@@ -100,43 +100,43 @@ const SkeletonCard = () => (
 // Skeleton component for loading state
 const BookingSkeleton = () => {
 	return (
-	  <Grid container spacing={2}>
-		{[1, 2, 3, 4].map((item) => (
-		  <Grid item xs={12} sm={6} key={item}>
-			<Card variant="outlined" sx={{ height: '100%' }}>
-			  <CardContent>
-				<Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-				  <Skeleton variant="text" width="60%" height={32} />
-				  <Skeleton variant="rectangular" width={60} height={24} />
-				</Box>
-				<Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-				  <Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
-				  <Skeleton variant="text" width="90%" height={24} />
-				</Box>
-				<Divider sx={{ my: 1.5 }} />
-				<Grid container spacing={1}>
-				  {[1, 2, 3, 4].map((subItem) => (
-					<Grid item xs={6} key={subItem}>
-					  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-						<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
-						<Skeleton variant="text" width="80%" height={24} />
-					  </Box>
-					</Grid>
-				  ))}
+		<Grid container spacing={2}>
+			{[1, 2, 3, 4].map((item) => (
+				<Grid item xs={12} sm={6} key={item}>
+					<Card variant="outlined" sx={{ height: "100%" }}>
+						<CardContent>
+							<Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+								<Skeleton variant="text" width="60%" height={32} />
+								<Skeleton variant="rectangular" width={60} height={24} />
+							</Box>
+							<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+								<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+								<Skeleton variant="text" width="90%" height={24} />
+							</Box>
+							<Divider sx={{ my: 1.5 }} />
+							<Grid container spacing={1}>
+								{[1, 2, 3, 4].map((subItem) => (
+									<Grid item xs={6} key={subItem}>
+										<Box sx={{ display: "flex", alignItems: "center" }}>
+											<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+											<Skeleton variant="text" width="80%" height={24} />
+										</Box>
+									</Grid>
+								))}
+							</Grid>
+							<Box sx={{ mt: 1 }}>
+								<Skeleton variant="text" width="40%" height={24} />
+							</Box>
+						</CardContent>
+						<CardActions sx={{ p: 2, pt: 0 }}>
+							<Skeleton variant="rectangular" width="100%" height={36} />
+						</CardActions>
+					</Card>
 				</Grid>
-				<Box sx={{ mt: 1 }}>
-				  <Skeleton variant="text" width="40%" height={24} />
-				</Box>
-			  </CardContent>
-			  <CardActions sx={{ p: 2, pt: 0 }}>
-				<Skeleton variant="rectangular" width="100%" height={36} />
-			  </CardActions>
-			</Card>
-		  </Grid>
-		))}
-	  </Grid>
+			))}
+		</Grid>
 	);
-  };
+};
 
 // Main HomePage component
 const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) => {
@@ -175,39 +175,36 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 		if (myLocationstatus) setOpenSnackbar(true);
 	}, [myLocationstatus]);
 
-
-	// Initialize Google Maps services when loaded and the current location 
+	// Initialize Google Maps services when loaded and the current location
 
 	useEffect(() => {
 		if (isLoaded && window.google && !autocompleteServiceRef.current) {
-		  try {
-			// Initialize the autocomplete service immediately
-			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
-			//console.log("Autocomplete service initialized successfully");
-			
-			// Set initial time
-			const intitalTime = getInitialStartTime();
-			setStartTime(intitalTime);
-		  } catch (error) {
-			console.error("Error initializing AutocompleteService:", error);
-		  }
+			try {
+				// Initialize the autocomplete service immediately
+				autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+				//console.log("Autocomplete service initialized successfully");
+
+				// Set initial time
+				const intitalTime = getInitialStartTime();
+				setStartTime(intitalTime);
+			} catch (error) {
+				console.error("Error initializing AutocompleteService:", error);
+			}
 		}
-	  }, [isLoaded]);
+	}, [isLoaded]);
 
+	useEffect(() => {
+		if (isLoaded && window.google && !hasFetchedLocation.current) {
+			hasFetchedLocation.current = true;
 
-useEffect(() => {
-	if (isLoaded && window.google && !hasFetchedLocation.current) {
-		hasFetchedLocation.current = true;
+			const storedLocation = localStorage.getItem("userLocation");
+			if (storedLocation) {
+				const parsed = JSON.parse(storedLocation);
+				setMyCurrentLocation(parsed.address);
+				setNewMarker({ name: parsed.address, location: { lat: parsed.lat, lng: parsed.lng } });
+				return;
+			}
 
-		const storedLocation = localStorage.getItem("userLocation");
-		if (storedLocation) {
-			const parsed = JSON.parse(storedLocation);
-			setMyCurrentLocation(parsed.address);
-			setNewMarker({ name: parsed.address, location: { lat: parsed.lat, lng: parsed.lng } });
-			return;
-		}
-
-		
 			setStatus("loading");
 			setMessage("Detecting location...");
 
@@ -260,9 +257,8 @@ useEffect(() => {
 				},
 				{ enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
 			);
-		} 
-}, [isLoaded, setNewMarker]);
-
+		}
+	}, [isLoaded, setNewMarker]);
 
 	// Search handling
 	const updateRecentSearches = (newSearch) => {
@@ -277,49 +273,49 @@ useEffect(() => {
 	const handleSearchChange = (event) => {
 		const value = event.target.value;
 		setSearchAddress(value);
-	  
+
 		if (!value) {
-		  setPredictions([]);
-		  setSuggestions(false);
-		  return;
+			setPredictions([]);
+			setSuggestions(false);
+			return;
 		}
-	  
+
 		if (!autocompleteServiceRef.current) {
-		  console.error("Autocomplete service not initialized yet");
-		  return;
+			console.error("Autocomplete service not initialized yet");
+			return;
 		}
-	  
+
 		// Add console log to check if this function is being called
 		//console.log("Fetching predictions for:", value);
-		
+
 		// Clear previous timeout to implement debouncing
 		if (window.searchTimeout) {
-		  clearTimeout(window.searchTimeout);
+			clearTimeout(window.searchTimeout);
 		}
-	  
+
 		// Debounce the predictions request
 		window.searchTimeout = setTimeout(() => {
-		//  console.log("Making autocomplete request for:", value);
-		  
-		  autocompleteServiceRef.current.getPlacePredictions(
-			{ 
-			  input: value, 
-			  componentRestrictions: { country: "IN" } 
-			},
-			(results, status) => {
-			 // console.log("Autocomplete response:", status, results);
-			  
-			  if (status === "OK" && results) {
-				setPredictions(results);
-				setSuggestions(true);
-			  } else {
-				setPredictions([]);
-				setSuggestions(true);
-			  }
-			}
-		  );
+			//  console.log("Making autocomplete request for:", value);
+
+			autocompleteServiceRef.current.getPlacePredictions(
+				{
+					input: value,
+					componentRestrictions: { country: "IN" },
+				},
+				(results, status) => {
+					// console.log("Autocomplete response:", status, results);
+
+					if (status === "OK" && results) {
+						setPredictions(results);
+						setSuggestions(true);
+					} else {
+						setPredictions([]);
+						setSuggestions(true);
+					}
+				}
+			);
 		}, 300);
-	  };
+	};
 
 	const handleSuggestionClick = (description) => {
 		setSearchAddress(description);
@@ -531,8 +527,6 @@ useEffect(() => {
 
 					{/* WE will use in the later demo  */}
 
-				
-
 					{myCurrentLocation ? (
 						<NearByParkings
 							isMobile={isMobile}
@@ -543,7 +537,6 @@ useEffect(() => {
 							selectedDate={selectedDate}
 							startTime={startTime}
 						/>
-
 					) : (
 						<Stack spacing={2} sx={{ maxWidth: "100%" }}>
 							{[1, 2, 3].map((item) => (
@@ -552,11 +545,8 @@ useEffect(() => {
 						</Stack>
 					)}
 
-					{user?<PastBooking  user={user}/>: <BookingSkeleton/>} 
+					{user ? <PastBooking user={user} /> : <BookingSkeleton />}
 
-					
-
-					
 					{/* How Smart Parking Works Section */}
 					<Box sx={{ mt: 5, mb: 3 }}>
 						<Typography variant="h6" fontWeight="bold" textAlign="center" mb={3} color="text.primary">
@@ -630,8 +620,7 @@ useEffect(() => {
 
 							<ActionButtons />
 
-							{user?<PastBooking  user={user} isMobile={isMobile}/>: <BookingSkeleton/>} 
-
+							{user ? <PastBooking user={user} isMobile={isMobile} /> : <BookingSkeleton />}
 						</Grid>
 
 						{/* Right Image */}
