@@ -7,8 +7,8 @@ import axios from "axios";
 import { CurrencyRupee } from "@mui/icons-material";
 import { BACKEND_URL } from "../const";
 import { SpotBookingView } from "../components/SpotBookingView";
-
-
+import { ConfirmationDialogBox } from "../components/ConfirmationDialogBox";
+import { AddSpotOwner } from "./AddSpotOwner";
 
 const OwnerDashboard = () => {
 	const { user, setUser } = useContext(AuthContext);
@@ -289,7 +289,7 @@ const OwnerDashboard = () => {
 				sx={{ m: 2, minHeight: "100vh", p: 2 }}
 			>
 				{/* Pass fetchUserSpots to Spot so it can refresh the list after adding */}
-				<Spot onSpotAdded={fetchUserSpots} />
+				<AddSpotOwner onSpotAdded={fetchUserSpots} />
 			</Dialog>
 
 			{/* Confirmation Dialog */}

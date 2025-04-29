@@ -68,7 +68,7 @@ const EditProfileModal = ({ open, handleClose, user, handleSave }) => {
 		<Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
 			<DialogTitle>Edit Profile</DialogTitle>
 			<DialogContent>
-				<Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+				<Box component="form"  sx={{ mt: 2 }}>
 					<TextField
 						margin="normal"
 						fullWidth
@@ -101,7 +101,7 @@ const EditProfileModal = ({ open, handleClose, user, handleSave }) => {
 						value={formData.profile_picture}
 						onChange={handleChange}
 					/>
-					<Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+					<Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }} onClick={handleSubmit}>
 						Save
 					</Button>
 				</Box>
