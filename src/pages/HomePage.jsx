@@ -41,7 +41,7 @@ import {
 
 import { IoLocationSharp } from "react-icons/io5";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import parking from "../assets/images/parkingSpace.jpg";
+import parking from "../assets/Images/parkingSpace.jpg";
 import { useNavigate } from "react-router-dom";
 import { MapContext } from "../context/MapContext";
 import { AddSpotUser } from "./AddSpotUser";
