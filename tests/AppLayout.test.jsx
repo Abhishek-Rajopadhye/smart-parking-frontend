@@ -12,7 +12,7 @@ vi.mock("../src/pages/BookingHistory", () => ({ BookingHistory: () => <div>Booki
 vi.mock("../src/pages/HomePage", () => ({ default: ({ setSelectedMarker }) => <div>Home Page</div> }));
 vi.mock("../src/pages/Auth", () => ({ Auth: () => <div>Auth Page</div> }));
 vi.mock("../src/pages/Booking", () => ({ Booking: () => <div>Booking Page</div> }));
-vi.mock("../src/pages/Spot", () => ({ Spot: () => <div>Spot Page</div> }));
+vi.mock("../src/pages/AddSpotUser", () => ({ AddSpotUser: () => <div>Spot Page</div> }));
 vi.mock("../src/components/DetailInfo", () => ({ default: () => <div>Detail Info Page</div> }));
 vi.mock("../src/pages/MapSearch", () => ({ default: () => <div>Map Search Page</div> }));
 vi.mock("../src/pages/Validation", () => ({ default: () => <div>Validation Page</div> }));

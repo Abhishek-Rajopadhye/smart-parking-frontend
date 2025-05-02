@@ -13,7 +13,7 @@ import DetailInfo from "./components/DetailInfo";
 import HomePage from "./pages/HomePage";
 import MapSearch from "./pages/MapSearch";
 import Validation from "./pages/Validation";
-import OwnerDashboard from "./pages/OwnerDashboard"; // <-- Add this import
+import OwnerDashboard from "./pages/OwnerDashboard";
 
 const AppLayout = () => {
     const authContextValue = useContext(AuthContext);

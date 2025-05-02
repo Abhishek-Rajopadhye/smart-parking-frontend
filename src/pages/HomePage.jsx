@@ -49,7 +49,7 @@ import { addMinutes, setMinutes } from "date-fns";
 import NearByParkings from "../components/NearByParkings";
 import PastBooking from "../components/PastBooking";
 import { AuthContext } from "../context/AuthContext";
-import AddSpotUser from "./AddSpotUser";
+import { AddSpotUser } from "./AddSpotUser";
 
 /**
  * Displays a loading indicator with message while the app initializes
@@ -537,13 +537,13 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 					borderRadius: isMobile ? 2 : 1,
 					py: isMobile ? 1.5 : 1.25,
 				}}
-				onClick={() => navigate("/addspot")}
+				onClick={() => navigate("/addspotuser")}
 				variant="outlined"
 				fullWidth
 				disableElevation
 				startIcon={<IoLocationSharp size={20} />}
 			>
-				Add Parking Spot
+				Mark Parking Spot
 			</Button>
 		</>
 	);

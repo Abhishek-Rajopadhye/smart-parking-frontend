@@ -19,14 +19,13 @@ import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
-import { useNavigate } from "react-router-dom";
 import "../style/spot.css";
 import MapDialog from "../components/MapDialog";
 import { AuthContext } from "../context/AuthContext";
 import { BACKEND_URL } from "../const";
 const steps = ["Instruction", "Spot Details", "Upload Documents", "Instructions & Submit"];
 
-const AddSpotUser = ({ onCancel }) => {
+const AddSpotUser = () => {
 	const [activeStep, setActiveStep] = useState(0);
 	// Spot Details States
 	const [spotAdded, setSpotAdded] = useState(false);
@@ -177,7 +176,6 @@ const AddSpotUser = ({ onCancel }) => {
 		formData.append("longitude", location.lng);
 		formData.append("available_days", openDay.join(","));
 		formData.append("image", images);
-
 		try {
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot`, formData, {
 				headers: {
@@ -185,6 +183,8 @@ const AddSpotUser = ({ onCancel }) => {
 				},
 			});
 			if (response.status == 200) {
+				setSpotName(spotTitle);
+				setSpotPrice(hourlyRate);
 				setSpotAdded(true);
 				setOpenSnackbar({
 					open: true,
@@ -610,4 +610,4 @@ const AddSpotUser = ({ onCancel }) => {
 	);
 };
 
-export default { AddSpotUser };
+export { AddSpotUser };
