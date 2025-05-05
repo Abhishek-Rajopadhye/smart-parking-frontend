@@ -6,59 +6,57 @@ import { AddReview } from "../src/components/AddReview";
 
 // Mock MUI components
 vi.mock("@mui/material", async () => {
-	const actual = await vi.importActual("@mui/material");
-	return {
-		...actual,
-		Dialog: ({ open, children, onClose }) =>
-			open ? (
-				<div data-testid="dialog">
-					{children}
-					<button onClick={onClose}>Close</button>
-				</div>
-			) : null,
-		Button: ({ children, disabled, ...props }) => (
-			<button {...props} type="button" disabled={disabled}>
-				{children}
-			</button>
-		),
-		TextField: ({ label, value, onChange, name = "", ...props }) => (
-			<input
-				aria-label={label}
-				value={value}
-				name={name}
-				onChange={(e) => {
-					onChange &&
-						onChange({
-							target: {
-								value: e.target.value,
-								name: name,
-							},
-						});
-				}}
-				{...props}
-			/>
-		),
-		Rating: ({ value, onChange }) => (
-			<input
-				data-testid="rating"
-				type="number"
-				value={value}
-				name="rating_score"
-				onChange={(e) =>
-					onChange &&
-					onChange({
-						target: {
-							value: Number(e.target.value),
-							name: "rating_score",
-						},
-					})
-				}
-				min={1}
-				max={5}
-			/>
-		),
-		Box: ({ children }) => <div>{children}</div>,
-	};
+    const actual = await vi.importActual("@mui/material");
+    return {
+        ...actual,
+        Dialog: ({ open, children }) =>
+            open ? <div data-testid="dialog">{children}</div> : null,
+        DialogActions: ({ children }) => <div>{children}</div>,
+        DialogTitle: ({ children }) => <h2>{children}</h2>,
+        DialogContent: ({ children }) => <div>{children}</div>,
+        Button: ({ children, disabled, ...props }) => (
+            <button {...props} type="button" disabled={disabled}>
+                {children}
+            </button>
+        ),
+        TextField: ({ label, value, onChange, name = "", ...props }) => (
+            <input
+                aria-label={label}
+                value={value}
+                name={name}
+                onChange={(e) => {
+                    onChange &&
+                        onChange({
+                            target: {
+                                value: e.target.value,
+                                name: name,
+                            },
+                        });
+                }}
+                {...props}
+            />
+        ),
+        Rating: ({ value, onChange }) => (
+            <input
+                data-testid="rating"
+                type="number"
+                value={value}
+                name="rating_score"
+                onChange={(e) =>
+                    onChange &&
+                    onChange({
+                        target: {
+                            value: Number(e.target.value),
+                            name: "rating_score",
+                        },
+                    })
+                }
+                min={1}
+                max={5}
+            />
+        ),
+        Box: ({ children }) => <div>{children}</div>,
+    };
 });
 
 const mockUser = {
