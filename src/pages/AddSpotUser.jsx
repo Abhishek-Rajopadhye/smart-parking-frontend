@@ -176,7 +176,8 @@ const AddSpotUser = () => {
 		formData.append("longitude", location.lng);
 		formData.append("available_days", openDay.join(","));
 		formData.append("image", images);
-		formData.append("verification_status",3);
+    formData.append("verification_status", 3);
+
 		try {
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot`, formData, {
 				headers: {
@@ -577,11 +578,9 @@ const AddSpotUser = () => {
 				{activeStep === 2 && (
 					<Box>
 						<Typography variant="body1" mb={2}>
-							Please review your details and ensure all information and documents are correct. Once submitted, you
-							won’t be able to edit.
-						</Typography>
-						<Typography variant="body2" color="textSecondary">
-							Spot: {spotName}, Price: ₹{spotPrice}, Slots: {totalSlots}
+							📍 This spot is only for viewing purposes on the map.
+							<br></br>🛑 Booking or reservation is not available for this spot.
+							<br></br>💡 Want to earn by listing your own spot? Log in as an owner and add a spot to make it bookable.
 						</Typography>
 						<Grid item xs={12} mt={4}>
 							<Box display="flex" justifyContent="space-between">

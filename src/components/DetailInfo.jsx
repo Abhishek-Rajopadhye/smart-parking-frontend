@@ -784,7 +784,7 @@ const DetailInfo = () => {
 						selectedMarker.available_days[0].split(",").map((day, i) => (
 							<Chip
 								key={i}
-								label={day.trim()}
+								label={day}
 								size="small"
 								color="info"
 								sx={{ mx: 0.5, my: 0.5 }}

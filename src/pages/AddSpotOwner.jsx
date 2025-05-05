@@ -195,10 +195,9 @@ const AddSpotOwner = ({ onCancel }) => {
 		formData.append("longitude", location.lng);
 		formData.append("available_days", openDay.join(","));
 		formData.append("image", images);
-		formData.append("verification_status",0);
+		formData.append("verification_status", 0);
 
-
-		try {
+    try {
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot`, formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",
@@ -277,7 +276,7 @@ const AddSpotOwner = ({ onCancel }) => {
 			alert("Please upload a valid PDF document");
 		}
 	};
-	
+
 	/**
 	 * Handles the next button click in the stepper.
 	 * Validates the form data and moves to the next step.
