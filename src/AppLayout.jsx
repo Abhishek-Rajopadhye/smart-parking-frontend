@@ -14,6 +14,7 @@ import HomePage from "./pages/HomePage";
 import MapSearch from "./pages/MapSearch";
 import Validation from "./pages/Validation";
 import OwnerDashboard from "./pages/OwnerDashboard";
+import { AddSpotOwner } from "./pages/AddSpotOwner";
 
 const AppLayout = () => {
     const authContextValue = useContext(AuthContext);
@@ -144,7 +145,6 @@ const AppLayout = () => {
         );
     }
 
-    // --- OWNER DASHBOARD CONDITION ---
     if (sessionType === "Owner") {
         return (
             <Box className="outermost-container" sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
@@ -173,13 +173,13 @@ const AppLayout = () => {
                 <Box variant="main" sx={{ flex: 1, mt: 8, width: "100vw" }}>
                     <Routes>
                         <Route path="/ownerdashboard" element={<OwnerDashboard />} />
+                        <Route path="/add-spot-owner" element={<AddSpotOwner />} />
                         <Route path="*" element={<Navigate to="/ownerdashboard" />} />
                     </Routes>
                 </Box>
             </Box>
         );
     }
-    // --- END OWNER DASHBOARD CONDITION ---
 
     return (
         <Box className="outermost-container" sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
