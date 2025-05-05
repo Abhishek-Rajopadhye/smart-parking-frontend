@@ -197,7 +197,7 @@ const AddSpotOwner = ({ onCancel }) => {
 		formData.append("image", images);
 		formData.append("verification_status", 0);
 
-		try {
+    try {
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot`, formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",
