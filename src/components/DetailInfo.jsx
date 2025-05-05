@@ -781,10 +781,10 @@ const DetailInfo = () => {
 				<Box mb={1} sx={{ display: "flex", flexWrap: "wrap" }}>
 					<CalendarTodayIcon fontSize="small" sx={{ mr: 1 }} />
 					{Array.isArray(selectedMarker.available_days) ? (
-						selectedMarker.available_days.map((day, i) => (
+						selectedMarker.available_days[0].split(",").map((day, i) => (
 							<Chip
 								key={i}
-								label={day.slice(0, 3).toUpperCase()}
+								label={day}
 								size="small"
 								color="info"
 								sx={{ mx: 0.5, my: 0.5 }}
