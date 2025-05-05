@@ -195,6 +195,8 @@ const AddSpotOwner = ({ onCancel }) => {
 		formData.append("longitude", location.lng);
 		formData.append("available_days", openDay.join(","));
 		formData.append("image", images);
+		formData.append("verification_status",0);
+
 
 		try {
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot`, formData, {

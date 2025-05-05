@@ -40,7 +40,7 @@ import { Booking } from "../pages/Booking";
  * @param {Object} props - Component props
  * @param {Object} props.user - Current user object with ID
  * @param {boolean} props.isMobile - Whether the component is being rendered on a mobile device
- * @returns {React.ReactElement} The PastBooking component
+ * @returns {JSX.Element} The PastBooking component
  */
 const PastBooking = ({ user, isMobile }) => {
 	// State for bookings and UI control
@@ -154,7 +154,7 @@ const PastBooking = ({ user, isMobile }) => {
 	};
 
 	return (
-		<Container>
+		
 			<Box sx={{ mb: 3, mt: 2 }}>
 				{/* Header Section  */}
 				<Typography
@@ -302,7 +302,7 @@ const PastBooking = ({ user, isMobile }) => {
 					previous_booking={previousBookingData}
 				/>
 			</Box>
-		</Container>
+		
 	);
 };
 
