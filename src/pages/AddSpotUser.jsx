@@ -23,7 +23,7 @@ import "../style/spot.css";
 import MapDialog from "../components/MapDialog";
 import { AuthContext } from "../context/AuthContext";
 import { BACKEND_URL } from "../const";
-const steps = ["Instruction", "Spot Details", "Upload Documents", "Instructions & Submit"];
+const steps = ["Instruction", "Spot Details", "Instructions & Submit"];
 
 const AddSpotUser = () => {
 	const [activeStep, setActiveStep] = useState(0);
@@ -163,7 +163,7 @@ const AddSpotUser = () => {
 	const handleSubmit = async () => {
 		if (spotAdded) return;
 		const formData = new FormData();
-		formData.append("owner_id", user.id);
+		formData.append("owner_id", "google-oauth2|1234567890");
 		formData.append("spot_title", spotTitle);
 		formData.append("spot_address", spotAddress);
 		formData.append("spot_description", spotDescription);
@@ -176,6 +176,8 @@ const AddSpotUser = () => {
 		formData.append("longitude", location.lng);
 		formData.append("available_days", openDay.join(","));
 		formData.append("image", images);
+    formData.append("verification_status", 3);
+
 		try {
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot`, formData, {
 				headers: {
@@ -576,11 +578,9 @@ const AddSpotUser = () => {
 				{activeStep === 2 && (
 					<Box>
 						<Typography variant="body1" mb={2}>
-							Please review your details and ensure all information and documents are correct. Once submitted, you
-							won’t be able to edit.
-						</Typography>
-						<Typography variant="body2" color="textSecondary">
-							Spot: {spotName}, Price: ₹{spotPrice}, Slots: {totalSlots}
+							📍 This spot is only for viewing purposes on the map.
+							<br></br>🛑 Booking or reservation is not available for this spot.
+							<br></br>💡 Want to earn by listing your own spot? Log in as an owner and add a spot to make it bookable.
 						</Typography>
 						<Grid item xs={12} mt={4}>
 							<Box display="flex" justifyContent="space-between">

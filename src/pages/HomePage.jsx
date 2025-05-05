@@ -543,7 +543,7 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 				disableElevation
 				startIcon={<IoLocationSharp size={20} />}
 			>
-				Mark Parking Spot
+				Add Community Parking Spot
 			</Button>
 		</>
 	);

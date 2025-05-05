@@ -40,7 +40,6 @@ import { AuthContext } from "../context/AuthContext";
 
 const DetailInfo = () => {
 	const { spot_id } = useParams();
-	console.log("spot_id", spot_id);
 	const [msg, setMsg] = useState("");
 	const [selectedMarker, setSelectedMarker] = useState([]);
 	const [reviews, setReviews] = useState([]);
@@ -52,7 +51,6 @@ const DetailInfo = () => {
 	const [addReviewDialogOpen, setAddReviewDialogOpen] = useState(false);
 	const navigate = useNavigate();
 	const spot_information = selectedMarker;
-	console.log(spot_information);
 	const { user } = useContext(AuthContext);
 	const [razorpay_order_id, setRazorpayOrderId] = useState(null);
 	const [totalSlots, setTotalSlots] = useState(1);
@@ -473,6 +471,7 @@ const DetailInfo = () => {
 		});
 	};
 
+	console.log("Available days ",selectedMarker.available_days)
 	/**
 	 * Function is used to process the payment and create the order
 	 * If the payment is successful then it will update the payment status and also available slots
@@ -607,13 +606,13 @@ const DetailInfo = () => {
 		toggleDialogBooking();
 	};
 
-	const deleteReview = async (review) =>{
+	const deleteReview = async (review) => {
 		const response = await axios.delete(`${BACKEND_URL}/reviews/${review.id}`);
-		if(response.status == 200){
-			const revRes = await axios.get(`${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`)
+		if (response.status == 200) {
+			const revRes = await axios.get(`${BACKEND_URL}/reviews/spot/${selectedMarker.spot_id}`);
 			setReviews(revRes.data);
 		}
-	}
+	};
 
 	return (
 		<Box
@@ -778,13 +777,14 @@ const DetailInfo = () => {
 					{formatTime(selectedMarker.open_time)} - {formatTime(selectedMarker.close_time)}
 				</Typography>
 
-				<Box mb={1} sx={{ display: "flex", flexWrap: "wrap" }}>
+				<Box mb={1} sx={{ display: "flex" }}>
 					<CalendarTodayIcon fontSize="small" sx={{ mr: 1 }} />
+					<Box>
 					{Array.isArray(selectedMarker.available_days) ? (
-						selectedMarker.available_days.map((day, i) => (
+						selectedMarker.available_days[0].split(",").map((day, i) => (
 							<Chip
 								key={i}
-								label={day.slice(0, 3).toUpperCase()}
+								label={day}
 								size="small"
 								color="info"
 								sx={{ mx: 0.5, my: 0.5 }}
@@ -793,6 +793,7 @@ const DetailInfo = () => {
 					) : (
 						<Typography>No Available Days</Typography>
 					)}
+					</Box>
 				</Box>
 				{selectedMarker.verification_status == 1 && (
 					<>
@@ -906,7 +907,7 @@ const DetailInfo = () => {
 					) : (
 						reviews.map((review, i) => (
 							<Box key={i} sx={{ my: 1 }}>
-								<ReviewCard review={review} handleDeleteReview={() => deleteReview(review)}/>
+								<ReviewCard review={review} handleDeleteReview={() => deleteReview(review)} />
 							</Box>
 						))
 					)}
