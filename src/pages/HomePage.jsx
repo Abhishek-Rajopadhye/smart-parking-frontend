@@ -61,7 +61,7 @@ const LoadingMessage = () => (
 	<Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
 		<Box sx={{ textAlign: "center" }}>
 			<DirectionsCarIcon sx={{ fontSize: 60, color: "primary.main", mb: 2 }} />
-			<Typography variant="h6">Loading Smart Parking</Typography>
+			<Typography variant="h6">Loading  Parking spots</Typography>
 			<Typography variant="body2" color="text.secondary">
 				Finding the best spots for you...
 			</Typography>
@@ -575,7 +575,7 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 				<Box sx={{ bgcolor: "#fff", py: 4, px: 2 }}>
 					{/* Header for mobile */}
 					<Typography variant="h5" fontWeight="bold" textAlign="center" gutterBottom color="primary.main">
-						Smart Parking
+						BookMy Parking
 					</Typography>
 					<Typography variant="subtitle2" textAlign="center" mb={4} color="text.secondary">
 						Find & reserve parking spots in seconds
@@ -621,10 +621,10 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 
 					{user ? <PastBooking user={user} /> : <BookingSkeleton />}
 
-					{/* How Smart Parking Works Section */}
+					{/* How  Parking Works Section */}
 					<Box sx={{ mt: 5, mb: 3 }}>
 						<Typography variant="h6" fontWeight="bold" textAlign="center" mb={3} color="text.primary">
-							How Smart Parking Works
+							How BookMy Parking Works
 						</Typography>
 
 						<Grid container direction="row" spacing={2} justifyContent="center">
@@ -733,7 +733,7 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 					{/* How it works */}
 					<Box sx={{ bgcolor: "#fff", py: 10 }}>
 						<Typography variant="h5" fontWeight="bold" textAlign="center" mb={6} color="text.primary">
-							How Smart Parking Works
+							How BookMy Parking Works
 						</Typography>
 						<Grid container spacing={6} justifyContent="center">
 							{[

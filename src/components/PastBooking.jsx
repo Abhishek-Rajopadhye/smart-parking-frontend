@@ -173,49 +173,56 @@ const PastBooking = ({ user, isMobile }) => {
 				<HistoryOutlined sx={{ mr: 1 }} />
 				Recent Bookings
 			</Typography>
-
 			{loading ? (
-				<Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
-					<CircularProgress />
-				</Box>
-			) : recentBookings.length === 0 ? (
-				<Card variant="outlined" sx={{ p: 3, textAlign: "center", bgcolor: "background.paper" }}>
-					<Typography variant="body1" color="text.secondary">
-						No recent bookings found. Book a parking spot to see your history here.
-					</Typography>
-				</Card>
-			) : (
-				<Grid container spacing={2}>
-					{recentBookings.map((booking) => {
-						const { date: startDate, time: startTime } = formatDateTime(booking.start_date_time);
-						const { time: endTime } = formatDateTime(booking.end_date_time);
-						const duration = calculateDuration(booking.start_date_time, booking.end_date_time);
-						const startTimeWithoutSeconds = startTime.slice(0, 5) + startTime.slice(8); // "11:00 am"
-						const endTimeWithoutSeconds = endTime.slice(0, 5) + endTime.slice(8);
-						return (
-							<Grid item xs={12} sm={12} key={booking.id}>
-								<Card variant="outlined" sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-									{/* Card Component */}
-									<CardContent sx={{ flex: "1 0 auto" }}>
-										{/* Spot title and status color  */}
-										<Box
-											sx={{
-												display: "flex",
-												justifyContent: "space-between",
-												alignItems: "flex-start",
-												mb: 1,
-											}}
-										>
-											<Typography variant="h6" component="h3" sx={{ fontWeight: "bold" }}>
-												{booking.spot_title}
-											</Typography>
-											<Chip
-												label={booking.status}
-												size="small"
-												color={getStatusColor(booking.status)}
-												variant="outlined"
-											/>
-										</Box>
+					<Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
+						<CircularProgress />
+					</Box>
+				) : recentBookings.length === 0 ? (
+					<Card variant="outlined" sx={{ p: 3, textAlign: "center", bgcolor: "background.paper" }}>
+						<Typography variant="body1" color="text.secondary">
+							No recent bookings found. Book a parking spot to see your history here.
+						</Typography>
+					</Card>
+				) : (
+					<Grid container spacing={2}>
+						{recentBookings.map((booking) => {
+							const { date: startDate, time: startTime } = formatDateTime(booking.start_date_time);
+							const { time: endTime } = formatDateTime(booking.end_date_time);
+							const duration = calculateDuration(booking.start_date_time, booking.end_date_time);
+							const startTimeWithoutSeconds = startTime.slice(0, 5) + startTime.slice(8); // "11:00 am"
+							const endTimeWithoutSeconds = endTime.slice(0, 5) + endTime.slice(8);
+							return (
+								<Grid item xs={12} sm={12} key={booking.id}>
+									<Card variant="outlined" sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+										{/* Card Component */}
+										<CardContent sx={{ flex: "1 0 auto" }}>
+											{/* Spot title and status color  */}
+											<Box
+												sx={{
+													display: "flex",
+													justifyContent: "space-between",
+													alignItems: "flex-start",
+													mb: 1,
+												}}
+											>
+												<Typography variant="h6" component="h3" sx={{ fontWeight: "bold" }}>
+													{booking.spot_title}
+												</Typography>
+												<Chip
+													label={booking.status}
+													size="small"
+													color={getStatusColor(booking.status)}
+													variant="outlined"
+												/>
+											</Box>
+
+											{/* spot address  */}
+											<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+												<LocationOnOutlined fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
+												<Typography variant="body2" color="text.secondary">
+												📍	{booking.spot_address}
+												</Typography>
+											</Box>
 
 										{/* spot address  */}
 										<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
