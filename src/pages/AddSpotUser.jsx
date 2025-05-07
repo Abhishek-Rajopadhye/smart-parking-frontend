@@ -36,7 +36,6 @@ const AddSpotUser = () => {
 	const [closeTime, setCloseTime] = useState("");
 	const [hourlyRate, setHourlyRate] = useState("");
 	const [totalSlots, setTotalSlots] = useState("");
-	const [availableSlots, setAvailableSlots] = useState("");
 	const [images, setImages] = useState([]);
 	const [imagePreviews, setImagePreviews] = useState([]);
 	const [openSnackbar, setOpenSnackbar] = useState({
@@ -71,12 +70,9 @@ const AddSpotUser = () => {
 		const newImages = [];
 		const newPreviews = [];
 		let validateFile = [];
-		console.log(files.length);
 		for (let file of files) {
-			console.log(file.size);
 			if (file.size <= maxSize) validateFile.push(file);
 		}
-		console.log(validateFile);
 		if (validateFile.length == 0) {
 			setOpenSnackbar({
 				open: true,
@@ -122,8 +118,6 @@ const AddSpotUser = () => {
 
 	const validateForm = () => {
 		const total = parseInt(totalSlots);
-		console.log(typeof totalSlots);
-		console.log(typeof availableSlots);
 		if (!spotTitle.trim()) return "Spot Title is required";
 		if (!spotAddress.trim()) return "Address is required";
 		if (location == null) return "Please select a location to proceed";
@@ -132,8 +126,6 @@ const AddSpotUser = () => {
 		if (!hourlyRate || hourlyRate <= 0) return "Hourly Rate must be positive";
 		if (!totalSlots || totalSlots <= 0) return "Total Slots must be a positive number";
 		if (!Object.values(openDays).includes(true)) return "At least one open day must be selected";
-		console.log(total);
-		console.log(typeof total);
 		return total;
 	};
 
@@ -195,7 +187,6 @@ const AddSpotUser = () => {
 				setHourlyRate("");
 
 				setTotalSlots("");
-				setAvailableSlots("");
 				setImages([]);
 				setImagePreviews([]);
 				setLocation(null);
@@ -210,7 +201,7 @@ const AddSpotUser = () => {
 				});
 			}
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			setOpenSnackbar({
 				open: true,
 				message: "Error uploading data",
@@ -404,7 +395,6 @@ const AddSpotUser = () => {
 											}}
 											onSave={(coords, msg) => {
 												setLocation(coords);
-												console.log("Location:", coords);
 												if (msg == "success") {
 													setOpenSnackbar({
 														open: true,

@@ -58,7 +58,6 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 		message: "",
 		severity: "info",
 	});
-	console.log(spot, spot_id);
 
 	useEffect(() => {
 		/**

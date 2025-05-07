@@ -93,10 +93,8 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 			return false;
 		}
 		if (msg == "start") {
-			console.log("Start", isoString);
 			setIndianStartTime(isoString);
 		} else {
-			console.log("End", isoString);
 			setIndianEndTime(isoString);
 		}
 		return true;
@@ -316,7 +314,6 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 	 */
 	useEffect(() => {
 		if (previous_booking) {
-			console.log(previous_booking);
 			setTotalSlots(previous_booking.total_slots);
 
 			const spotDays = spot_information.available_days || [];
@@ -381,7 +378,6 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 		const end = new Date(endTime);
 		const diffInMs = end - start;
 		let hours = Math.ceil(diffInMs / (1000 * 60 * 60));
-		console.log(hours);
 		if (hours <= 0) {
 			showSnackbar("Enter a valid time.", "error");
 			return false;
@@ -536,7 +532,7 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 			}
 			set_dialog();
 		} catch (error) {
-			console.log(error.msg);
+			console.error(error.msg);
 			showSnackbar("Failed to cancel booking");
 		}
 	};

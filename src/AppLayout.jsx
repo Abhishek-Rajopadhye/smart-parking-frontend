@@ -6,7 +6,6 @@ import HomeIcon from "@mui/icons-material/Home";
 import { AuthContext } from "./context/AuthContext";
 import { Profile } from "./pages/Profile";
 import { Booking } from "./pages/Booking";
-import { BookingHistory } from "./pages/BookingHistory";
 import { Auth } from "./pages/Auth";
 import { AddSpotUser } from "./pages/AddSpotUser";
 import DetailInfo from "./pages/DetailInfo";
@@ -43,13 +42,8 @@ const AppLayout = () => {
 		}
 	}, [navigate]);
 
-	console.log("Markers", markers);
-	console.log("Filters ", filters);
-	console.log("Filtered markers ", filteredMarkers);
-
 	useEffect(() => {
 		let result = markers;
-		console.log("Results ", result);
 
 		if (filters.available_days && filters.available_days.length > 0) {
 			result = result.filter((marker) => {
@@ -84,13 +78,6 @@ const AppLayout = () => {
 			result = result.filter((marker) => {
 				const markerOpenTimeMinutes = parseTimeWithAMPM(marker.open_time);
 				const markerCloseTimeMinutes = parseTimeWithAMPM(marker.close_time);
-				console.log(
-					"Opening timeing ",
-					marker.spot_id,
-					markerOpenTimeMinutes,
-					markerCloseTimeMinutes,
-					filterOpenTimeMinutes
-				);
 				return markerOpenTimeMinutes <= filterOpenTimeMinutes && markerCloseTimeMinutes >= filterOpenTimeMinutes;
 			});
 		}
@@ -104,16 +91,13 @@ const AppLayout = () => {
 			});
 		}
 
-		console.log("After filter ", result);
 		setFilteredMarkers(result);
 	}, [filters, markers]);
 
 	const getPageTitle = () => {
 		switch (location.pathname) {
-			case "/profile":
-				return "Profile";
-			case "/booking-history":
-				return "My Bookings";
+			case "/account-details":
+				return "Account Details";
 			case "/addspotuser":
 				return "Add Spot";
 			case "/homepage":
@@ -145,8 +129,7 @@ const AppLayout = () => {
 
 	const routes = [
 		{ label: "Home", path: "/homepage" },
-		{ label: "Profile", path: "/profile" },
-		{ label: "My Bookings", path: "/booking-history" },
+		{ label: "Account Details", path: "/account-details" },
 	];
 
 	if (!user) {
@@ -262,8 +245,7 @@ const AppLayout = () => {
 
 			<Box variant="main" sx={{ flex: 1, mt: 8, width: "100vw" }}>
 				<Routes>
-					<Route path="/profile" element={<Profile />} />
-					<Route path="/booking-history" element={<BookingHistory />} />
+					<Route path="/account-details" element={<Profile />} />
 					<Route
 						path="/homepage"
 						element={
@@ -276,7 +258,6 @@ const AppLayout = () => {
 						}
 					/>
 					<Route path="/auth" element={<Auth />} />
-					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
 					<Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker} />} />
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />

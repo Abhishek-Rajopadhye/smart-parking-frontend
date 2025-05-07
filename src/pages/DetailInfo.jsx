@@ -191,10 +191,8 @@ const DetailInfo = () => {
 			return false;
 		}
 		if (msg == "start") {
-			console.log("Start", isoString);
 			setIndianStartTime(isoString);
 		} else {
-			console.log("End", isoString);
 			setIndianEndTime(isoString);
 		}
 		return true;
@@ -374,7 +372,7 @@ const DetailInfo = () => {
 				showSnackbar("Failed to send receipt to email", "error");
 			}
 		} catch (err) {
-			console.log(err);
+			console.error(err);
 			showSnackbar("Fail to Send Receipt to mail", "error");
 		}
 	}, [
@@ -437,7 +435,6 @@ const DetailInfo = () => {
 		const end = new Date(endTime);
 		const diffInMs = end - start;
 		let hours = Math.ceil(diffInMs / (1000 * 60 * 60));
-		console.log(hours);
 		if (hours <= 0) {
 			showSnackbar("Enter a valid time.", "error");
 			return false;
@@ -446,8 +443,6 @@ const DetailInfo = () => {
 		setTotalAmount(hours * spot_information.hourly_rate * totalSlots);
 		//setOpenDialog(true);
 		const t = `You have to pay ₹${hours * spot_information.hourly_rate * totalSlots}. Are you sure you want to proceed?`;
-		console.log(totalAmount);
-		console.log(t);
 		setMsg(t);
 		toggleDialogBooking();
 		return true;
@@ -471,7 +466,6 @@ const DetailInfo = () => {
 		});
 	};
 
-	console.log("Available days ", selectedMarker.available_days);
 	/**
 	 * Function is used to process the payment and create the order
 	 * If the payment is successful then it will update the payment status and also available slots
@@ -488,13 +482,12 @@ const DetailInfo = () => {
 				return;
 			}
 			if (flag) {
-				const response = await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
+				await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
 					spot_id: spot_information.spot_id,
 					total_slots: prevTotalSlots,
 				});
 				setPrevTotalSlots(0);
 				setFlag(false);
-				console.log(response);
 			}
 
 			const start_time = dateTimeToString(startTime);
@@ -588,11 +581,10 @@ const DetailInfo = () => {
 	const handleCancel = async () => {
 		try {
 			if (flag && totalSlots != 0 && razorpay_order_id != null) {
-				const response = await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
+				await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
 					spot_id: spot_information.spot_id,
 					total_slots: totalSlots,
 				});
-				console.log(response);
 				setTotalSlots(0);
 				setStartTime(null);
 				setEndTime(null);

@@ -41,7 +41,6 @@ const Validation = () => {
 		const response = await axios.get(`${BACKEND_URL}/spots/documents/`);
 		if (response.status === 200) {
 			setRequests(response.data);
-			console.log(response.data);
 		}
 	};
 
@@ -51,8 +50,7 @@ const Validation = () => {
 	 * @param {number} id - The ID of the document to accept.
 	 */
 	const handleAccept = async (id) => {
-		const response = await axios.put(`${BACKEND_URL}/verify-list/request/accept/${id}`);
-		console.log(response.data);
+		await axios.put(`${BACKEND_URL}/verify-list/request/accept/${id}`);
 	};
 
 	/**
