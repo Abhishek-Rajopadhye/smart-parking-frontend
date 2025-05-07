@@ -8,7 +8,7 @@ import { Profile } from "./pages/Profile";
 import { Booking } from "./pages/Booking";
 import { BookingHistory } from "./pages/BookingHistory";
 import { Auth } from "./pages/Auth";
-import AddSpotUser from "./pages/AddSpotUser";
+import { AddSpotUser } from "./pages/AddSpotUser";
 import DetailInfo from "./components/DetailInfo";
 import HomePage from "./pages/HomePage";
 import MapSearch from "./pages/MapSearch";
@@ -70,7 +70,8 @@ const AppLayout = () => {
 			return hours * 60 + minutes;
 		}
 		function parseTimeWithAMPM(timeStr) {
-			const [time, meridiem] = timeStr.split(" ");
+			const time = timeStr.split(" ")[0];
+			//const [time, meridiem] = timeStr.split(" ");
 			const [hours, minutes] = time.split(":").map(Number);
 
 			return hours * 60 + minutes;

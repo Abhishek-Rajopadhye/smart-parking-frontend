@@ -32,9 +32,11 @@ import axios from "axios";
  * @returns {JSX.Element} The AddReview component.
  */
 const AddReview = ({ openDialog, onClose, spot_id }) => {
+	
+	const { user } = useContext(AuthContext);
 	const [formData, setFormData] = useState({
 		id: null,
-		user_id: -1,
+		user_id: user.id,
 		spot_id: spot_id,
 		review_description: "",
 		rating_score: 0,
@@ -42,23 +44,11 @@ const AddReview = ({ openDialog, onClose, spot_id }) => {
 		owner_reply: null,
 		created_at: null,
 	});
-	const { user } = useContext(AuthContext);
 	const [openSnackbar, setOpenSnackbar] = useState({
 		open: false,
 		message: "",
 		severity: "info",
 	});
-
-	/**
-	 * Initializes the form data with the logged-in user's ID.
-	 */
-	useEffect(() => {
-		setFormData((prevData) => ({
-			...prevData,
-			["user_id"]: user.id,
-		}));
-		console.log(formData);
-	}, [formData,setFormData, spot_id, user]);
 
 	/**
 	 * Handles the submission of the review form.
