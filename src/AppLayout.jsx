@@ -6,10 +6,9 @@ import HomeIcon from "@mui/icons-material/Home";
 import { AuthContext } from "./context/AuthContext";
 import { Profile } from "./pages/Profile";
 import { Booking } from "./pages/Booking";
-import { BookingHistory } from "./pages/BookingHistory";
 import { Auth } from "./pages/Auth";
-import {AddSpotUser} from "./pages/AddSpotUser";
-import DetailInfo from "./components/DetailInfo";
+import { AddSpotUser } from "./pages/AddSpotUser";
+import DetailInfo from "./pages/DetailInfo";
 import HomePage from "./pages/HomePage";
 import MapSearch from "./pages/MapSearch";
 import Validation from "./pages/Validation";
@@ -43,13 +42,8 @@ const AppLayout = () => {
 		}
 	}, [navigate]);
 
-	console.log("Markers", markers);
-	console.log("Filters ", filters);
-	console.log("Filtered markers ", filteredMarkers);
-
 	useEffect(() => {
 		let result = markers;
-		console.log("Results ", result);
 
 		if (filters.available_days && filters.available_days.length > 0) {
 			result = result.filter((marker) => {
@@ -70,8 +64,11 @@ const AppLayout = () => {
 			return hours * 60 + minutes;
 		}
 		function parseTimeWithAMPM(timeStr) {
-			const [time, meridiem] = timeStr.split(" ");
+			const time = timeStr.split(" ")[0];
 			const [hours, minutes] = time.split(":").map(Number);
+
+			// const [time, meridiem] = timeStr.split(" ");
+			// const [hours, minutes] = time.split(":").map(Number);
 
 			return hours * 60 + minutes;
 		}
@@ -81,13 +78,6 @@ const AppLayout = () => {
 			result = result.filter((marker) => {
 				const markerOpenTimeMinutes = parseTimeWithAMPM(marker.open_time);
 				const markerCloseTimeMinutes = parseTimeWithAMPM(marker.close_time);
-				console.log(
-					"Opening timeing ",
-					marker.spot_id,
-					markerOpenTimeMinutes,
-					markerCloseTimeMinutes,
-					filterOpenTimeMinutes
-				);
 				return markerOpenTimeMinutes <= filterOpenTimeMinutes && markerCloseTimeMinutes >= filterOpenTimeMinutes;
 			});
 		}
@@ -101,16 +91,13 @@ const AppLayout = () => {
 			});
 		}
 
-		console.log("After filter ", result);
 		setFilteredMarkers(result);
 	}, [filters, markers]);
 
 	const getPageTitle = () => {
 		switch (location.pathname) {
-			case "/profile":
-				return "Profile";
-			case "/booking-history":
-				return "My Bookings";
+			case "/account-details":
+				return "Account Details";
 			case "/addspotuser":
 				return "Add Spot";
 			case "/homepage":
@@ -142,8 +129,7 @@ const AppLayout = () => {
 
 	const routes = [
 		{ label: "Home", path: "/homepage" },
-		{ label: "Profile", path: "/profile" },
-		{ label: "My Bookings", path: "/booking-history" },
+		{ label: "Account Details", path: "/account-details" },
 	];
 
 	if (!user) {
@@ -154,12 +140,18 @@ const AppLayout = () => {
 		);
 	}
 
-  // --- OWNER DASHBOARD CONDITION ---
+	// --- OWNER DASHBOARD CONDITION ---
 	if (sessionType === "Owner") {
 		return (
 			<Box className="outermost-container" sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
 				<AppBar position="fixed" sx={{ zIndex: 3, bgcolor: "#3f51b5", color: "white" }}>
 					<Toolbar>
+						<Button
+							variant="Text"
+							color="primary"
+							startIcon={<KeyboardBackspaceIcon />}
+							onClick={() => navigate(-1)}
+						/>
 						<Typography variant="h6" sx={{ flexGrow: 1, justifyContent: "center", textAlign: "center" }}>
 							{getPageTitle()}
 						</Typography>
@@ -167,6 +159,30 @@ const AppLayout = () => {
 							<Avatar alt="Avatar" src={user.profile_picture || ""} />
 						</IconButton>
 						<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+							<MenuItem
+								key={"/ownerdashboard"}
+								onClick={() => {
+									handleMenuClose();
+									navigate("/ownerdashboard");
+								}}
+								selected={"/ownerdashboard" === location.pathname}
+							>
+								Owner Dashboard
+							</MenuItem>
+							{user.email == "abhishek.rajopadhye21@gmail.com" ||
+							user.email == "arjunghule6583@gmail.com" ||
+							user.email == "kalepradeep2001@gmail.com" ? (
+								<MenuItem
+									key={"/validation"}
+									onClick={() => {
+										handleMenuClose();
+										navigate("/validation");
+									}}
+									selected={"/validation" === location.pathname}
+								>
+									Verify Spot Requests
+								</MenuItem>
+							) : null}
 							<MenuItem
 								onClick={() => {
 									handleMenuClose();
@@ -183,7 +199,8 @@ const AppLayout = () => {
 				<Box variant="main" sx={{ flex: 1, mt: 8, width: "100vw" }}>
 					<Routes>
 						<Route path="/ownerdashboard" element={<OwnerDashboard />} />
-            <Route path="/add-spot-owner" element={<AddSpotOwner />} />
+						<Route path="/validation" element={<Validation />} />
+						<Route path="/addspotowner" element={<AddSpotOwner />} />
 						<Route path="*" element={<Navigate to="/ownerdashboard" />} />
 					</Routes>
 				</Box>
@@ -231,18 +248,6 @@ const AppLayout = () => {
 								{route.label}
 							</MenuItem>
 						))}
-						{user.email == "abhishek.rajopadhye21@gmail.com" && (
-							<MenuItem
-								key={"/validation"}
-								onClick={() => {
-									handleMenuClose();
-									navigate("/validation");
-								}}
-								selected={"/validation" === location.pathname}
-							>
-								Verify Spot Requests
-							</MenuItem>
-						)}
 						<MenuItem
 							onClick={() => {
 								handleMenuClose();
@@ -259,8 +264,7 @@ const AppLayout = () => {
 
 			<Box variant="main" sx={{ flex: 1, mt: 8, width: "100vw" }}>
 				<Routes>
-					<Route path="/profile" element={<Profile />} />
-					<Route path="/booking-history" element={<BookingHistory />} />
+					<Route path="/account-details" element={<Profile />} />
 					<Route
 						path="/homepage"
 						element={
@@ -273,7 +277,6 @@ const AppLayout = () => {
 						}
 					/>
 					<Route path="/auth" element={<Auth />} />
-					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
 					<Route path="/spotdetail/" element={<DetailInfo selectedMarker={selectedMarker} />} />
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
@@ -295,7 +298,6 @@ const AppLayout = () => {
 						}
 					/>
 					<Route path="/spotdetail/:spot_id" element={<DetailInfo />} />
-					<Route path="/validation" element={<Validation />} />
 					<Route path="*" element={<Navigate to="/homepage" />} />
 				</Routes>
 			</Box>

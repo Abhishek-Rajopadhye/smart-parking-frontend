@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * PastBooking Component
  *
@@ -154,27 +155,25 @@ const PastBooking = ({ user, isMobile }) => {
 	};
 
 	return (
-		
-			<Box sx={{ mb: 3, mt: 2 }}>
-				{/* Header Section  */}
-				<Typography
-					variant="h5"
-					component="h2"
-					sx={{
-						mb: 2,
-						display: "flex",
-						alignItems: "center",
-						color: "GrayText",
-						borderBottom: "2px solid",
-						borderColor: "primary.light",
-						pb: 1,
-					}}
-				>
-					<HistoryOutlined sx={{ mr: 1 }} />
-					Recent Bookings
-				</Typography>
-
-				{loading ? (
+		<Box sx={{ mb: 3, mt: 2 }}>
+			{/* Header Section  */}
+			<Typography
+				variant="h5"
+				component="h2"
+				sx={{
+					mb: 2,
+					display: "flex",
+					alignItems: "center",
+					color: "GrayText",
+					borderBottom: "2px solid",
+					borderColor: "primary.light",
+					pb: 1,
+				}}
+			>
+				<HistoryOutlined sx={{ mr: 1 }} />
+				Recent Bookings
+			</Typography>
+			{loading ? (
 					<Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
 						<CircularProgress />
 					</Box>
@@ -225,84 +224,85 @@ const PastBooking = ({ user, isMobile }) => {
 												</Typography>
 											</Box>
 
-											<Divider sx={{ my: 1.5 }} />
+										{/* spot address  */}
+										<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+											<LocationOnOutlined fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
+											<Typography variant="body2" color="text.secondary">
+												{booking.spot_address}
+											</Typography>
+										</Box>
 
-											<Grid container spacing={1}>
-												<Grid item xs={6}>
-													<Box sx={{ display: "flex", alignItems: "center" }}>
-														<EventOutlined
-															fontSize="small"
-															sx={{ color: "text.secondary", mr: 1 }}
-														/>
-														<Typography variant="body2">{startDate}</Typography>
-													</Box>
-												</Grid>
-												<Grid item xs={6}>
-													<Box sx={{ display: "flex", alignItems: "center" }}>
-														<AccessTimeOutlined
-															fontSize="small"
-															sx={{ color: "text.secondary", mr: 1 }}
-														/>
-														<Typography variant="body2">
-															{startTimeWithoutSeconds} <br /> {endTimeWithoutSeconds}
-														</Typography>
-													</Box>
-												</Grid>
+										<Divider sx={{ my: 1.5 }} />
 
-												<Grid item xs={6}>
-													<Box sx={{ display: "flex", alignItems: "center" }}>
-														<PaymentOutlined
-															fontSize="small"
-															sx={{ color: "text.secondary", mr: 1 }}
-														/>
-														<Typography variant="body2">₹{booking.payment_amount}</Typography>
-													</Box>
-												</Grid>
-												<Grid item xs={6}>
-													<Box sx={{ display: "flex", alignItems: "center" }}>
-														<AccessTimeOutlined
-															fontSize="small"
-															sx={{ color: "text.secondary", mr: 1 }}
-														/>
-														<Typography variant="body2">{duration} hours</Typography>
-													</Box>
-												</Grid>
+										<Grid container spacing={1}>
+											<Grid item xs={6}>
+												<Box sx={{ display: "flex", alignItems: "center" }}>
+													<EventOutlined fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
+													<Typography variant="body2">{startDate}</Typography>
+												</Box>
 											</Grid>
-
-											{booking.payment_status === "success" && (
-												<Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-													<CheckCircle fontSize="small" sx={{ color: "success.main", mr: 0.5 }} />
-													<Typography variant="body2" color="success.main">
-														Payment Successful
+											<Grid item xs={6}>
+												<Box sx={{ display: "flex", alignItems: "center" }}>
+													<AccessTimeOutlined
+														fontSize="small"
+														sx={{ color: "text.secondary", mr: 1 }}
+													/>
+													<Typography variant="body2">
+														{startTimeWithoutSeconds} <br /> {endTimeWithoutSeconds}
 													</Typography>
 												</Box>
-											)}
-										</CardContent>
-										<CardActions sx={{ p: 2, pt: 0 }}>
-											<Button
-												variant="contained"
-												size="small"
-												fullWidth
-												onClick={() => handleBooking(booking)}
-											>
-												Book Now
-											</Button>
-										</CardActions>
-									</Card>
-								</Grid>
-							);
-						})}
-					</Grid>
-				)}
+											</Grid>
 
-				<Booking
-					open={dialogBookingOpen}
-					spot_information={selectedMarker}
-					set_dialog={toggleDialogBooking}
-					previous_booking={previousBookingData}
-				/>
-			</Box>
-		
+											<Grid item xs={6}>
+												<Box sx={{ display: "flex", alignItems: "center" }}>
+													<PaymentOutlined fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
+													<Typography variant="body2">₹{booking.payment_amount}</Typography>
+												</Box>
+											</Grid>
+											<Grid item xs={6}>
+												<Box sx={{ display: "flex", alignItems: "center" }}>
+													<AccessTimeOutlined
+														fontSize="small"
+														sx={{ color: "text.secondary", mr: 1 }}
+													/>
+													<Typography variant="body2">{duration} hours</Typography>
+												</Box>
+											</Grid>
+										</Grid>
+
+										{booking.payment_status === "success" && (
+											<Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+												<CheckCircle fontSize="small" sx={{ color: "success.main", mr: 0.5 }} />
+												<Typography variant="body2" color="success.main">
+													Payment Successful
+												</Typography>
+											</Box>
+										)}
+									</CardContent>
+									<CardActions sx={{ p: 2, pt: 0 }}>
+										<Button
+											variant="contained"
+											size="small"
+											fullWidth
+											onClick={() => handleBooking(booking)}
+										>
+											Book Now
+										</Button>
+									</CardActions>
+								</Card>
+							</Grid>
+						);
+					})}
+				</Grid>
+			)}
+
+			<Booking
+				open={dialogBookingOpen}
+				spot_information={selectedMarker}
+				set_dialog={toggleDialogBooking}
+				previous_booking={previousBookingData}
+			/>
+		</Box>
 	);
 };
 

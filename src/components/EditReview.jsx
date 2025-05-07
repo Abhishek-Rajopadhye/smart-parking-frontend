@@ -65,7 +65,7 @@ const EditReview = ({ openDialog, onClose, review, handleSave }) => {
 	 */
 	const handleSubmit = async () => {
 		handleSave(formData);
-        onClose()
+		onClose();
 	};
 
 	/**

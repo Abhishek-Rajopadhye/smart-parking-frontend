@@ -18,22 +18,19 @@ import {
 	TextField,
 	Alert,
 } from "@mui/material";
-import { ConfirmationDialogBox } from "./ConfirmationDialogBox";
+import { ConfirmationDialogBox } from "../components/ConfirmationDialogBox";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import PhoneIcon from "@mui/icons-material/Phone";
-import EmailIcon from "@mui/icons-material/Email";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalParkingIcon from "@mui/icons-material/LocalParking";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import axios from "axios";
 import { BACKEND_URL } from "../const";
-import { Booking } from "../pages/Booking";
-import { ReviewCard } from "./ReviewCard";
-import { AddReview } from "./AddReview";
+import { ReviewCard } from "../components/ReviewCard";
+import { AddReview } from "../components/AddReview";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { AuthContext } from "../context/AuthContext";
@@ -88,16 +85,6 @@ const DetailInfo = () => {
 			})
 			.catch((err) => console.error("Error:", err));
 	}, [spot_id]);
-
-	// Format time to 12-hour format
-	function formatTime(timeStr) {
-		if (!timeStr) return "";
-		const [h, m] = timeStr.split(":");
-		const hour = parseInt(h, 10);
-		const ampm = hour >= 12 ? "PM" : "AM";
-		const hour12 = hour % 12 === 0 ? 12 : hour % 12;
-		return `${hour12}:${m} ${ampm}`;
-	}
 
 	// Fetch reviews and owner details
 	useEffect(() => {
@@ -234,7 +221,7 @@ const DetailInfo = () => {
 		doc.setFontSize(22);
 		doc.setTextColor(255, 255, 255);
 		doc.setFont("helvetica", "bold");
-		doc.text("Smart Parking", 105, 12, null, null, "center");
+		doc.text("BookMy Parking", 105, 12, null, null, "center");
 
 		doc.setFontSize(13);
 		doc.setFont("helvetica", "italic");
@@ -354,7 +341,7 @@ const DetailInfo = () => {
 		doc.setFont("helvetica", "bold");
 		doc.setTextColor(primaryColor);
 		doc.setFontSize(11);
-		doc.text("Thank you for using Smart Parking!", 105, y, null, null, "center");
+		doc.text("Thank you for using BookMy Parking!", 105, y, null, null, "center");
 
 		doc.save("booking_receipt.pdf");
 
@@ -374,7 +361,7 @@ const DetailInfo = () => {
 				showSnackbar("Failed to send receipt to email", "error");
 			}
 		} catch (err) {
-			console.log(err);
+			console.error(err);
 			showSnackbar("Fail to Send Receipt to mail", "error");
 		}
 	}, [
@@ -471,7 +458,7 @@ const DetailInfo = () => {
 		});
 	};
 
-	console.log("Available days ",selectedMarker.available_days)
+	console.log("Available days ", selectedMarker.available_days);
 	/**
 	 * Function is used to process the payment and create the order
 	 * If the payment is successful then it will update the payment status and also available slots
@@ -774,25 +761,21 @@ const DetailInfo = () => {
 
 				<Typography variant="body1" mb={1}>
 					<AccessTimeIcon fontSize="small" sx={{ mr: 1 }} />
-					{formatTime(selectedMarker.open_time)} - {formatTime(selectedMarker.close_time)}
+					{selectedMarker.open_time} - {selectedMarker.close_time}
 				</Typography>
 
 				<Box mb={1} sx={{ display: "flex" }}>
 					<CalendarTodayIcon fontSize="small" sx={{ mr: 1 }} />
 					<Box>
-					{Array.isArray(selectedMarker.available_days) ? (
-						selectedMarker.available_days[0].split(",").map((day, i) => (
-							<Chip
-								key={i}
-								label={day}
-								size="small"
-								color="info"
-								sx={{ mx: 0.5, my: 0.5 }}
-							/>
-						))
-					) : (
-						<Typography>No Available Days</Typography>
-					)}
+						{Array.isArray(selectedMarker.available_days) ? (
+							selectedMarker.available_days[0]
+								.split(",")
+								.map((day, i) => (
+									<Chip key={i} label={day} size="small" color="info" sx={{ mx: 0.5, my: 0.5 }} />
+								))
+						) : (
+							<Typography>No Available Days</Typography>
+						)}
 					</Box>
 				</Box>
 				{selectedMarker.verification_status == 1 && (
@@ -821,10 +804,7 @@ const DetailInfo = () => {
 										minDateTime={new Date()}
 										shouldDisableDate={(date) => {
 											const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-											return (
-												!Array.isArray(spot_information.available_days) ||
-												!spot_information.available_days.includes(days[date.getDay()])
-											);
+											return !spot_information.available_days[0].split(",").includes(days[date.getDay()]);
 										}}
 										slotProps={{
 											textField: {
@@ -843,7 +823,7 @@ const DetailInfo = () => {
 										minDateTime={new Date()}
 										shouldDisableDate={(date) => {
 											const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-											return !spot_information.available_days.includes(days[date.getDay()]);
+											return !spot_information.available_days[0].split(",").includes(days[date.getDay()]);
 										}}
 										slotProps={{
 											textField: {
