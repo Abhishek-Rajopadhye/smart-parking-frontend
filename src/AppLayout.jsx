@@ -70,8 +70,8 @@ const AppLayout = () => {
 			return hours * 60 + minutes;
 		}
 		function parseTimeWithAMPM(timeStr) {
-			const time = timeStr.split(" ");
-			const [hours, minutes] = time[0].split(":").map(Number);
+			const time = timeStr.split(" ")[0];
+			const [hours, minutes] = time.split(":").map(Number);
 
 			// const [time, meridiem] = timeStr.split(" ");
 			// const [hours, minutes] = time.split(":").map(Number);
