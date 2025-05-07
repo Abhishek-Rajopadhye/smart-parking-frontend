@@ -32,6 +32,7 @@ const AddSpotOwner = ({ onCancel }) => {
 	const [activeStep, setActiveStep] = useState(0);
 
 	// Spot Details States
+	const navigate = useNavigate();
 	const [spotAdded, setSpotAdded] = useState(false);
 	const [spotName, setSpotName] = useState("");
 	const [spotPrice, setSpotPrice] = useState("");
@@ -212,11 +213,6 @@ const AddSpotOwner = ({ onCancel }) => {
 
 				if (document_response.status == 200) {
 					setSpotAdded(true);
-					setOpenSnackbar({
-						open: true,
-						message: "Spot Added Successfully",
-						severity: "success",
-					});
 					setSpotTitle("");
 					setSpotAddress("");
 					setSpotDescription("");
@@ -242,6 +238,15 @@ const AddSpotOwner = ({ onCancel }) => {
 					documents.doc1 = null;
 					documents.doc2 = null;
 					documents.doc3 = null;
+					setOpenSnackbar({
+						open: true,
+						message: "Spot Added Successfully",
+						severity: "success",
+					});
+					setTimeout(() => {
+						navigate("/ownerdashboard");
+					}, 3000);
+					
 				}
 			}
 		} catch (error) {
@@ -278,6 +283,7 @@ const AddSpotOwner = ({ onCancel }) => {
 	 */
 	const handleNext = () => {
 		if (activeStep === 1) {
+			
 			setSpotAdded(false);
 			const error = validateForm();
 			if (error)

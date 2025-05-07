@@ -49,7 +49,7 @@ import { addMinutes, setMinutes } from "date-fns";
 import NearByParkings from "../components/NearByParkings";
 import PastBooking from "../components/PastBooking";
 import { AuthContext } from "../context/AuthContext";
-import { AddSpotUser } from "./AddSpotUser";
+import  { AddSpotUser }  from "./AddSpotUser";
 
 /**
  * Displays a loading indicator with message while the app initializes
