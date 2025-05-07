@@ -122,7 +122,26 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 				listContainerRef.current.scrollTop = 0;
 			}
 		}
-	}, [sortType, sortedMarkers]);
+	}, [sortType, sortedMarkers, setSortedMarkers, setVisibleMarkers]);
+
+	const loadMoreMarkers = () => {
+		if (loading) return;
+
+		setLoading(true);
+
+		// Small timeout to prevent too rapid loading
+		setTimeout(() => {
+			const nextPage = page + 1;
+			const newVisibleMarkers = [
+				...visibleMarkers,
+				...sortedMarkers.slice(page * ITEMS_PER_PAGE, nextPage * ITEMS_PER_PAGE),
+			];
+
+			setVisibleMarkers(newVisibleMarkers);
+			setPage(nextPage);
+			setLoading(false);
+		}, 300);
+	};
 
 	// Set up intersection observer for infinite scrolling
 	useEffect(() => {
@@ -147,25 +166,6 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 			}
 		};
 	}, [visibleMarkers, sortedMarkers, loading, loadMoreMarkers]);
-
-	const loadMoreMarkers = () => {
-		if (loading) return;
-
-		setLoading(true);
-
-		// Small timeout to prevent too rapid loading
-		setTimeout(() => {
-			const nextPage = page + 1;
-			const newVisibleMarkers = [
-				...visibleMarkers,
-				...sortedMarkers.slice(page * ITEMS_PER_PAGE, nextPage * ITEMS_PER_PAGE),
-			];
-
-			setVisibleMarkers(newVisibleMarkers);
-			setPage(nextPage);
-			setLoading(false);
-		}, 300);
-	};
 
 	const sortMarkers = (markerList, type) => {
 		if (type === "price") {
