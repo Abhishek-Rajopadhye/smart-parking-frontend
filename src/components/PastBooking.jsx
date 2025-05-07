@@ -221,7 +221,7 @@ const PastBooking = ({ user, isMobile }) => {
 											<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
 												<LocationOnOutlined fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
 												<Typography variant="body2" color="text.secondary">
-													{booking.spot_address}
+												📍	{booking.spot_address}
 												</Typography>
 											</Box>
 

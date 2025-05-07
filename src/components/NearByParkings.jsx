@@ -216,7 +216,7 @@ const NearByParkings = ({ origin, onSpotSelect, isMobile, selectedDate, startTim
 											WebkitLineClamp: 1,
 										}}
 									>
-										{spot.address}
+										📍{spot.address}
 									</Typography>
 
 									<Divider sx={{ my: 1.5 }} />

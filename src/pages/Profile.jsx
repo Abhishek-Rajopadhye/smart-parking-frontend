@@ -203,6 +203,7 @@ const Profile = () => {
 				elevation={3}
 				sx={{
 					display: "flex",
+					flexDirection:"column",
 					alignItems: "center",
 					justifyContent: "space-between",
 					padding: 3,
@@ -263,7 +264,7 @@ const Profile = () => {
 											{spot.title}
 										</Typography>
 										<Typography variant="body2" color="text.secondary">
-											{spot.address}
+										📍 {spot.address}
 										</Typography>
 										<Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
 											<strong>Description:</strong> {spot.description}
@@ -281,8 +282,8 @@ const Profile = () => {
 											<strong>Open Days:</strong> {spot.openDays}
 										</Typography>
 										<Typography variant="body2" fontWeight="bold" color="success" sx={{ mt: 1 }}>
-											Earnings: <CurrencyRupee fontSize="small" />
-											{spot.totalEarning}
+											Earnings:  ₹  
+											{" "+spot.totalEarning}
 										</Typography>
 									</CardContent>
 									<CardActions sx={{ justifyContent: "space-between", mt: "auto" }}>

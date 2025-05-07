@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import GoogleIcon from "@mui/icons-material/Google";
 
 /**
- * Login page component for Smart Parking.
+ * Login page component for BookMy Parking.
  *
  * Provides options for users to log in using Google.
  * @component
@@ -40,7 +40,7 @@ const Login = () => {
 			>
 				<Box sx={{ marginBottom: 3 }}>
 					<Typography variant="h4" fontWeight="bold" gutterBottom>
-						Welcome to Smart Parking
+						Welcome to BookMy Parking
 					</Typography>
 					<Typography variant="body1" color="text.secondary">
 						Please log in to continue

@@ -193,6 +193,7 @@ const OwnerDashboard = () => {
 										sx={{
 											mb: 2,
 											borderRadius: 2,
+											bgcolor:"lightgray"
 										}}
 									>
 										<CardContent>
@@ -200,7 +201,7 @@ const OwnerDashboard = () => {
 												{spot.title}
 											</Typography>
 											<Typography variant="body2" color="text.secondary">
-												{spot.address}
+											📍	{spot.address}
 											</Typography>
 											<Typography variant="body2" color="text.secondary">
 												<strong>Open Time:</strong> {spot.openTime}
@@ -215,8 +216,8 @@ const OwnerDashboard = () => {
 												<strong>Open Days:</strong> {spot.openDays}
 											</Typography>
 											<Typography variant="body2" fontWeight="bold" color="success.main" sx={{ mt: 1 }}>
-												Earnings: <CurrencyRupee fontSize="small" />
-												{spot.totalEarning}
+												Earnings: ₹  
+												 {" " +spot.totalEarning}
 											</Typography>
 										</CardContent>
 										<CardActions sx={{ justifyContent: "space-between" }}>
