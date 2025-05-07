@@ -65,19 +65,19 @@ const AddSpotOwner = ({ onCancel }) => {
 		Sat: false,
 	});
 
-		// Document Uploads
-		const [documents, setDocuments] = useState({
-			doc1: null,
-			doc2: null,
-			doc3: null,
-		});
+	// Document Uploads
+	const [documents, setDocuments] = useState({
+		doc1: null,
+		doc2: null,
+		doc3: null,
+	});
 
-		// Document Labels for UI display
-		const docLabels = [
-			{ key: "doc1", label: "Identification Document (PDF)" },
-			{ key: "doc2", label: "Proof Of Ownership Document (PDF)" },
-			{ key: "doc3", label: "Optional Supporting Document (PDF)" },
-		];
+	// Document Labels for UI display
+	const docLabels = [
+		{ key: "doc1", label: "Identification Document (PDF)" },
+		{ key: "doc2", label: "Proof Of Ownership Document (PDF)" },
+		{ key: "doc3", label: "Optional Supporting Document (PDF)" },
+	];
 
 	const toggleDay = (day) => {
 		setOpenDays({ ...openDays, [day]: !openDays[day] });
@@ -95,12 +95,9 @@ const AddSpotOwner = ({ onCancel }) => {
 		const newImages = [];
 		const newPreviews = [];
 		let validateFile = [];
-		console.log(files.length);
 		for (let file of files) {
-			console.log(file.size);
 			if (file.size <= maxSize) validateFile.push(file);
 		}
-		console.log(validateFile);
 		if (validateFile.length == 0) {
 			setOpenSnackbar({
 				open: true,
@@ -146,8 +143,6 @@ const AddSpotOwner = ({ onCancel }) => {
 
 	const validateForm = () => {
 		const total = parseInt(totalSlots);
-		console.log(typeof totalSlots);
-		console.log(typeof availableSlots);
 		if (!spotTitle.trim()) return "Spot Title is required";
 		if (!spotAddress.trim()) return "Address is required";
 		if (location == null) return "Please select a location to proceed";
@@ -156,8 +151,6 @@ const AddSpotOwner = ({ onCancel }) => {
 		if (!hourlyRate || hourlyRate <= 0) return "Hourly Rate must be positive";
 		if (!totalSlots || totalSlots <= 0) return "Total Slots must be a positive number";
 		if (!Object.values(openDays).includes(true)) return "At least one open day must be selected";
-		console.log(total);
-		console.log(typeof total);
 		return total;
 	};
 
@@ -198,7 +191,7 @@ const AddSpotOwner = ({ onCancel }) => {
 		formData.append("image", images);
 		formData.append("verification_status", 0);
 
-    try {
+		try {
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot`, formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",
@@ -206,13 +199,12 @@ const AddSpotOwner = ({ onCancel }) => {
 			});
 			if (response.status === 200) {
 				const document = new FormData();
-				console.log("Spot ID:", response.data.spot_id);
 				document.append("spot_id", response.data.spot_id);
 				document.append("doc1", documents.doc1);
 				document.append("doc2", documents.doc2);
 				if (documents.doc3) {
 					document.append("doc3", documents.doc3);
-			}
+				}
 				const document_response = await axios.post(`${BACKEND_URL}/spots/add-documents`, document, {
 					headers: {
 						"Content-Type": "multipart/form-data",
@@ -258,7 +250,7 @@ const AddSpotOwner = ({ onCancel }) => {
 				}
 			}
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			setOpenSnackbar({
 				open: true,
 				message: "Error uploading data",
@@ -268,11 +260,11 @@ const AddSpotOwner = ({ onCancel }) => {
 	};
 
 	/**
- * Handles file selection for document uploads.
- * Only accepts PDF files; otherwise, alerts the user.
- * @param {*} e - Event triggered on file input change.
- * @param {*} docKey - The key corresponding to the document (doc1, doc2, doc3).
- */
+	 * Handles file selection for document uploads.
+	 * Only accepts PDF files; otherwise, alerts the user.
+	 * @param {*} e - Event triggered on file input change.
+	 * @param {*} docKey - The key corresponding to the document (doc1, doc2, doc3).
+	 */
 	const handleDocumentChange = (e, docKey) => {
 		const file = e.target.files[0];
 		if (file && file.type === "application/pdf") {
@@ -287,7 +279,7 @@ const AddSpotOwner = ({ onCancel }) => {
 	 * Validates the form data and moves to the next step.
 	 * If on the last step, it submits the form.
 	 * @param {*} e - Event triggered on button click.
-	 * @returns 
+	 * @returns
 	 */
 	const handleNext = () => {
 		if (activeStep === 1) {
@@ -489,7 +481,6 @@ const AddSpotOwner = ({ onCancel }) => {
 											}}
 											onSave={(coords, msg) => {
 												setLocation(coords);
-												console.log("Location:", coords);
 												if (msg == "success") {
 													setOpenSnackbar({
 														open: true,

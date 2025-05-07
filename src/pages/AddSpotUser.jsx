@@ -13,7 +13,6 @@ import {
 	Stack,
 } from "@mui/material";
 import { useState } from "react";
-import React, { useContext } from "react";
 import axios from "axios";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -21,7 +20,6 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 import "../style/spot.css";
 import MapDialog from "../components/MapDialog";
-import { AuthContext } from "../context/AuthContext";
 import { BACKEND_URL } from "../const";
 const steps = ["Instruction", "Spot Details", "Instructions & Submit"];
 
@@ -29,11 +27,8 @@ const AddSpotUser = () => {
 	const [activeStep, setActiveStep] = useState(0);
 	// Spot Details States
 	const [spotAdded, setSpotAdded] = useState(false);
-	const [spotName, setSpotName] = useState("");
-	const [spotPrice, setSpotPrice] = useState("");
 	const [mapOpen, setMapOpen] = useState(false);
 	const [location, setLocation] = useState(null);
-	const { user } = useContext(AuthContext);
 	const [spotTitle, setSpotTitle] = useState("");
 	const [spotAddress, setSpotAddress] = useState("");
 	const [spotDescription, setSpotDescription] = useState("");
@@ -41,7 +36,6 @@ const AddSpotUser = () => {
 	const [closeTime, setCloseTime] = useState("");
 	const [hourlyRate, setHourlyRate] = useState("");
 	const [totalSlots, setTotalSlots] = useState("");
-	const [availableSlots, setAvailableSlots] = useState("");
 	const [images, setImages] = useState([]);
 	const [imagePreviews, setImagePreviews] = useState([]);
 	const [openSnackbar, setOpenSnackbar] = useState({
@@ -76,12 +70,9 @@ const AddSpotUser = () => {
 		const newImages = [];
 		const newPreviews = [];
 		let validateFile = [];
-		console.log(files.length);
 		for (let file of files) {
-			console.log(file.size);
 			if (file.size <= maxSize) validateFile.push(file);
 		}
-		console.log(validateFile);
 		if (validateFile.length == 0) {
 			setOpenSnackbar({
 				open: true,
@@ -127,8 +118,6 @@ const AddSpotUser = () => {
 
 	const validateForm = () => {
 		const total = parseInt(totalSlots);
-		console.log(typeof totalSlots);
-		console.log(typeof availableSlots);
 		if (!spotTitle.trim()) return "Spot Title is required";
 		if (!spotAddress.trim()) return "Address is required";
 		if (location == null) return "Please select a location to proceed";
@@ -137,12 +126,10 @@ const AddSpotUser = () => {
 		if (!hourlyRate || hourlyRate <= 0) return "Hourly Rate must be positive";
 		if (!totalSlots || totalSlots <= 0) return "Total Slots must be a positive number";
 		if (!Object.values(openDays).includes(true)) return "At least one open day must be selected";
-		console.log(total);
-		console.log(typeof total);
 		return total;
 	};
 
-  /**
+	/**
 	 * handle delete image from the preview
 	 * @param {*} index - index of the image to be deleted
 	 */
@@ -176,7 +163,7 @@ const AddSpotUser = () => {
 		formData.append("longitude", location.lng);
 		formData.append("available_days", openDay.join(","));
 		formData.append("image", images);
-    formData.append("verification_status", 3);
+		formData.append("verification_status", 3);
 
 		try {
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot`, formData, {
@@ -185,8 +172,6 @@ const AddSpotUser = () => {
 				},
 			});
 			if (response.status == 200) {
-				setSpotName(spotTitle);
-				setSpotPrice(hourlyRate);
 				setSpotAdded(true);
 				setOpenSnackbar({
 					open: true,
@@ -202,7 +187,6 @@ const AddSpotUser = () => {
 				setHourlyRate("");
 
 				setTotalSlots("");
-				setAvailableSlots("");
 				setImages([]);
 				setImagePreviews([]);
 				setLocation(null);
@@ -217,7 +201,7 @@ const AddSpotUser = () => {
 				});
 			}
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			setOpenSnackbar({
 				open: true,
 				message: "Error uploading data",
@@ -226,12 +210,12 @@ const AddSpotUser = () => {
 		}
 	};
 
-  /**
+	/**
 	 * Handles the next button click in the stepper.
 	 * Validates the form data and moves to the next step.
 	 * If on the last step, it submits the form.
 	 * @param {*} e - Event triggered on button click.
-	 * @returns 
+	 * @returns
 	 */
 	const handleNext = () => {
 		if (activeStep === 1) {
@@ -411,7 +395,6 @@ const AddSpotUser = () => {
 											}}
 											onSave={(coords, msg) => {
 												setLocation(coords);
-												console.log("Location:", coords);
 												if (msg == "success") {
 													setOpenSnackbar({
 														open: true,
@@ -580,7 +563,8 @@ const AddSpotUser = () => {
 						<Typography variant="body1" mb={2}>
 							📍 This spot is only for viewing purposes on the map.
 							<br></br>🛑 Booking or reservation is not available for this spot.
-							<br></br>💡 Want to earn by listing your own spot? Log in as an owner and add a spot to make it bookable.
+							<br></br>💡 Want to earn by listing your own spot? Log in as an owner and add a spot to make it
+							bookable.
 						</Typography>
 						<Grid item xs={12} mt={4}>
 							<Box display="flex" justifyContent="space-between">

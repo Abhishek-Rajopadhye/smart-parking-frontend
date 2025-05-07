@@ -15,7 +15,7 @@ import {
 	DialogActions,
 	IconButton,
 } from "@mui/material";
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -32,7 +32,6 @@ import axios from "axios";
  * @returns {JSX.Element} The AddReview component.
  */
 const AddReview = ({ openDialog, onClose, spot_id }) => {
-	
 	const { user } = useContext(AuthContext);
 	const [formData, setFormData] = useState({
 		id: null,
@@ -41,8 +40,6 @@ const AddReview = ({ openDialog, onClose, spot_id }) => {
 		review_description: "",
 		rating_score: 0,
 		images: [], // Array to store multiple images
-		owner_reply: null,
-		created_at: null,
 	});
 	const [openSnackbar, setOpenSnackbar] = useState({
 		open: false,
@@ -60,12 +57,15 @@ const AddReview = ({ openDialog, onClose, spot_id }) => {
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 		try {
-			setFormData((prevData) => ({
-				...prevData,
-				["spot_id"]:spot_id,
-				["created_at"]: new Date().toISOString(),
-			}));
-			const response = await axios.post(`${BACKEND_URL}/reviews/`, formData, {
+			const reviewData = {
+				user_id: user.id,
+				spot_id: spot_id,
+				rating_score: Number(formData.rating_score),
+				review_description: formData.review_description,
+				images: formData.images || [],
+			};
+
+			const response = await axios.post(`${BACKEND_URL}/reviews/`, reviewData, {
 				headers: {
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -227,7 +227,13 @@ const AddReview = ({ openDialog, onClose, spot_id }) => {
 					<Button color="error" onClick={onClose}>
 						Cancel
 					</Button>
-					<Button type="submit" variant="contained" color="primary" onClick={(event) => {handleSubmit(event)}}>
+					<Button
+						variant="contained"
+						color="primary"
+						onClick={(event) => {
+							handleSubmit(event);
+						}}
+					>
 						Submit Review
 					</Button>
 				</DialogActions>

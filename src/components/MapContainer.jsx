@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useContext, useEffect, useState, useMemo } from "react";
 import { Box, Alert } from "@mui/material";
 import { GoogleMap, Marker } from "@react-google-maps/api";

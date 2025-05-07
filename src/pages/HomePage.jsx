@@ -476,7 +476,6 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 			return;
 		}
 		updateRecentSearches(searchAddress);
-		console.log("Selected Date:", selectedDate.toDateString());
 		const weekDay = selectedDate.toLocaleDateString("en-US", { weekday: "short" });
 		setFilters((prev) => ({ ...prev, available_days: [weekDay] }));
 
