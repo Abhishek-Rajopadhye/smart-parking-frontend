@@ -156,6 +156,7 @@ const Profile = () => {
 				elevation={3}
 				sx={{
 					display: "flex",
+					flexDirection:"column",
 					alignItems: "center",
 					justifyContent: "space-between",
 					padding: 3,
@@ -189,6 +190,7 @@ const Profile = () => {
 				<Typography variant="h5" fontWeight="bold" sx={{ mb: 2, ml: 1 }}>
 					My Bookings
 				</Typography>
+				<Divider sx={{ mb: 3 }} />
 				{loadingBookings === true ? (
 					<CircularProgress />
 				) : (
