@@ -64,19 +64,19 @@ const AddSpotOwner = ({ onCancel }) => {
 		Sat: false,
 	});
 
-		// Document Uploads
-		const [documents, setDocuments] = useState({
-			doc1: null,
-			doc2: null,
-			doc3: null,
-		});
+	// Document Uploads
+	const [documents, setDocuments] = useState({
+		doc1: null,
+		doc2: null,
+		doc3: null,
+	});
 
-		// Document Labels for UI display
-		const docLabels = [
-			{ key: "doc1", label: "Identification Document (PDF)" },
-			{ key: "doc2", label: "Proof Of Ownership Document (PDF)" },
-			{ key: "doc3", label: "Optional Supporting Document (PDF)" },
-		];
+	// Document Labels for UI display
+	const docLabels = [
+		{ key: "doc1", label: "Identification Document (PDF)" },
+		{ key: "doc2", label: "Proof Of Ownership Document (PDF)" },
+		{ key: "doc3", label: "Optional Supporting Document (PDF)" },
+	];
 
 	const toggleDay = (day) => {
 		setOpenDays({ ...openDays, [day]: !openDays[day] });
@@ -197,7 +197,7 @@ const AddSpotOwner = ({ onCancel }) => {
 		formData.append("image", images);
 		formData.append("verification_status", 0);
 
-    try {
+		try {
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot`, formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",
@@ -211,7 +211,7 @@ const AddSpotOwner = ({ onCancel }) => {
 				document.append("doc2", documents.doc2);
 				if (documents.doc3) {
 					document.append("doc3", documents.doc3);
-			}
+				}
 				const document_response = await axios.post(`${BACKEND_URL}/spots/add-documents`, document, {
 					headers: {
 						"Content-Type": "multipart/form-data",
@@ -263,11 +263,11 @@ const AddSpotOwner = ({ onCancel }) => {
 	};
 
 	/**
- * Handles file selection for document uploads.
- * Only accepts PDF files; otherwise, alerts the user.
- * @param {*} e - Event triggered on file input change.
- * @param {*} docKey - The key corresponding to the document (doc1, doc2, doc3).
- */
+	 * Handles file selection for document uploads.
+	 * Only accepts PDF files; otherwise, alerts the user.
+	 * @param {*} e - Event triggered on file input change.
+	 * @param {*} docKey - The key corresponding to the document (doc1, doc2, doc3).
+	 */
 	const handleDocumentChange = (e, docKey) => {
 		const file = e.target.files[0];
 		if (file && file.type === "application/pdf") {
@@ -282,7 +282,7 @@ const AddSpotOwner = ({ onCancel }) => {
 	 * Validates the form data and moves to the next step.
 	 * If on the last step, it submits the form.
 	 * @param {*} e - Event triggered on button click.
-	 * @returns 
+	 * @returns
 	 */
 	const handleNext = () => {
 		if (activeStep === 1) {

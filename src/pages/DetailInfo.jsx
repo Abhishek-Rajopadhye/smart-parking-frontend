@@ -471,7 +471,7 @@ const DetailInfo = () => {
 		});
 	};
 
-	console.log("Available days ",selectedMarker.available_days)
+	console.log("Available days ", selectedMarker.available_days);
 	/**
 	 * Function is used to process the payment and create the order
 	 * If the payment is successful then it will update the payment status and also available slots
@@ -780,19 +780,15 @@ const DetailInfo = () => {
 				<Box mb={1} sx={{ display: "flex" }}>
 					<CalendarTodayIcon fontSize="small" sx={{ mr: 1 }} />
 					<Box>
-					{Array.isArray(selectedMarker.available_days) ? (
-						selectedMarker.available_days[0].split(",").map((day, i) => (
-							<Chip
-								key={i}
-								label={day}
-								size="small"
-								color="info"
-								sx={{ mx: 0.5, my: 0.5 }}
-							/>
-						))
-					) : (
-						<Typography>No Available Days</Typography>
-					)}
+						{Array.isArray(selectedMarker.available_days) ? (
+							selectedMarker.available_days[0]
+								.split(",")
+								.map((day, i) => (
+									<Chip key={i} label={day} size="small" color="info" sx={{ mx: 0.5, my: 0.5 }} />
+								))
+						) : (
+							<Typography>No Available Days</Typography>
+						)}
 					</Box>
 				</Box>
 				{selectedMarker.verification_status == 1 && (

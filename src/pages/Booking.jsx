@@ -27,7 +27,6 @@ import { AuthContext } from "../context/AuthContext";
 const Booking = ({ spot_information, open, set_dialog, previous_booking = null }) => {
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext);
-	const [razorpay_signature, setRazorpaySignature] = useState(null);
 	const [razorpay_order_id, setRazorpayOrderId] = useState(null);
 	const [totalSlots, setTotalSlots] = useState(1);
 	const [startTime, setStartTime] = useState(null);
@@ -69,7 +68,6 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 		const isoString = selectedDate.toLocaleString("en-IN", {
 			timeZone: "Asia/Kolkata",
 		});
-		const dateParts = isoString.split(",")[0].split("/");
 		const timeParts = isoString.split(",")[1].trim().split(":");
 		let hours = parseInt(timeParts[0]);
 		const minutes = parseInt(timeParts[1]);
@@ -276,6 +274,7 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 			if (result.error) {
 				showSnackbar("Failed to send receipt to email", "error");
 			}
+			// eslint-disable-next-line no-unused-vars
 		} catch (err) {
 			showSnackbar("Fail to Send Receipt to mail", "error");
 		}
@@ -427,7 +426,7 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 				return;
 			}
 			if (flag) {
-				const response = await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
+				await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
 					spot_id: spot_information.spot_id,
 					total_slots: prevTotalSlots,
 				});
@@ -436,7 +435,6 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 			}
 			const start_time = dateTimeToString(startTime);
 			const end_time = dateTimeToString(endTime);
-			setRazorpaySignature(null);
 			setRazorpayOrderId(null);
 			setPrevTotalSlots(totalSlots);
 			orderResponse = await axios.post(`${BACKEND_URL}/bookings/book-spot`, {
@@ -479,7 +477,6 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 					});
 
 					try {
-						setRazorpaySignature(response.razorpay_signature);
 						const check_payment = await axios.post(`${BACKEND_URL}/bookings/update-payment-status`, {
 							start_time: indianStartTime,
 							end_time: indianEndTime,
@@ -493,7 +490,6 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 						}
 					} catch (error) {
 						if (error.response) {
-							const errorMsg = error.response.data?.detail || "Payment failed.";
 							showSnackbar("Booking failed We're refunding your payment", "error");
 						} else {
 							showSnackbar("Booking failed We're refunding your payment", "error");
@@ -515,7 +511,7 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 			}
 		}
 	};
-	
+
 	/**
 	 * Handles the cancellation of a booking.
 	 * - If the user cancels after starting the booking process,
@@ -529,7 +525,7 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 		if (buttonDisabled) return;
 		try {
 			if (flag && totalSlots != 0 && razorpay_order_id != null) {
-				const response = await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
+				await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
 					spot_id: spot_information.spot_id,
 					total_slots: totalSlots,
 				});

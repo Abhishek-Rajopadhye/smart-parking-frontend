@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
@@ -53,7 +54,6 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 	const listContainerRef = useRef(null);
 
 	const navigate = useNavigate();
-	
 
 	const toggleDialogBooking = () => {
 		setDialogBookingOpen(!dialogBookingOpen);
@@ -76,7 +76,6 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 			lng: marker.longitude,
 		}));
 
-		
 		service.getDistanceMatrix(
 			{
 				origins: [origin],
@@ -86,7 +85,6 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 			},
 			(response, status) => {
 				if (status === "OK" && response?.rows?.length > 0) {
-
 					const updated = markers.map((marker, index) => {
 						const element = response.rows[0]?.elements?.[index];
 
@@ -110,7 +108,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 				}
 			}
 		);
-	}, [markers, origin]);
+	}, [markers, origin, sortType]);
 
 	useEffect(() => {
 		if (sortedMarkers.length > 0) {
@@ -124,7 +122,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 				listContainerRef.current.scrollTop = 0;
 			}
 		}
-	}, [sortType]);
+	}, [sortType, sortedMarkers]);
 
 	// Set up intersection observer for infinite scrolling
 	useEffect(() => {
@@ -148,7 +146,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 				observer.unobserve(loaderRef.current);
 			}
 		};
-	}, [visibleMarkers, sortedMarkers, loading]);
+	}, [visibleMarkers, sortedMarkers, loading, loadMoreMarkers]);
 
 	const loadMoreMarkers = () => {
 		if (loading) return;
@@ -197,7 +195,6 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 		setSortType(newType);
 	};
 
-
 	return (
 		<Box sx={{ p: 2, bgcolor: "#f9f9f9" }} ref={listContainerRef}>
 			<FormControl fullWidth size="small" sx={{ mb: 2 }}>
@@ -218,8 +215,6 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 						key={spot.spot_id}
 						sx={{ display: "flex", mb: 2, borderRadius: 3, flexDirection: "column", boxShadow: 2 }}
 					>
-						
-
 						<CardContent sx={{ pb: 1 }}>
 							<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
 								<Typography
