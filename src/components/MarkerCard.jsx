@@ -1,3 +1,15 @@
+/**
+ * MarkerCard Component
+ *
+ * Displays a list of parking spots as cards with information like price and walking distance.
+ * Features include sorting, infinite scrolling, and booking functionality.
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {Array} props.markers - Array of parking spot markers
+ * @param {Object} props.origin - Origin location coordinates for distance calculation
+ * @param {Object} props.latlng - Latitude and longitude coordinates (Note: Currently not used)
+ */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useContext, useEffect, useRef, useState } from "react";
@@ -17,7 +29,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Booking } from "../pages/Booking";
 
-// Skeleton placeholder for marker card
+/**
+ * Skeleton placeholder for marker card during loading
+ *
+ * @component
+ */
 const MarkerSkeleton = () => (
 	<Card
 		sx={{
@@ -42,6 +58,7 @@ const MarkerSkeleton = () => (
 );
 
 const MarkerCard = ({ markers, origin, latlng }) => {
+	const navigate = useNavigate();
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
 	const [sortedMarkers, setSortedMarkers] = useState([]);
 	const [sortType, setSortType] = useState("price");
@@ -49,16 +66,21 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 	const [visibleMarkers, setVisibleMarkers] = useState([]);
 	const [page, setPage] = useState(1);
 	const [loading, setLoading] = useState(false);
-	const loaderRef = useRef(null);
 	const ITEMS_PER_PAGE = 2;
 	const listContainerRef = useRef(null);
+	const loaderRef = useRef(null);
 
-	const navigate = useNavigate();
+	/**
+	 * Toggle booking dialog visibility
+	 */
 
 	const toggleDialogBooking = () => {
 		setDialogBookingOpen(!dialogBookingOpen);
 	};
 
+	/**
+	 * Calculate walking distances for markers using Google Distance Matrix
+	 */
 	useEffect(() => {
 		if (!window.google || !origin) return;
 
@@ -110,6 +132,9 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 		);
 	}, [markers, origin, sortType]);
 
+	/**
+	 * Re-sort markers when sort type changes
+	 */
 	useEffect(() => {
 		if (sortedMarkers.length > 0) {
 			const sortedListOfMarkers = sortMarkers([...sortedMarkers], sortType);
@@ -124,6 +149,9 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 		}
 	}, [sortType, sortedMarkers, setSortedMarkers, setVisibleMarkers]);
 
+	/**
+	 * Load more markers when scrolling
+	 */
 	const loadMoreMarkers = () => {
 		if (loading) return;
 
@@ -143,7 +171,9 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 		}, 300);
 	};
 
-	// Set up intersection observer for infinite scrolling
+	/**
+	 * Set up intersection observer for infinite scrolling
+	 */
 	useEffect(() => {
 		const observer = new IntersectionObserver(
 			(entries) => {
@@ -166,6 +196,14 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 			}
 		};
 	}, [visibleMarkers, sortedMarkers, loading, loadMoreMarkers]);
+
+	/**
+	 * Sort markers by specified criteria
+	 *
+	 * @param {Array} markerList - Array of markers to sort
+	 * @param {string} type - Sort type ('price' or 'distance')
+	 * @returns {Array} Sorted array of markers
+	 */
 
 	const sortMarkers = (markerList, type) => {
 		if (type === "price") {
@@ -190,6 +228,11 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 		return markerList;
 	};
 
+	/**
+	 * Handle sort type change
+	 *
+	 * @param {Object} event - Change event
+	 */
 	const handleSortChange = (event) => {
 		const newType = event.target.value;
 		setSortType(newType);
@@ -197,6 +240,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 
 	return (
 		<Box sx={{ p: 2, bgcolor: "#f9f9f9" }} ref={listContainerRef}>
+			{/* Sort control */}
 			<FormControl fullWidth size="small" sx={{ mb: 2 }}>
 				<InputLabel>Sort by</InputLabel>
 				<Select value={sortType} label="Sort by" onChange={handleSortChange}>
@@ -205,11 +249,13 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 				</Select>
 			</FormControl>
 
+			{/* Show message when no parking spots are found */}
 			{visibleMarkers.length === 0 && !loading ? (
 				<Typography align="center" sx={{ mt: 4 }}>
 					No parking spots found
 				</Typography>
 			) : (
+				/* Display parking spot cards */
 				visibleMarkers.map((spot) => (
 					<Card
 						key={spot.spot_id}
@@ -256,6 +302,8 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 							>
 								Details
 							</Button>
+
+							{/* Only show booking button if not owned by current user */}
 							{spot.owner_id != "google-oauth2|1234567890" && (
 								<Button
 									size="small"
@@ -272,6 +320,8 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 					</Card>
 				))
 			)}
+
+			{/* Infinite scroll loader */}
 			{visibleMarkers.length < sortedMarkers.length && (
 				<Box
 					ref={loaderRef}

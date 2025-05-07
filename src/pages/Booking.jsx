@@ -133,7 +133,7 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 		doc.setFontSize(22);
 		doc.setTextColor(255, 255, 255);
 		doc.setFont("helvetica", "bold");
-		doc.text("Smart Parking", 105, 12, null, null, "center");
+		doc.text("BookMy Parking", 105, 12, null, null, "center");
 
 		doc.setFontSize(13);
 		doc.setFont("helvetica", "italic");
@@ -253,7 +253,7 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 		doc.setFont("helvetica", "bold");
 		doc.setTextColor(primaryColor);
 		doc.setFontSize(11);
-		doc.text("Thank you for using Smart Parking!", 105, y, null, null, "center");
+		doc.text("Thank you for using BookMy Parking!", 105, y, null, null, "center");
 
 		doc.save("booking_receipt.pdf");
 
@@ -576,7 +576,7 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 									minDateTime={new Date()}
 									shouldDisableDate={(date) => {
 										const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-										return !spot_information.available_days.includes(days[date.getDay()]);
+										return !spot_information.available_days[0].split(",").includes(days[date.getDay()]);
 									}}
 									slotProps={{
 										textField: {
@@ -595,7 +595,7 @@ const Booking = ({ spot_information, open, set_dialog, previous_booking = null }
 									minDateTime={new Date()}
 									shouldDisableDate={(date) => {
 										const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-										return !spot_information.available_days.includes(days[date.getDay()]);
+										return !spot_information.available_days[0].split(",").includes(days[date.getDay()]);
 									}}
 									slotProps={{
 										textField: {
