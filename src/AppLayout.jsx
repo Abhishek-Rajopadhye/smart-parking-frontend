@@ -8,8 +8,8 @@ import { Profile } from "./pages/Profile";
 import { Booking } from "./pages/Booking";
 import { BookingHistory } from "./pages/BookingHistory";
 import { Auth } from "./pages/Auth";
-import AddSpotUser from "./pages/AddSpotUser";
-import DetailInfo from "./components/DetailInfo";
+import { AddSpotUser } from "./pages/AddSpotUser";
+import DetailInfo from "./pages/DetailInfo";
 import HomePage from "./pages/HomePage";
 import MapSearch from "./pages/MapSearch";
 import Validation from "./pages/Validation";
@@ -70,8 +70,11 @@ const AppLayout = () => {
 			return hours * 60 + minutes;
 		}
 		function parseTimeWithAMPM(timeStr) {
-			const [time, meridiem] = timeStr.split(" ");
-			const [hours, minutes] = time.split(":").map(Number);
+			const time = timeStr.split(" ");
+			const [hours, minutes] = time[0].split(":").map(Number);
+
+			// const [time, meridiem] = timeStr.split(" ");
+			// const [hours, minutes] = time.split(":").map(Number);
 
 			return hours * 60 + minutes;
 		}
@@ -154,7 +157,7 @@ const AppLayout = () => {
 		);
 	}
 
-  // --- OWNER DASHBOARD CONDITION ---
+	// --- OWNER DASHBOARD CONDITION ---
 	if (sessionType === "Owner") {
 		return (
 			<Box className="outermost-container" sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
@@ -183,7 +186,7 @@ const AppLayout = () => {
 				<Box variant="main" sx={{ flex: 1, mt: 8, width: "100vw" }}>
 					<Routes>
 						<Route path="/ownerdashboard" element={<OwnerDashboard />} />
-            <Route path="/add-spot-owner" element={<AddSpotOwner />} />
+						<Route path="/addspotowner" element={<AddSpotOwner />} />
 						<Route path="*" element={<Navigate to="/ownerdashboard" />} />
 					</Routes>
 				</Box>

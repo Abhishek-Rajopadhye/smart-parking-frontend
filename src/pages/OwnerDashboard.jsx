@@ -179,7 +179,7 @@ const OwnerDashboard = () => {
 							<Typography variant="h6" fontWeight="bold" sx={{ flexGrow: 1 }}>
 								My Spots
 							</Typography>
-							<Button variant="text" color="secondary" onClick={() =>  navigate("/add-spot-owner")} sx={{ ml: 1 }}>
+							<Button variant="text" color="secondary" onClick={() =>  navigate("/addspotowner")} sx={{ ml: 1 }}>
 								Add Spot
 							</Button>
 						</Box>
