@@ -146,6 +146,12 @@ const AppLayout = () => {
 			<Box className="outermost-container" sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
 				<AppBar position="fixed" sx={{ zIndex: 3, bgcolor: "#3f51b5", color: "white" }}>
 					<Toolbar>
+						<Button
+							variant="Text"
+							color="primary"
+							startIcon={<KeyboardBackspaceIcon />}
+							onClick={() => navigate(-1)}
+						/>
 						<Typography variant="h6" sx={{ flexGrow: 1, justifyContent: "center", textAlign: "center" }}>
 							{getPageTitle()}
 						</Typography>
@@ -153,6 +159,30 @@ const AppLayout = () => {
 							<Avatar alt="Avatar" src={user.profile_picture || ""} />
 						</IconButton>
 						<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+							<MenuItem
+								key={"/ownerdashboard"}
+								onClick={() => {
+									handleMenuClose();
+									navigate("/ownerdashboard");
+								}}
+								selected={"/ownerdashboard" === location.pathname}
+							>
+								Owner Dashboard
+							</MenuItem>
+							{user.email == "abhishek.rajopadhye21@gmail.com" ||
+							user.email == "arjunghule6583@gmail.com" ||
+							user.email == "kalepradeep2001@gmail.com" ? (
+								<MenuItem
+									key={"/validation"}
+									onClick={() => {
+										handleMenuClose();
+										navigate("/validation");
+									}}
+									selected={"/validation" === location.pathname}
+								>
+									Verify Spot Requests
+								</MenuItem>
+							) : null}
 							<MenuItem
 								onClick={() => {
 									handleMenuClose();
@@ -169,6 +199,7 @@ const AppLayout = () => {
 				<Box variant="main" sx={{ flex: 1, mt: 8, width: "100vw" }}>
 					<Routes>
 						<Route path="/ownerdashboard" element={<OwnerDashboard />} />
+						<Route path="/validation" element={<Validation />} />
 						<Route path="/addspotowner" element={<AddSpotOwner />} />
 						<Route path="*" element={<Navigate to="/ownerdashboard" />} />
 					</Routes>
@@ -217,18 +248,6 @@ const AppLayout = () => {
 								{route.label}
 							</MenuItem>
 						))}
-						{user.email == "abhishek.rajopadhye21@gmail.com" && (
-							<MenuItem
-								key={"/validation"}
-								onClick={() => {
-									handleMenuClose();
-									navigate("/validation");
-								}}
-								selected={"/validation" === location.pathname}
-							>
-								Verify Spot Requests
-							</MenuItem>
-						)}
 						<MenuItem
 							onClick={() => {
 								handleMenuClose();
@@ -279,7 +298,6 @@ const AppLayout = () => {
 						}
 					/>
 					<Route path="/spotdetail/:spot_id" element={<DetailInfo />} />
-					<Route path="/validation" element={<Validation />} />
 					<Route path="*" element={<Navigate to="/homepage" />} />
 				</Routes>
 			</Box>

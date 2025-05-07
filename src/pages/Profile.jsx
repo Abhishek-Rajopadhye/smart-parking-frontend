@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import { Container, Typography, Avatar, Button, Box, Card } from "@mui/material";
+import { Container, Typography, Avatar, Button, Box, Card, CircularProgress } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import { EditProfileModal } from "../components/EditProfileModal";
 import { UserBookingView } from "../components/UserBookingView";
@@ -186,11 +186,11 @@ const Profile = () => {
 
 			{/* User Booking View Section */}
 			<Box sx={{ mb: 4 }}>
-				<Typography variant="h5" fontWeight="bold" sx={{ mb: 2, ml:1 }}>
+				<Typography variant="h5" fontWeight="bold" sx={{ mb: 2, ml: 1 }}>
 					My Bookings
 				</Typography>
 				{loadingBookings === true ? (
-					<Typography variant="h5">Loading bookings...</Typography>
+					<CircularProgress />
 				) : (
 					<UserBookingView
 						bookingDetails={userBookings}
