@@ -20,7 +20,7 @@ import {
 	MenuItem,
 } from "@mui/material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Search as SearchIcon } from "@mui/icons-material";
 import { DatePicker } from "@mui/x-date-pickers";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -48,8 +48,8 @@ import RecentSearchesSection from "./RecentSearchSection";
  * @returns {JSX.Element} The rendered sidebar component
  */
 
+// eslint-disable-next-line no-unused-vars
 const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilters, filteredMarkers }) => {
-	const navigate = useNavigate();
 	const location = useLocation();
 	const { isLoaded, loadError } = useContext(MapContext);
 
@@ -62,10 +62,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 	const autocompleteServiceRef = useRef(null);
 
 	// State for date and time selection
-	const [selectedDate, setSelectedDate] = useState(new Date());
 	const [tempDate, setTempDate] = useState(new Date());
-	const [startTime, setStartTime] = useState(null);
-	const [endTime, setEndTime] = useState(null);
 	const [tempStartTime, setTempStartTime] = useState(null);
 	const [tempEndTime, setTempEndTime] = useState(null);
 	const [availableStartTimes, setAvailableStartTimes] = useState([]);
@@ -107,11 +104,8 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 			const { locationName, startTime, endTime, selectedDate } = location.state;
 			setSearchLocation(locationName);
 			setTempLocation(locationName);
-			setStartTime(startTime);
 			setTempStartTime(startTime);
-			setEndTime(endTime);
 			setTempEndTime(endTime);
-			setSelectedDate(selectedDate);
 			setTempDate(selectedDate);
 		}
 	}, [isLoaded, location]);
@@ -218,7 +212,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 				setTempEndTime(endTimeSlots[0].value);
 			}
 		}
-	}, [tempDate]);
+	}, [tempDate, tempEndTime, tempStartTime]);
 
 	/**
 	 * Handles start time selection and updates end time options accordingly
@@ -243,8 +237,8 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 	};
 
 	/**
-   * Update end times whenever start time changes
-   */
+	 * Update end times whenever start time changes
+	 */
 	useEffect(() => {
 		if (!tempStartTime || !tempDate) return;
 
@@ -266,8 +260,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 			// If no end time is set, set default
 			setTempEndTime(endTimeSlots[0].value);
 		}
-	}, [tempStartTime, tempDate]);
-
+	}, [tempStartTime, tempDate, tempEndTime]);
 
 	if (loadError) return <div>Error loading Google Maps</div>;
 	if (!isLoaded) return <div>Loading Google Maps...</div>;
@@ -339,9 +332,6 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 	 */
 	const handleUpdateSearch = () => {
 		setSearchLocation(tempLocation);
-		setSelectedDate(tempDate);
-		setStartTime(tempStartTime);
-		setEndTime(tempEndTime);
 		updateRecentSearches(tempLocation);
 
 		const weekDay = tempDate.toLocaleDateString("en-US", { weekday: "short" });
@@ -414,7 +404,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 					autoComplete="off"
 				/>
 
- {/* Suggestions Dropdown */}
+				{/* Suggestions Dropdown */}
 				{suggestions && (
 					<Paper>
 						{showRecentSearches && (
@@ -468,7 +458,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 					sx={{ mt: 2 }}
 				/>
 
-				 {/* Start Time Section */}
+				{/* Start Time Section */}
 				<Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>
 					Enter After
 				</Typography>
@@ -495,7 +485,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 					</Select>
 				</FormControl>
 
- {/* End Time Section */}
+				{/* End Time Section */}
 				<Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>
 					Exit Before
 				</Typography>

@@ -17,7 +17,6 @@ const MapSearch = ({
 	mapRef,
 	filteredMarkers,
 	setFilters,
-	
 }) => {
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const theme = useTheme();
@@ -103,7 +102,6 @@ const MapSearch = ({
 					<Grid item md={3}>
 						<Box
 							sx={{
-								
 								// overflowY: 'auto',
 								padding: 2,
 								backgroundColor: "#f5f5f5",

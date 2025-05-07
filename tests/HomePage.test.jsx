@@ -185,7 +185,7 @@ describe("HomePage", () => {
 		await waitFor(() => {
 			expect(screen.getByPlaceholderText("Search address")).toBeInTheDocument();
 			expect(screen.getByText("Find Parking Spots")).toBeInTheDocument();
-			expect(screen.getByText("Add Parking Spot")).toBeInTheDocument();
+			expect(screen.getByText("Add Community Parking Spot")).toBeInTheDocument();
 		});
 	});
 
