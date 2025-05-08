@@ -150,7 +150,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 				listContainerRef.current.scrollTop = 0;
 			}
 		}
-	}, [sortType, sortedMarkers, setSortedMarkers, setVisibleMarkers]);
+	}, [sortType]);
 
 /**
 	 * Load more markers when scrolling
@@ -199,7 +199,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 				observer.unobserve(loaderRef.current);
 			}
 		};
-	}, [visibleMarkers, sortedMarkers, loading, loadMoreMarkers]);
+	}, [visibleMarkers, sortedMarkers, loading]);
 
 	/**
 	 * Sort markers by specified criteria
