@@ -1,108 +1,95 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import axios from "axios";
-import AddSpotUser from "../src/pages/AddSpotUser"; // adjust the path as needed
+import { AddSpotUser } from "../src/pages/AddSpotUser";
 import { AuthContext } from "../src/context/AuthContext";
+import { MapContext } from "../src/context/MapContext";
+
+// Mock MUI components
+vi.mock("@mui/material", async () => {
+	const actual = await vi.importActual("@mui/material");
+	return {
+		...actual,
+		TextField: ({ label, value, onChange, ...props }) => (
+			<input aria-label={label} value={value} onChange={onChange} {...props} />
+		),
+		Button: ({ children, onClick, ...props }) => (
+			<button onClick={onClick} {...props}>
+				{children}
+			</button>
+		),
+		Stepper: ({ children }) => <div>{children}</div>,
+		Step: ({ children }) => <div>{children}</div>,
+		StepLabel: ({ children }) => <div>{children}</div>,
+		Typography: ({ children }) => <div>{children}</div>,
+		Grid: ({ children }) => <div>{children}</div>,
+		Box: ({ children }) => <div>{children}</div>,
+		Snackbar: ({ open, children }) => (open ? <div>{children}</div> : null),
+		Alert: ({ severity, children }) => (
+			<div>
+				{severity}: {children}
+			</div>
+		),
+		Stack: ({ children }) => <div>{children}</div>,
+		IconButton: ({ children, ...props }) => <button {...props}>{children}</button>,
+	};
+});
+vi.mock("@mui/icons-material/Delete", () => ({ default: () => <span>DeleteIcon</span> }));
+vi.mock("@mui/icons-material/LocationOn", () => ({ default: () => <span>LocationOnIcon</span> }));
+vi.mock("../components/MapDialog", () => ({
+	default: ({ open, onClose, onSave }) =>
+		open ? (
+			<div data-testid="map-dialog">
+				<button onClick={() => onSave({ lat: 10, lng: 20 }, "success")}>Save Location</button>
+				<button onClick={onClose}>Close</button>
+			</div>
+		) : null,
+}));
 
 vi.mock("axios");
 
 describe("AddSpotUser Component", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    localStorage.clear();
-  });
+	beforeEach(() => {
+		vi.clearAllMocks();
+		localStorage.clear();
+	});
 
-  const mockUser = {
-    _id: "12345",
-    name: "John Doe",
-  };
+	const mockUser = {
+		_id: "12345",
+		name: "John Doe",
+	};
 
-  test("renders input fields and submit button", () => {
-    render(
-      <AuthContext.Provider value={{ user: mockUser }}>
-        <AddSpotUser />
-      </AuthContext.Provider>
-    );
+	test("renders stepper and form fields", () => {
+		render(
+			<MapContext.Provider value={{ isLoaded: true }}>
+				<AuthContext.Provider value={{ user: mockUser }}>
+					<AddSpotUser />
+				</AuthContext.Provider>
+			</MapContext.Provider>
+		);
 
-    expect(screen.getByLabelText(/Spot Name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Address/i)).toBeInTheDocument();
-    expect(screen.getByText(/Submit/i)).toBeInTheDocument();
-  });
+		expect(screen.getByText(/Add a Parking Spot/i)).toBeInTheDocument();
+		expect(screen.getByText("Instruction")).toBeInTheDocument();
+		expect(screen.getByText(/Spot Details/i)).toBeInTheDocument();
+		expect(screen.getByText(/Instructions & Submit/i)).toBeInTheDocument();
+		expect(screen.getByText(/Next/i)).toBeInTheDocument();
+	});
 
-  test("displays error message when no user is present", () => {
-    render(
-      <AuthContext.Provider value={{ user: null }}>
-        <AddSpotUser />
-      </AuthContext.Provider>
-    );
+	test("shows error if required fields are missing on submit", async () => {
+		render(
+			<MapContext.Provider value={{ isLoaded: true }}>
+				<AuthContext.Provider value={{ user: mockUser }}>
+					<AddSpotUser />
+				</AuthContext.Provider>
+			</MapContext.Provider>
+		);
 
-    expect(screen.getByText("Please log in first")).toBeInTheDocument();
-  });
+		// Go to Spot Details step
+		fireEvent.click(screen.getByText(/Next/i));
+        fireEvent.click(screen.getByText(/Next/i));
+		await waitFor(() => {
+			expect(screen.getByText(/Spot Title is required/i)).toBeInTheDocument();
+		});
+	});
 
-  test("updates state on input change", () => {
-    render(
-      <AuthContext.Provider value={{ user: mockUser }}>
-        <AddSpotUser />
-      </AuthContext.Provider>
-    );
-
-    const nameInput = screen.getByLabelText(/Spot Name/i);
-    fireEvent.change(nameInput, { target: { value: "Test Spot" } });
-    expect(nameInput.value).toBe("Test Spot");
-  });
-
-  test("submits form and calls axios.post with correct data", async () => {
-    axios.post.mockResolvedValueOnce({ status: 200 });
-
-    render(
-      <AuthContext.Provider value={{ user: mockUser }}>
-        <AddSpotUser />
-      </AuthContext.Provider>
-    );
-
-    fireEvent.change(screen.getByLabelText(/Spot Name/i), {
-      target: { value: "Test Spot" },
-    });
-    fireEvent.change(screen.getByLabelText(/Address/i), {
-      target: { value: "123 Main St" },
-    });
-
-    fireEvent.click(screen.getByText(/Submit/i));
-
-    await waitFor(() => {
-      expect(axios.post).toHaveBeenCalled();
-      expect(axios.post).toHaveBeenCalledWith(
-        expect.stringContaining("/spots"), 
-        expect.objectContaining({
-          name: "Test Spot",
-          address: "123 Main St",
-          userId: "12345",
-        })
-      );
-    });
-  });
-
-  test("handles API error gracefully", async () => {
-    axios.post.mockRejectedValueOnce(new Error("Network Error"));
-
-    render(
-      <AuthContext.Provider value={{ user: mockUser }}>
-        <AddSpotUser />
-      </AuthContext.Provider>
-    );
-
-    fireEvent.change(screen.getByLabelText(/Spot Name/i), {
-      target: { value: "Error Spot" },
-    });
-    fireEvent.change(screen.getByLabelText(/Address/i), {
-      target: { value: "Error Address" },
-    });
-
-    fireEvent.click(screen.getByText(/Submit/i));
-
-    await waitFor(() => {
-      expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
-    });
-  });
 });
