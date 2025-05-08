@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import { Container, Typography, Avatar, Button, Box, Card, CircularProgress } from "@mui/material";
+import { Container, Typography, Avatar, Button, Box, Card, CircularProgress, Divider } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import { EditProfileModal } from "../components/EditProfileModal";
 import { UserBookingView } from "../components/UserBookingView";
