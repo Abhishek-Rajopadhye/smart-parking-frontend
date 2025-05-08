@@ -306,7 +306,6 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 								size="small"
 								onClick={() => {
 									navigate(`/spotdetail/${spot.spot_id}`);
-									console.log("Inside navigate ", spot.spot_id);
 								}}
 								variant="text"
 							>
@@ -319,7 +318,6 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 									size="small"
 									color="success"
 									onClick={() => {
-										console.log("SPott", spot);
 										setBookingMarker(spot);
 										toggleDialogBooking();
 									}}
