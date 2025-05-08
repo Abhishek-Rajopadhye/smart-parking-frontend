@@ -57,7 +57,7 @@ const MarkerSkeleton = () => (
 );
 
 const MarkerCard = ({ markers, origin, latlng }) => {
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
 	const [sortedMarkers, setSortedMarkers] = useState([]);
 	const [sortType, setSortType] = useState("price");
@@ -174,7 +174,6 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 		}, 300);
 	};
 
-
 	/**
 	 * Set up intersection observer for infinite scrolling
 	 */
@@ -201,13 +200,15 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 		};
 	}, [visibleMarkers, sortedMarkers, loading]);
 
-	/**
-	 * Sort markers by specified criteria
-	 *
-	 * @param {Array} markerList - Array of markers to sort
-	 * @param {string} type - Sort type ('price' or 'distance')
-	 * @returns {Array} Sorted array of markers
-	 */
+
+
+  /**
+   * Sort markers by specified criteria
+   * 
+   * @param {Array} markerList - Array of markers to sort
+   * @param {string} type - Sort type ('price' or 'distance')
+   * @returns {Array} Sorted array of markers
+   */
 
 	const sortMarkers = (markerList, type) => {
 		if (type === "price") {
@@ -305,7 +306,6 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 								size="small"
 								onClick={() => {
 									navigate(`/spotdetail/${spot.spot_id}`);
-									console.log("Inside navigate ", spot.spot_id);
 								}}
 								variant="text"
 							>
@@ -318,7 +318,6 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 									size="small"
 									color="success"
 									onClick={() => {
-										console.log("SPott", spot);
 										setBookingMarker(spot);
 										toggleDialogBooking();
 									}}

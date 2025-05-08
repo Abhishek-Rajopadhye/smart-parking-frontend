@@ -302,6 +302,7 @@ const AddSpotUser = () => {
 					width: "100%",
 					maxWidth: 600,
 					bgcolor: "white",
+					color: "black",
 					p: 4,
 				}}
 			>
