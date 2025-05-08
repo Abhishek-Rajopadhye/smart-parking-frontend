@@ -294,7 +294,7 @@ const AddSpotUser = () => {
 				alignItems: "center",
 				px: 2,
 				py: 4,
-				backgroundColor: "#ffff",
+				backgroundColor: "#ffffff",
 			}}
 		>
 			<Box
