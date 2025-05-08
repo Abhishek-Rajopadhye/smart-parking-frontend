@@ -294,7 +294,7 @@ const AddSpotUser = () => {
 				alignItems: "center",
 				px: 2,
 				py: 4,
-				backgroundColor: "#f9f9f9",
+				backgroundColor: "#ffff",
 			}}
 		>
 			<Box
@@ -302,6 +302,7 @@ const AddSpotUser = () => {
 					width: "100%",
 					maxWidth: 600,
 					bgcolor: "white",
+					color: "black",
 					p: 4,
 				}}
 			>
