@@ -78,6 +78,7 @@ const DetailInfo = () => {
 		fetch(`${BACKEND_URL}/spotdetails/get-spot/${spot_id}`)
 			.then((res) => res.json())
 			.then((data) => {
+				console.log(data)
 				if (typeof data.available_days === "string") {
 					data.available_days = data.available_days.split(",").map((d) => d.trim());
 				}
@@ -85,7 +86,7 @@ const DetailInfo = () => {
 			})
 			.catch((err) => console.error("Error:", err));
 	}, [spot_id]);
-
+	console.log("Status", selectedMarker);
 	// Fetch reviews and owner details
 	useEffect(() => {
 		const fetchDetails = async () => {
@@ -778,7 +779,7 @@ const DetailInfo = () => {
 						)}
 					</Box>
 				</Box>
-				{selectedMarker.verification_status == 1 && (
+				{selectedMarker.status == 1 && (
 					<>
 						<Typography variant="body1" mb={2}>
 							<LocalParkingIcon fontSize="small" sx={{ mr: 1 }} />
