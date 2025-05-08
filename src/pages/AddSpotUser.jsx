@@ -307,7 +307,7 @@ const AddSpotUser = () => {
 				}}
 			>
 				<Grid item xs={12}>
-					<Typography variant="h5" gutterBottom textAlign="center">
+					<Typography sx={{color:"black"}} variant="h5" gutterBottom textAlign="center">
 						Add a Parking Spot
 					</Typography>
 				</Grid>
@@ -319,7 +319,7 @@ const AddSpotUser = () => {
 					))}
 				</Stepper>
 				{activeStep === 0 && (
-					<Box>
+					<Box sx={{color:"black"}}>
 						<Typography gutterBottom>Here are the steps to add a new parking spot:</Typography>
 						<Box component="ul" pl={2}>
 							<li>Select a location using the "Location" button and click on the map.</li>
@@ -561,7 +561,7 @@ const AddSpotUser = () => {
 				{/* Step 3: Instructions + Submit */}
 				{activeStep === 2 && (
 					<Box>
-						<Typography variant="body1" mb={2}>
+						<Typography variant="body1" mb={2} sx={{color:"black"}}>
 							📍 This spot is only for viewing purposes on the map.
 							<br></br>🛑 Booking or reservation is not available for this spot.
 							<br></br>💡 Want to earn by listing your own spot? Log in as an owner and add a spot to make it
