@@ -10,8 +10,7 @@
  * @param {Object} props.origin - Origin location coordinates for distance calculation
  * @param {Object} props.latlng - Latitude and longitude coordinates (Note: Currently not used)
  */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
+
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
 	Box,
@@ -74,6 +73,10 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 	 * Toggle booking dialog visibility
 	 */
 
+
+	/**
+	 * Toggle booking dialog visibility
+	 */
 	const toggleDialogBooking = () => {
 		setDialogBookingOpen(!dialogBookingOpen);
 	};
@@ -130,7 +133,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 				}
 			}
 		);
-	}, [markers, origin, sortType]);
+	}, [markers, origin]);
 
 	/**
 	 * Re-sort markers when sort type changes
@@ -149,7 +152,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 		}
 	}, [sortType, sortedMarkers, setSortedMarkers, setVisibleMarkers]);
 
-	/**
+/**
 	 * Load more markers when scrolling
 	 */
 	const loadMoreMarkers = () => {
@@ -170,6 +173,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 			setLoading(false);
 		}, 300);
 	};
+
 
 	/**
 	 * Set up intersection observer for infinite scrolling
@@ -209,7 +213,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 		if (type === "price") {
 			return markerList.sort((a, b) => {
 				if (a.hourly_rate === b.hourly_rate) {
-					// If prices are the same, sort by distance
+					// If prices are the same, sort by raw distance
 					return a.rawDistance - b.rawDistance;
 				}
 				// Otherwise, sort by price
@@ -217,12 +221,16 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 			});
 		} else if (type === "distance") {
 			return markerList.sort((a, b) => {
-				if (a.rawDistance === b.rawDistance) {
-					// If distances are the same, sort by price
+				// Round distances to nearest 0.1 km for comparison
+				const distA = Math.round((a.rawDistance / 1000) * 10); 
+				const distB = Math.round((b.rawDistance / 1000) * 10);
+
+				if (distA === distB) {
+					// If rounded distances are the same, sort by price
 					return a.hourly_rate - b.hourly_rate;
 				}
-				// Otherwise, sort by distance
-				return a.rawDistance - b.rawDistance;
+				// Otherwise, sort by rounded distance
+				return distA - distB;
 			});
 		}
 		return markerList;
@@ -297,6 +305,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 								size="small"
 								onClick={() => {
 									navigate(`/spotdetail/${spot.spot_id}`);
+									console.log("Inside navigate ", spot.spot_id);
 								}}
 								variant="text"
 							>
@@ -309,6 +318,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 									size="small"
 									color="success"
 									onClick={() => {
+										console.log("SPott", spot);
 										setBookingMarker(spot);
 										toggleDialogBooking();
 									}}
