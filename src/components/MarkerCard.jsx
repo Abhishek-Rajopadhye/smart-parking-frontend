@@ -69,8 +69,10 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 	const listContainerRef = useRef(null);
 	const loaderRef = useRef(null);
 
-	console.log(sortedMarkers);
-	console.log("skfnsklfn", visibleMarkers);
+	/**
+	 * Toggle booking dialog visibility
+	 */
+
 
 	/**
 	 * Toggle booking dialog visibility
@@ -148,7 +150,30 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 				listContainerRef.current.scrollTop = 0;
 			}
 		}
-	}, [sortType]);
+	}, [sortType, sortedMarkers, setSortedMarkers, setVisibleMarkers]);
+
+/**
+	 * Load more markers when scrolling
+	 */
+	const loadMoreMarkers = () => {
+		if (loading) return;
+
+		setLoading(true);
+
+		// Small timeout to prevent too rapid loading
+		setTimeout(() => {
+			const nextPage = page + 1;
+			const newVisibleMarkers = [
+				...visibleMarkers,
+				...sortedMarkers.slice(page * ITEMS_PER_PAGE, nextPage * ITEMS_PER_PAGE),
+			];
+
+			setVisibleMarkers(newVisibleMarkers);
+			setPage(nextPage);
+			setLoading(false);
+		}, 300);
+	};
+
 
 	/**
 	 * Set up intersection observer for infinite scrolling
@@ -174,30 +199,8 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 				observer.unobserve(loaderRef.current);
 			}
 		};
-	}, [visibleMarkers, sortedMarkers, loading]);
+	}, [visibleMarkers, sortedMarkers, loading, loadMoreMarkers]);
 
-	/**
-	 * Load more markers when scrolling
-	 */
-	const loadMoreMarkers = () => {
-		if (loading) return;
-
-		setLoading(true);
-
-		// Small timeout to prevent too rapid loading
-		setTimeout(() => {
-			const nextPage = page + 1;
-			const newVisibleMarkers = [
-				...visibleMarkers,
-				...sortedMarkers.slice(page * ITEMS_PER_PAGE, nextPage * ITEMS_PER_PAGE),
-			];
-
-			setVisibleMarkers(newVisibleMarkers);
-			setPage(nextPage);
-			setLoading(false);
-		}, 300);
-	};
-	
 	/**
 	 * Sort markers by specified criteria
 	 *
