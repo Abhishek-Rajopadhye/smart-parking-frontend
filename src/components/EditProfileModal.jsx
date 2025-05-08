@@ -68,7 +68,7 @@ const EditProfileModal = ({ open, handleClose, user, handleSave }) => {
 		<Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
 			<DialogTitle>Edit Profile</DialogTitle>
 			<DialogContent>
-				<Box component="form"  sx={{ mt: 2 }}>
+				<Box component="form" sx={{ mt: 2 }}>
 					<TextField
 						margin="normal"
 						fullWidth

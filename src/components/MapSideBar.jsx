@@ -1,4 +1,10 @@
-/* eslint-disable no-unused-vars */
+/**
+ * @file MapSidebar.jsx
+ * @description A sidebar component for map interaction that provides location search, date/time selection,
+ * price filtering, and displays parking spot results.
+ *
+ */
+
 import React, { useState, useContext, useEffect, useRef } from "react";
 import {
 	Box,
@@ -10,13 +16,12 @@ import {
 	IconButton,
 	Slider,
 	FormControl,
-	InputLabel,
 	Select,
 	MenuItem,
 } from "@mui/material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { useLocation, useNavigate } from "react-router-dom";
-import { MyLocationOutlined, Search as SearchIcon } from "@mui/icons-material";
+import { useLocation } from "react-router-dom";
+import { Search as SearchIcon } from "@mui/icons-material";
 import { DatePicker } from "@mui/x-date-pickers";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -25,31 +30,48 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { MapContext } from "../context/MapContext";
 import { getLatLng } from "react-places-autocomplete";
 import MarkerCard from "./MarkerCard";
-import { isBefore, addMinutes, setHours, setMinutes, format, isToday } from "date-fns";
+import { isBefore, format, isToday } from "date-fns";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
-import SearchBar from "./SearchBar";
 import RecentSearchesSection from "./RecentSearchSection";
 
+/**
+ * MapSidebar component provides search and filtering capabilities for the parking map
+ *
+ * * @param {MapSidebarProps} props - Component props
+ * @typedef {Object} MapSidebarProps
+ * @property {React.RefObject} mapRef - Reference to the Google Map instance
+ * @property {Function} setNewMarker - Function to set a new marker on the map
+ * @property {Function} setSelectedMarker - Function to set the currently selected marker
+ * @property {Array} markers - Array of all available markers/parking spots
+ * @property {Function} setFilters - Function to update the filter criteria
+ * @property {Array} filteredMarkers - Array of markers that match the current filters
+ * @returns {JSX.Element} The rendered sidebar component
+ */
+
+// eslint-disable-next-line no-unused-vars
 const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilters, filteredMarkers }) => {
-	const navigate = useNavigate();
 	const location = useLocation();
-	const [searchLocation, setSearchLocation] = useState("");
-	const [latlng, setLatLng] = useState(null);
-	const [startTime, setStartTime] = useState(null);
-	const [endTime, setEndTime] = useState(null);
-	const [selectedDate, setSelectedDate] = useState(new Date());
-	const [suggestions, setSuggestions] = useState(false);
 	const { isLoaded, loadError } = useContext(MapContext);
+
+	// State for search and location
+	const [searchLocation, setSearchLocation] = useState("");
+	const [tempLocation, setTempLocation] = useState("");
+	const [latlng, setLatLng] = useState(null);
+	const [suggestions, setSuggestions] = useState(false);
 	const [predictions, setPredictions] = useState([]);
 	const autocompleteServiceRef = useRef(null);
-	const [tempLocation, setTempLocation] = useState("");
+
+	// State for date and time selection
 	const [tempDate, setTempDate] = useState(new Date());
 	const [tempStartTime, setTempStartTime] = useState(null);
 	const [tempEndTime, setTempEndTime] = useState(null);
-	const [parkingPrice, setParkingPrice] = useState([0, 250]);
 	const [availableStartTimes, setAvailableStartTimes] = useState([]);
 	const [availableEndTimes, setAvailableEndTimes] = useState([]);
 
+	// State for price range
+	const [parkingPrice, setParkingPrice] = useState([0, 250]);
+
+	// State for recent searches
 	const [recentSearches, setRecentSearches] = useState(() => {
 		const saved = localStorage.getItem("recentSearches");
 		return saved ? JSON.parse(saved) : [];
@@ -57,7 +79,11 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 
 	const showRecentSearches = suggestions && !tempLocation && recentSearches.length > 0;
 
-	// Search handling
+	/**
+	 * Adds a search term to recent searches and updates localStorage
+	 *
+	 * @param {string} newSearch - Search address to add to recent searches
+	 */
 	const updateRecentSearches = (newSearch) => {
 		setRecentSearches((prev) => {
 			const updated = [newSearch, ...prev.filter((item) => item !== newSearch)].slice(0, 4);
@@ -66,6 +92,9 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 		});
 	};
 
+	/**
+	 * Initialize Google Places AutocompleteService and handle location state
+	 */
 	useEffect(() => {
 		if (isLoaded && window.google && !autocompleteServiceRef.current) {
 			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
@@ -75,16 +104,20 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 			const { locationName, startTime, endTime, selectedDate } = location.state;
 			setSearchLocation(locationName);
 			setTempLocation(locationName);
-			setStartTime(startTime);
 			setTempStartTime(startTime);
-			setEndTime(endTime);
 			setTempEndTime(endTime);
-			setSelectedDate(selectedDate);
 			setTempDate(selectedDate);
 		}
 	}, [isLoaded, location]);
 
-	// Generate time slots in 30-minute intervals
+	/**
+	 * Generates available time slots in 30-minute intervals
+	 *
+	 * @param {Date} date - The selected date
+	 * @param {boolean} isStartTime - Whether generating slots for start time (true) or end time (false)
+	 * @param {Date|null} referenceTime - Reference time (used for end time generation)
+	 * @returns {Array} Array of time slot objects with label and value properties
+	 */
 	const generateTimeSlots = (date, isStartTime = true, referenceTime = null) => {
 		if (!date) return [];
 
@@ -141,7 +174,9 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 		return slots;
 	};
 
-	// Update time slots when date changes
+	/**
+	 * Update time slots when the selected date changes
+	 */
 	useEffect(() => {
 		if (!tempDate) return;
 
@@ -177,9 +212,13 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 				setTempEndTime(endTimeSlots[0].value);
 			}
 		}
-	}, [tempDate]);
+	}, [tempDate, tempEndTime, tempStartTime]);
 
-	// Handle start time change with proper end time updates
+	/**
+	 * Handles start time selection and updates end time options accordingly
+	 *
+	 * @param {Date} newStartTime - The newly selected start time
+	 */
 	const handleStartTimeChange = (newStartTime) => {
 		if (!newStartTime) return;
 
@@ -197,7 +236,9 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 		}
 	};
 
-	// Effect to update end times whenever start time changes
+	/**
+	 * Update end times whenever start time changes
+	 */
 	useEffect(() => {
 		if (!tempStartTime || !tempDate) return;
 
@@ -219,7 +260,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 			// If no end time is set, set default
 			setTempEndTime(endTimeSlots[0].value);
 		}
-	}, [tempStartTime, tempDate]);
+	}, [tempStartTime, tempDate, tempEndTime]);
 
 	if (loadError) return <div>Error loading Google Maps</div>;
 	if (!isLoaded) return <div>Loading Google Maps...</div>;
@@ -291,9 +332,6 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 	 */
 	const handleUpdateSearch = () => {
 		setSearchLocation(tempLocation);
-		setSelectedDate(tempDate);
-		setStartTime(tempStartTime);
-		setEndTime(tempEndTime);
 		updateRecentSearches(tempLocation);
 
 		const weekDay = tempDate.toLocaleDateString("en-US", { weekday: "short" });
@@ -338,7 +376,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 	return (
 		<LocalizationProvider dateAdapter={AdapterDateFns}>
 			<Paper elevation={3} sx={{ p: 2, height: "100vh", borderRadius: 0, overflowY: "auto" }}>
-				{/* Search Location */}
+				{/* Location Search Section */}
 				<Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
 					Book Parking Near
 				</Typography>
@@ -366,6 +404,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 					autoComplete="off"
 				/>
 
+				{/* Suggestions Dropdown */}
 				{suggestions && (
 					<Paper>
 						{showRecentSearches && (
@@ -394,7 +433,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 					</Paper>
 				)}
 
-				{/* Date Picker */}
+				{/* Date Picker Section */}
 				<DatePicker
 					value={tempDate}
 					onChange={(newDate) => {
@@ -418,7 +457,8 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 					}}
 					sx={{ mt: 2 }}
 				/>
-				{/* Time Pickers */}
+
+				{/* Start Time Section */}
 				<Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>
 					Enter After
 				</Typography>
@@ -445,6 +485,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 					</Select>
 				</FormControl>
 
+				{/* End Time Section */}
 				<Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>
 					Exit Before
 				</Typography>
@@ -472,7 +513,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 					</Select>
 				</FormControl>
 
-				{/* Price Range */}
+				{/* Price Range Section */}
 				<Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 3 }}>
 					<CurrencyRupeeIcon sx={{ color: "green" }} />
 					<Typography variant="h6">Price Range</Typography>
@@ -485,7 +526,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 					max={500}
 					sx={{ color: "primary.main" }}
 				/>
-				{/* Update Search */}
+				{/* Search Button */}
 				<Button
 					variant="contained"
 					fullWidth
@@ -495,7 +536,7 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 				>
 					Update Search
 				</Button>
-				{/* Marker Cards */}
+				{/* Result Cards Section */}
 				<Box sx={{ mt: 3 }}>
 					<MarkerCard markers={filteredMarkers} origin={searchLocation} latlng={latlng} />
 				</Box>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Card, CardContent, Typography, Box, Grid, Chip, Skeleton, Stack, Divider } from "@mui/material";
+import { Card, CardContent, Typography, Box, Grid, Chip, Skeleton, Stack, Divider } from "@mui/material";
 import { BACKEND_URL } from "../const";
 import { useNavigate } from "react-router-dom";
 import { DirectionsWalk, LocalParking, CurrencyRupee, MyLocationOutlined } from "@mui/icons-material";
@@ -21,7 +21,6 @@ import { DirectionsWalk, LocalParking, CurrencyRupee, MyLocationOutlined } from 
  */
 const NearByParkings = ({ origin, onSpotSelect, isMobile, selectedDate, startTime }) => {
 	const navigate = useNavigate();
-	const [spots, setSpots] = useState([]);
 	const [sortedMarkers, setSortedMarkers] = useState([]);
 	const [loading, setLoading] = useState(true);
 
@@ -39,7 +38,6 @@ const NearByParkings = ({ origin, onSpotSelect, isMobile, selectedDate, startTim
 				}
 
 				const fetchedMarkers = response.data;
-				setSpots(fetchedMarkers);
 
 				// Skip distance calculation if Google Maps isn't loaded or no origin provided
 				if (!window.google || !origin || fetchedMarkers.length === 0) {
@@ -216,7 +214,7 @@ const NearByParkings = ({ origin, onSpotSelect, isMobile, selectedDate, startTim
 											WebkitLineClamp: 1,
 										}}
 									>
-										{spot.address}
+										📍{spot.address}
 									</Typography>
 
 									<Divider sx={{ my: 1.5 }} />

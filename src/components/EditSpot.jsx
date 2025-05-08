@@ -58,7 +58,6 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 		message: "",
 		severity: "info",
 	});
-	console.log(spot, spot_id);
 
 	useEffect(() => {
 		/**
@@ -68,17 +67,16 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 		 * @returns {Promise<Array>} An array of images in Base64 format.
 		 */
 		const fetchImages = async () => {
-			try{
+			try {
 				const imageRes = await axios.get(`${BACKEND_URL}/spotdetails/get-images/${spot_id}`);
 				if (imageRes.status === 200) {
 					return imageRes.data.images;
 				}
-			}
-			catch{
+			} catch {
 				return [];
 			}
 		};
-	    /**
+		/**
 		 * Formats a time string to the "HH:mm" format.
 		 *
 		 * @param {string} time - The time string to format.
@@ -280,7 +278,7 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 								value={formData.spot_title}
 								onChange={handleInputChange}
 								sx={{
-									mt:2
+									mt: 2,
 								}}
 							/>
 						</Grid>
@@ -348,7 +346,7 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 							<Typography variant="subtitle1" sx={{ mb: 1 }}>
 								Select Open Days:
 							</Typography>
-							<Grid container spacing={1} sx={{justifyContent:"center"}}>
+							<Grid container spacing={1} sx={{ justifyContent: "center" }}>
 								{["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
 									<Grid item key={day}>
 										<Button

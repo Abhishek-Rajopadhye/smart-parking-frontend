@@ -13,28 +13,22 @@ import {
 	Stack,
 } from "@mui/material";
 import { useState } from "react";
-import React, { useContext } from "react";
 import axios from "axios";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
-import { useNavigate } from "react-router-dom";
 import "../style/spot.css";
 import MapDialog from "../components/MapDialog";
-import { AuthContext } from "../context/AuthContext";
 import { BACKEND_URL } from "../const";
-const steps = ["Instruction", "Spot Details", "Upload Documents", "Instructions & Submit"];
+const steps = ["Instruction", "Spot Details", "Instructions & Submit"];
 
-const AddSpotUser = ({ onCancel }) => {
+const AddSpotUser = () => {
 	const [activeStep, setActiveStep] = useState(0);
 	// Spot Details States
 	const [spotAdded, setSpotAdded] = useState(false);
-	const [spotName, setSpotName] = useState("");
-	const [spotPrice, setSpotPrice] = useState("");
 	const [mapOpen, setMapOpen] = useState(false);
 	const [location, setLocation] = useState(null);
-	const { user } = useContext(AuthContext);
 	const [spotTitle, setSpotTitle] = useState("");
 	const [spotAddress, setSpotAddress] = useState("");
 	const [spotDescription, setSpotDescription] = useState("");
@@ -42,7 +36,6 @@ const AddSpotUser = ({ onCancel }) => {
 	const [closeTime, setCloseTime] = useState("");
 	const [hourlyRate, setHourlyRate] = useState("");
 	const [totalSlots, setTotalSlots] = useState("");
-	const [availableSlots, setAvailableSlots] = useState("");
 	const [images, setImages] = useState([]);
 	const [imagePreviews, setImagePreviews] = useState([]);
 	const [openSnackbar, setOpenSnackbar] = useState({
@@ -77,12 +70,9 @@ const AddSpotUser = ({ onCancel }) => {
 		const newImages = [];
 		const newPreviews = [];
 		let validateFile = [];
-		console.log(files.length);
 		for (let file of files) {
-			console.log(file.size);
 			if (file.size <= maxSize) validateFile.push(file);
 		}
-		console.log(validateFile);
 		if (validateFile.length == 0) {
 			setOpenSnackbar({
 				open: true,
@@ -128,8 +118,6 @@ const AddSpotUser = ({ onCancel }) => {
 
 	const validateForm = () => {
 		const total = parseInt(totalSlots);
-		console.log(typeof totalSlots);
-		console.log(typeof availableSlots);
 		if (!spotTitle.trim()) return "Spot Title is required";
 		if (!spotAddress.trim()) return "Address is required";
 		if (location == null) return "Please select a location to proceed";
@@ -138,12 +126,10 @@ const AddSpotUser = ({ onCancel }) => {
 		if (!hourlyRate || hourlyRate <= 0) return "Hourly Rate must be positive";
 		if (!totalSlots || totalSlots <= 0) return "Total Slots must be a positive number";
 		if (!Object.values(openDays).includes(true)) return "At least one open day must be selected";
-		console.log(total);
-		console.log(typeof total);
 		return total;
 	};
 
-  /**
+	/**
 	 * handle delete image from the preview
 	 * @param {*} index - index of the image to be deleted
 	 */
@@ -164,7 +150,7 @@ const AddSpotUser = ({ onCancel }) => {
 	const handleSubmit = async () => {
 		if (spotAdded) return;
 		const formData = new FormData();
-		formData.append("owner_id", user.id);
+		formData.append("owner_id", "google-oauth2|1234567890");
 		formData.append("spot_title", spotTitle);
 		formData.append("spot_address", spotAddress);
 		formData.append("spot_description", spotDescription);
@@ -177,6 +163,7 @@ const AddSpotUser = ({ onCancel }) => {
 		formData.append("longitude", location.lng);
 		formData.append("available_days", openDay.join(","));
 		formData.append("image", images);
+		formData.append("verification_status", 3);
 
 		try {
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot`, formData, {
@@ -200,7 +187,6 @@ const AddSpotUser = ({ onCancel }) => {
 				setHourlyRate("");
 
 				setTotalSlots("");
-				setAvailableSlots("");
 				setImages([]);
 				setImagePreviews([]);
 				setLocation(null);
@@ -215,7 +201,7 @@ const AddSpotUser = ({ onCancel }) => {
 				});
 			}
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			setOpenSnackbar({
 				open: true,
 				message: "Error uploading data",
@@ -224,12 +210,12 @@ const AddSpotUser = ({ onCancel }) => {
 		}
 	};
 
-  /**
+	/**
 	 * Handles the next button click in the stepper.
 	 * Validates the form data and moves to the next step.
 	 * If on the last step, it submits the form.
 	 * @param {*} e - Event triggered on button click.
-	 * @returns 
+	 * @returns
 	 */
 	const handleNext = () => {
 		if (activeStep === 1) {
@@ -320,7 +306,7 @@ const AddSpotUser = ({ onCancel }) => {
 				}}
 			>
 				<Grid item xs={12}>
-					<Typography variant="h5" gutterBottom textAlign="center">
+					<Typography sx={{color:"black"}} variant="h5" gutterBottom textAlign="center">
 						Add a Parking Spot
 					</Typography>
 				</Grid>
@@ -332,7 +318,7 @@ const AddSpotUser = ({ onCancel }) => {
 					))}
 				</Stepper>
 				{activeStep === 0 && (
-					<Box>
+					<Box sx={{color:"black"}}>
 						<Typography gutterBottom>Here are the steps to add a new parking spot:</Typography>
 						<Box component="ul" pl={2}>
 							<li>Select a location using the "Location" button and click on the map.</li>
@@ -409,7 +395,6 @@ const AddSpotUser = ({ onCancel }) => {
 											}}
 											onSave={(coords, msg) => {
 												setLocation(coords);
-												console.log("Location:", coords);
 												if (msg == "success") {
 													setOpenSnackbar({
 														open: true,
@@ -499,7 +484,7 @@ const AddSpotUser = ({ onCancel }) => {
 											<Grid item key={day}>
 												<Button
 													variant={openDays[day] ? "contained" : "outlined"}
-													color={openDays[day] ? "primary" : "default"}
+													color="primary"
 													onClick={() => toggleDay(day)}
 												>
 													{day}
@@ -575,12 +560,11 @@ const AddSpotUser = ({ onCancel }) => {
 				{/* Step 3: Instructions + Submit */}
 				{activeStep === 2 && (
 					<Box>
-						<Typography variant="body1" mb={2}>
-							Please review your details and ensure all information and documents are correct. Once submitted, you
-							won’t be able to edit.
-						</Typography>
-						<Typography variant="body2" color="textSecondary">
-							Spot: {spotName}, Price: ₹{spotPrice}, Slots: {totalSlots}
+						<Typography variant="body1" mb={2} sx={{color:"black"}}>
+							📍 This spot is only for viewing purposes on the map.
+							<br></br>🛑 Booking or reservation is not available for this spot.
+							<br></br>💡 Want to earn by listing your own spot? Log in as an owner and add a spot to make it
+							bookable.
 						</Typography>
 						<Grid item xs={12} mt={4}>
 							<Box display="flex" justifyContent="space-between">

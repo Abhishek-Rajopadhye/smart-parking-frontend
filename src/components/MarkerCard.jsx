@@ -1,4 +1,16 @@
-/* eslint-disable no-unused-vars */
+/**
+ * MarkerCard Component
+ *
+ * Displays a list of parking spots as cards with information like price and walking distance.
+ * Features include sorting, infinite scrolling, and booking functionality.
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {Array} props.markers - Array of parking spot markers
+ * @param {Object} props.origin - Origin location coordinates for distance calculation
+ * @param {Object} props.latlng - Latitude and longitude coordinates (Note: Currently not used)
+ */
+
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
 	Box,
@@ -7,44 +19,45 @@ import {
 	Select,
 	MenuItem,
 	Card,
-	CardMedia,
 	CardContent,
 	CardActions,
 	FormControl,
 	InputLabel,
-	CircularProgress,
 	Skeleton,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Booking } from "../pages/Booking";
 
-
-// Skeleton placeholder for marker card
+/**
+ * Skeleton placeholder for marker card during loading
+ *
+ * @component
+ */
 const MarkerSkeleton = () => (
 	<Card
-	  sx={{ 
-		display: "flex",
-		mb: 2,
-		borderRadius: 3,
-		flexDirection: { xs: "column", sm: "row" },
-		boxShadow: 1,
-		overflow: "hidden"
-	  }}
+		sx={{
+			display: "flex",
+			mb: 2,
+			borderRadius: 3,
+			flexDirection: { xs: "column", sm: "row" },
+			boxShadow: 1,
+			overflow: "hidden",
+		}}
 	>
-	  <Skeleton variant="rectangular" width={100} height={100} />
-  
-	  <Box sx={{ flex: 1, p: 1.5 }}>
-		<Skeleton width="70%" height={20} sx={{ mb: 1 }} />
-		<Skeleton width="50%" height={20} />
-		<Box sx={{ mt: 2 }}>
-		  <Skeleton width="40%" height={30} />
+		<Skeleton variant="rectangular" width={100} height={100} />
+
+		<Box sx={{ flex: 1, p: 1.5 }}>
+			<Skeleton width="70%" height={20} sx={{ mb: 1 }} />
+			<Skeleton width="50%" height={20} />
+			<Box sx={{ mt: 2 }}>
+				<Skeleton width="40%" height={30} />
+			</Box>
 		</Box>
-	  </Box>
 	</Card>
-  );
-  
+);
 
 const MarkerCard = ({ markers, origin, latlng }) => {
+	const navigate = useNavigate();
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
 	const [sortedMarkers, setSortedMarkers] = useState([]);
 	const [sortType, setSortType] = useState("price");
@@ -52,21 +65,25 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 	const [visibleMarkers, setVisibleMarkers] = useState([]);
 	const [page, setPage] = useState(1);
 	const [loading, setLoading] = useState(false);
-	const loaderRef = useRef(null);
 	const ITEMS_PER_PAGE = 2;
 	const listContainerRef = useRef(null);
+	const loaderRef = useRef(null);
 
-	// console.log("booking marker", markers);
-	const navigate = useNavigate();
-	//  console.log("Origin",origin)
-	//  console.log("lat.l",latlng);
-	//  console.log("ON the marker card ",markers);
-	// Calculate walking time & distance
+	/**
+	 * Toggle booking dialog visibility
+	 */
 
+
+	/**
+	 * Toggle booking dialog visibility
+	 */
 	const toggleDialogBooking = () => {
 		setDialogBookingOpen(!dialogBookingOpen);
 	};
 
+	/**
+	 * Calculate walking distances for markers using Google Distance Matrix
+	 */
 	useEffect(() => {
 		if (!window.google || !origin) return;
 
@@ -84,8 +101,6 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 			lng: marker.longitude,
 		}));
 
-		//  console.log("Destinations:", destinations);
-		// console.log(" :", destinations);
 		service.getDistanceMatrix(
 			{
 				origins: [origin],
@@ -95,8 +110,6 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 			},
 			(response, status) => {
 				if (status === "OK" && response?.rows?.length > 0) {
-					// console.log("Distance Matrix Response:", response);
-
 					const updated = markers.map((marker, index) => {
 						const element = response.rows[0]?.elements?.[index];
 
@@ -122,47 +135,9 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 		);
 	}, [markers, origin]);
 
-	// useEffect(()=>{
-
-	// 	const getImages = async () => {
-	// 		try {
-	// 			const { data } = await axios.get(`${BACKEND_URL}/spotdetails/get-images/${selectedMarker.spot_id}`);
-	// 			setSpotImages(data.images.map((b64) => `data:image/png;base64,${b64}`));
-	// 		} catch (err) {
-	// 			console.error("Image Error:", err);
-	// 		}
-	// 	};
-
-	// 	getImages();
-	// },[markers])
-
-	// const calculateDistance = (origin, destination) => {
-	//     try {
-	//         if (!window.google?.maps?.geometry) return null;
-
-	//         if (!origin?.lat || !origin?.lng || !destination?.lat || !destination?.lng) {
-	//             throw new Error("Invalid coordinates provided for distance calculation");
-	//         }
-
-	//         const originLatLng = new window.google.maps.LatLng(origin.lat, origin.lng);
-
-	//         const destinationLatLng = new window.google.maps.LatLng(destination.lat, destination.lng);
-
-	//         // Distance in meters
-	//         const distanceInMeters = window.google.maps.geometry.spherical.computeDistanceBetween(
-	//             originLatLng,
-	//             destinationLatLng
-	//         );
-
-	//         // Converting  km with 2 decimal places
-	//         return (distanceInMeters / 1000).toFixed(2);
-	//     } catch (error) {
-	//         console.error("Distance claculation error:", error);
-	//         return null;
-	//     }
-	// };
-
-	// Update when sort type changes
+	/**
+	 * Re-sort markers when sort type changes
+	 */
 	useEffect(() => {
 		if (sortedMarkers.length > 0) {
 			const sortedListOfMarkers = sortMarkers([...sortedMarkers], sortType);
@@ -175,9 +150,34 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 				listContainerRef.current.scrollTop = 0;
 			}
 		}
-	}, [sortType]);
+	}, [sortType, sortedMarkers, setSortedMarkers, setVisibleMarkers]);
 
-	// Set up intersection observer for infinite scrolling
+/**
+	 * Load more markers when scrolling
+	 */
+	const loadMoreMarkers = () => {
+		if (loading) return;
+
+		setLoading(true);
+
+		// Small timeout to prevent too rapid loading
+		setTimeout(() => {
+			const nextPage = page + 1;
+			const newVisibleMarkers = [
+				...visibleMarkers,
+				...sortedMarkers.slice(page * ITEMS_PER_PAGE, nextPage * ITEMS_PER_PAGE),
+			];
+
+			setVisibleMarkers(newVisibleMarkers);
+			setPage(nextPage);
+			setLoading(false);
+		}, 300);
+	};
+
+
+	/**
+	 * Set up intersection observer for infinite scrolling
+	 */
 	useEffect(() => {
 		const observer = new IntersectionObserver(
 			(entries) => {
@@ -199,32 +199,21 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 				observer.unobserve(loaderRef.current);
 			}
 		};
-	}, [visibleMarkers, sortedMarkers, loading]);
+	}, [visibleMarkers, sortedMarkers, loading, loadMoreMarkers]);
 
-	const loadMoreMarkers = () => {
-		if (loading) return;
-
-		setLoading(true);
-
-		// Small timeout to prevent too rapid loading
-		setTimeout(() => {
-			const nextPage = page + 1;
-			const newVisibleMarkers = [
-				...visibleMarkers,
-				...sortedMarkers.slice(page * ITEMS_PER_PAGE, nextPage * ITEMS_PER_PAGE),
-			];
-
-			setVisibleMarkers(newVisibleMarkers);
-			setPage(nextPage);
-			setLoading(false);
-		}, 300);
-	};
+	/**
+	 * Sort markers by specified criteria
+	 *
+	 * @param {Array} markerList - Array of markers to sort
+	 * @param {string} type - Sort type ('price' or 'distance')
+	 * @returns {Array} Sorted array of markers
+	 */
 
 	const sortMarkers = (markerList, type) => {
 		if (type === "price") {
 			return markerList.sort((a, b) => {
 				if (a.hourly_rate === b.hourly_rate) {
-					// If prices are the same, sort by distance
+					// If prices are the same, sort by raw distance
 					return a.rawDistance - b.rawDistance;
 				}
 				// Otherwise, sort by price
@@ -232,26 +221,34 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 			});
 		} else if (type === "distance") {
 			return markerList.sort((a, b) => {
-				if (a.rawDistance === b.rawDistance) {
-					// If distances are the same, sort by price
+				// Round distances to nearest 0.1 km for comparison
+				const distA = Math.round((a.rawDistance / 1000) * 10); 
+				const distB = Math.round((b.rawDistance / 1000) * 10);
+
+				if (distA === distB) {
+					// If rounded distances are the same, sort by price
 					return a.hourly_rate - b.hourly_rate;
 				}
-				// Otherwise, sort by distance
-				return a.rawDistance - b.rawDistance;
+				// Otherwise, sort by rounded distance
+				return distA - distB;
 			});
 		}
 		return markerList;
 	};
 
+	/**
+	 * Handle sort type change
+	 *
+	 * @param {Object} event - Change event
+	 */
 	const handleSortChange = (event) => {
 		const newType = event.target.value;
 		setSortType(newType);
 	};
 
-	//   console.log("Sorted log",sortedMarkers);
-
 	return (
-		<Box sx={{ p: 2, bgcolor: "#f9f9f9",height: "calc(100vh - 64px)" }} ref={listContainerRef}>
+		<Box sx={{ p: 2, bgcolor: "#f9f9f9" }} ref={listContainerRef}>
+			{/* Sort control */}
 			<FormControl fullWidth size="small" sx={{ mb: 2 }}>
 				<InputLabel>Sort by</InputLabel>
 				<Select value={sortType} label="Sort by" onChange={handleSortChange}>
@@ -260,23 +257,18 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 				</Select>
 			</FormControl>
 
+			{/* Show message when no parking spots are found */}
 			{visibleMarkers.length === 0 && !loading ? (
 				<Typography align="center" sx={{ mt: 4 }}>
 					No parking spots found
 				</Typography>
 			) : (
+				/* Display parking spot cards */
 				visibleMarkers.map((spot) => (
 					<Card
 						key={spot.spot_id}
 						sx={{ display: "flex", mb: 2, borderRadius: 3, flexDirection: "column", boxShadow: 2 }}
 					>
-						{/* <CardMedia
-							component="img"
-							image={spot.image || "/placeholder.jpg"}
-							alt={spot.spot_title}
-							sx={{ width: 100, height: 100, borderRadius: "12px 0 0 12px" }}
-						/> */}
-
 						<CardContent sx={{ pb: 1 }}>
 							<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
 								<Typography
@@ -305,7 +297,6 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 								}}
 							>
 								🚶 {spot.walkingDuration} ({spot.walkingDistance})
-								{/* ({calculateDistance({ lat: latlng.lat, lng: latlng.lng}, { lat: spot.latitude, lng: spot.longitude })} km ) */}
 							</Typography>
 						</CardContent>
 
@@ -320,21 +311,27 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 							>
 								Details
 							</Button>
-							<Button
-								size="small"
-								color="success"
-								onClick={() => {
-									console.log("SPott", spot);
-									setBookingMarker(spot);
-									toggleDialogBooking();
-								}}
-							>
-								Book{" "}
-							</Button>
+
+							{/* Only show booking button if not owned by current user */}
+							{spot.owner_id != "google-oauth2|1234567890" && (
+								<Button
+									size="small"
+									color="success"
+									onClick={() => {
+										console.log("SPott", spot);
+										setBookingMarker(spot);
+										toggleDialogBooking();
+									}}
+								>
+									Book{" "}
+								</Button>
+							)}
 						</CardActions>
 					</Card>
 				))
 			)}
+
+			{/* Infinite scroll loader */}
 			{visibleMarkers.length < sortedMarkers.length && (
 				<Box
 					ref={loaderRef}
@@ -345,7 +342,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 						height: 60,
 					}}
 				>
-					{loading && <CircularProgress size={30} />}
+					{loading && <MarkerSkeleton />}
 				</Box>
 			)}
 

@@ -8,9 +8,10 @@ import { CurrencyRupee } from "@mui/icons-material";
 import { BACKEND_URL } from "../const";
 import { SpotBookingView } from "../components/SpotBookingView";
 import { ConfirmationDialogBox } from "../components/ConfirmationDialogBox";
-import { AddSpotOwner } from "./AddSpotOwner";
+import { useNavigate } from "react-router-dom"; // <-- Add this import
 
 const OwnerDashboard = () => {
+	const navigate = useNavigate();
 	const { user, setUser } = useContext(AuthContext);
 	const [selectedSpot, setSelectedSpot] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,7 +23,6 @@ const OwnerDashboard = () => {
 	const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
 	const [confirmationMessage, setConfirmationMessage] = useState(null);
 	const [selectedSpotID, setSelectedSpotID] = useState(null);
-	const [addSpotOpen, setAddSpotOpen] = useState(false);
 
 	// Fetch profile and spots
 	const fetchProfile = async () => {
@@ -179,7 +179,7 @@ const OwnerDashboard = () => {
 							<Typography variant="h6" fontWeight="bold" sx={{ flexGrow: 1 }}>
 								My Spots
 							</Typography>
-							<Button variant="text" color="secondary" onClick={() => setAddSpotOpen(true)} sx={{ ml: 1 }}>
+							<Button variant="text" color="secondary" onClick={() => navigate("/addspotowner")} sx={{ ml: 1 }}>
 								Add Spot
 							</Button>
 						</Box>
@@ -193,6 +193,7 @@ const OwnerDashboard = () => {
 										sx={{
 											mb: 2,
 											borderRadius: 2,
+											bgcolor:"lightgray"
 										}}
 									>
 										<CardContent>
@@ -200,7 +201,7 @@ const OwnerDashboard = () => {
 												{spot.title}
 											</Typography>
 											<Typography variant="body2" color="text.secondary">
-												{spot.address}
+											📍	{spot.address}
 											</Typography>
 											<Typography variant="body2" color="text.secondary">
 												<strong>Open Time:</strong> {spot.openTime}
@@ -215,8 +216,8 @@ const OwnerDashboard = () => {
 												<strong>Open Days:</strong> {spot.openDays}
 											</Typography>
 											<Typography variant="body2" fontWeight="bold" color="success.main" sx={{ mt: 1 }}>
-												Earnings: <CurrencyRupee fontSize="small" />
-												{spot.totalEarning}
+												Earnings: ₹  
+												 {" " +spot.totalEarning}
 											</Typography>
 										</CardContent>
 										<CardActions sx={{ justifyContent: "space-between" }}>
@@ -276,21 +277,6 @@ const OwnerDashboard = () => {
 					spot_id={selectedSpot.id}
 				/>
 			)}
-
-			{/* Add Spot Modal */}
-			<Dialog
-				open={addSpotOpen}
-				onClose={() => {
-					setAddSpotOpen(false);
-					fetchUserSpots();
-				}}
-				maxWidth="md"
-				fullWidth
-				sx={{ m: 2, minHeight: "100vh", p: 2 }}
-			>
-				{/* Pass fetchUserSpots to Spot so it can refresh the list after adding */}
-				<AddSpotOwner onSpotAdded={fetchUserSpots} />
-			</Dialog>
 
 			{/* Confirmation Dialog */}
 			<ConfirmationDialogBox

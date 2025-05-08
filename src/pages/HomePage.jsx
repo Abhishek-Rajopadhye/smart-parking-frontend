@@ -44,12 +44,12 @@ import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import parking from "../assets/Images/parkingSpace.jpg";
 import { useNavigate } from "react-router-dom";
 import { MapContext } from "../context/MapContext";
-import { AddSpotUser } from "./AddSpotUser";
 import SearchBar from "../components/SearchBar";
 import { addMinutes, setMinutes } from "date-fns";
 import NearByParkings from "../components/NearByParkings";
 import PastBooking from "../components/PastBooking";
 import { AuthContext } from "../context/AuthContext";
+import  { AddSpotUser }  from "./AddSpotUser";
 
 /**
  * Displays a loading indicator with message while the app initializes
@@ -61,7 +61,7 @@ const LoadingMessage = () => (
 	<Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
 		<Box sx={{ textAlign: "center" }}>
 			<DirectionsCarIcon sx={{ fontSize: 60, color: "primary.main", mb: 2 }} />
-			<Typography variant="h6">Loading Smart Parking</Typography>
+			<Typography variant="h6">Loading  Parking spots</Typography>
 			<Typography variant="body2" color="text.secondary">
 				Finding the best spots for you...
 			</Typography>
@@ -141,78 +141,41 @@ const SkeletonCard = () => (
  */
 const BookingSkeleton = () => {
 	return (
-		<React.Fragment>
-			<Grid container spacing={2}>
-				{[1, 2, 3, 4].map((item) => (
-					<Grid item xs={12} sm={6} key={item}>
-						<Card variant="outlined" sx={{ height: "100%" }}>
-							<CardContent>
-								<Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-									<Skeleton variant="text" width="60%" height={32} />
-									<Skeleton variant="rectangular" width={60} height={24} />
-								</Box>
-								<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-									<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
-									<Skeleton variant="text" width="90%" height={24} />
-								</Box>
-								<Divider sx={{ my: 1.5 }} />
-								<Grid container spacing={1}>
-									{[1, 2, 3, 4].map((subItem) => (
-										<Grid item xs={6} key={subItem}>
-											<Box sx={{ display: "flex", alignItems: "center" }}>
-												<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
-												<Skeleton variant="text" width="80%" height={24} />
-											</Box>
-										</Grid>
-									))}
-								</Grid>
-								<Box sx={{ mt: 1 }}>
-									<Skeleton variant="text" width="40%" height={24} />
-								</Box>
-							</CardContent>
-							<CardActions sx={{ p: 2, pt: 0 }}>
-								<Skeleton variant="rectangular" width="100%" height={36} />
-							</CardActions>
-						</Card>
-					</Grid>
-				))}
-			</Grid>
-			<Grid container spacing={2}>
-				{[1, 2, 3, 4].map((item) => (
-					<Grid item xs={12} sm={6} key={item}>
-						<Card variant="outlined" sx={{ height: "100%" }}>
-							<CardContent>
-								<Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-									<Skeleton variant="text" width="60%" height={32} />
-									<Skeleton variant="rectangular" width={60} height={24} />
-								</Box>
-								<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-									<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
-									<Skeleton variant="text" width="90%" height={24} />
-								</Box>
-								<Divider sx={{ my: 1.5 }} />
-								<Grid container spacing={1}>
-									{[1, 2, 3, 4].map((subItem) => (
-										<Grid item xs={6} key={subItem}>
-											<Box sx={{ display: "flex", alignItems: "center" }}>
-												<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
-												<Skeleton variant="text" width="80%" height={24} />
-											</Box>
-										</Grid>
-									))}
-								</Grid>
-								<Box sx={{ mt: 1 }}>
-									<Skeleton variant="text" width="40%" height={24} />
-								</Box>
-							</CardContent>
-							<CardActions sx={{ p: 2, pt: 0 }}>
-								<Skeleton variant="rectangular" width="100%" height={36} />
-							</CardActions>
-						</Card>
-					</Grid>
-				))}
-			</Grid>
-		</React.Fragment>
+		<Grid container spacing={2}>
+			{[1, 2, 3, 4].map((item) => (
+				<Grid item xs={12} sm={6} key={item}>
+					<Card variant="outlined" sx={{ height: "100%" }}>
+						<CardContent>
+							<Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+								<Skeleton variant="text" width="60%" height={32} />
+								<Skeleton variant="rectangular" width={60} height={24} />
+							</Box>
+							<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+								<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+								<Skeleton variant="text" width="90%" height={24} />
+							</Box>
+							<Divider sx={{ my: 1.5 }} />
+							<Grid container spacing={1}>
+								{[1, 2, 3, 4].map((subItem) => (
+									<Grid item xs={6} key={subItem}>
+										<Box sx={{ display: "flex", alignItems: "center" }}>
+											<Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+											<Skeleton variant="text" width="80%" height={24} />
+										</Box>
+									</Grid>
+								))}
+							</Grid>
+							<Box sx={{ mt: 1 }}>
+								<Skeleton variant="text" width="40%" height={24} />
+							</Box>
+						</CardContent>
+						<CardActions sx={{ p: 2, pt: 0 }}>
+							<Skeleton variant="rectangular" width="100%" height={36} />
+						</CardActions>
+					</Card>
+				</Grid>
+			))}
+		</Grid>
 	);
 };
 
@@ -386,12 +349,8 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 			return;
 		}
 
-		// Add console log to check if this function is being called
-		//console.log("Fetching predictions for:", value);
-
 		// Clear previous timeout to implement debouncing
 		if (window.searchTimeout) {
-			clearTimeout(window.searchTimeout);
 			clearTimeout(window.searchTimeout);
 		}
 
@@ -517,7 +476,6 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 			return;
 		}
 		updateRecentSearches(searchAddress);
-		console.log("Selected Date:", selectedDate.toDateString());
 		const weekDay = selectedDate.toLocaleDateString("en-US", { weekday: "short" });
 		setFilters((prev) => ({ ...prev, available_days: [weekDay] }));
 
@@ -578,13 +536,13 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 					borderRadius: isMobile ? 2 : 1,
 					py: isMobile ? 1.5 : 1.25,
 				}}
-				onClick={() => navigate("/addspot")}
+				onClick={() => navigate("/addspotuser")}
 				variant="outlined"
 				fullWidth
 				disableElevation
 				startIcon={<IoLocationSharp size={20} />}
 			>
-				Add Parking Spot
+				Add Community Parking Spot
 			</Button>
 		</>
 	);
@@ -617,7 +575,7 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 				<Box sx={{ bgcolor: "#fff", py: 4, px: 2 }}>
 					{/* Header for mobile */}
 					<Typography variant="h5" fontWeight="bold" textAlign="center" gutterBottom color="primary.main">
-						Smart Parking
+						BookMy Parking
 					</Typography>
 					<Typography variant="subtitle2" textAlign="center" mb={4} color="text.secondary">
 						Find & reserve parking spots in seconds
@@ -663,10 +621,10 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 
 					{user ? <PastBooking user={user} /> : <BookingSkeleton />}
 
-					{/* How Smart Parking Works Section */}
+					{/* How  Parking Works Section */}
 					<Box sx={{ mt: 5, mb: 3 }}>
 						<Typography variant="h6" fontWeight="bold" textAlign="center" mb={3} color="text.primary">
-							How Smart Parking Works
+							How BookMy Parking Works
 						</Typography>
 
 						<Grid container direction="row" spacing={2} justifyContent="center">
@@ -775,7 +733,7 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 					{/* How it works */}
 					<Box sx={{ bgcolor: "#fff", py: 10 }}>
 						<Typography variant="h5" fontWeight="bold" textAlign="center" mb={6} color="text.primary">
-							How Smart Parking Works
+							How BookMy Parking Works
 						</Typography>
 						<Grid container spacing={6} justifyContent="center">
 							{[
