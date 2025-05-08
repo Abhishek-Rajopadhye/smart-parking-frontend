@@ -59,7 +59,7 @@ const MarkerSkeleton = () => (
 
 
 const MarkerCard = ({ markers, origin, latlng }) => {
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
 	const [sortedMarkers, setSortedMarkers] = useState([]);
 	const [sortType, setSortType] = useState("price");
@@ -154,6 +154,27 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 		}
 	}, [sortType, sortedMarkers]);
 
+		/**
+   * Load more markers when scrolling
+   */
+		const loadMoreMarkers = () => {
+			if (loading) return;
+	
+			setLoading(true);
+	
+			// Small timeout to prevent too rapid loading
+			setTimeout(() => {
+				const nextPage = page + 1;
+				const newVisibleMarkers = [
+					...visibleMarkers,
+					...sortedMarkers.slice(page * ITEMS_PER_PAGE, nextPage * ITEMS_PER_PAGE),
+				];
+	
+				setVisibleMarkers(newVisibleMarkers);
+				setPage(nextPage);
+				setLoading(false);
+			}, 300);
+		};
 
 	/**
    * Set up intersection observer for infinite scrolling
@@ -182,27 +203,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 	}, [visibleMarkers, sortedMarkers, loading, loadMoreMarkers]);
 
 
-	/**
-   * Load more markers when scrolling
-   */
-	const loadMoreMarkers = () => {
-		if (loading) return;
 
-		setLoading(true);
-
-		// Small timeout to prevent too rapid loading
-		setTimeout(() => {
-			const nextPage = page + 1;
-			const newVisibleMarkers = [
-				...visibleMarkers,
-				...sortedMarkers.slice(page * ITEMS_PER_PAGE, nextPage * ITEMS_PER_PAGE),
-			];
-
-			setVisibleMarkers(newVisibleMarkers);
-			setPage(nextPage);
-			setLoading(false);
-		}, 300);
-	};
   /**
    * Sort markers by specified criteria
    * 
