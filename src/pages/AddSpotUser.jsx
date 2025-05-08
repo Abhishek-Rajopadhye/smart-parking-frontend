@@ -17,7 +17,7 @@ import axios from "axios";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-
+import { useNavigate } from "react-router";
 import "../style/spot.css";
 import MapDialog from "../components/MapDialog";
 import { BACKEND_URL } from "../const";
@@ -26,6 +26,7 @@ const steps = ["Instruction", "Spot Details", "Instructions & Submit"];
 const AddSpotUser = () => {
 	const [activeStep, setActiveStep] = useState(0);
 	// Spot Details States
+	const navigate = useNavigate();
 	const [spotAdded, setSpotAdded] = useState(false);
 	const [mapOpen, setMapOpen] = useState(false);
 	const [location, setLocation] = useState(null);
@@ -199,6 +200,14 @@ const AddSpotUser = () => {
 					Fri: false,
 					Sat: false,
 				});
+				setOpenSnackbar({
+					open: true,
+					message: "Spot Added Successfully",
+					severity: "success",
+				});
+				setTimeout(() => {
+					navigate("/homepage");
+				}, 3000);
 			}
 		} catch (error) {
 			console.error(error);
@@ -294,7 +303,7 @@ const AddSpotUser = () => {
 				alignItems: "center",
 				px: 2,
 				py: 4,
-				backgroundColor: "#f9f9f9",
+				backgroundColor: "#ffff",
 			}}
 		>
 			<Box
@@ -557,6 +566,13 @@ const AddSpotUser = () => {
 						</Box>
 					</Box>
 				)}
+				{spotAdded && (
+									<Box>
+										<Typography variant="h6" color="green" textAlign="center">
+											Spot Added Successfully!
+										</Typography>
+									</Box>
+								)}
 				{/* Step 3: Instructions + Submit */}
 				{activeStep === 2 && (
 					<Box>

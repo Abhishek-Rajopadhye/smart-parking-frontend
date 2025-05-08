@@ -391,7 +391,7 @@ const AddSpotOwner = ({ onCancel }) => {
 					p: 4,
 				}}
 			>
-				<Grid item xs={12}>
+				<Grid item xs={12}  sx={{color:"black"}}>
 					<Typography variant="h5" gutterBottom textAlign="center">
 						Add a Parking Spot
 					</Typography>
@@ -404,7 +404,7 @@ const AddSpotOwner = ({ onCancel }) => {
 					))}
 				</Stepper>
 				{activeStep === 0 && (
-					<Box>
+					<Box  sx={{color:"black"}}>
 						<Typography gutterBottom>Here are the steps to add a new parking spot:</Typography>
 						<Box component="ul" pl={2}>
 							<li>Select a location using the "Location" button and click on the map.</li>
@@ -570,7 +570,7 @@ const AddSpotOwner = ({ onCancel }) => {
 											<Grid item key={day}>
 												<Button
 													variant={openDays[day] ? "contained" : "outlined"}
-													color={openDays[day] ? "primary" : "default"}
+													color= "primary"
 													onClick={() => toggleDay(day)}
 												>
 													{day}
@@ -660,7 +660,7 @@ const AddSpotOwner = ({ onCancel }) => {
 								</Button>
 								{documents[key] && (
 									<Box mt={1}>
-										<Typography variant="body2">
+										<Typography variant="body2"  sx={{color:"black"}}>
 											📄 {documents[key].name} -{" "}
 											<a
 												href={URL.createObjectURL(documents[key])}
@@ -701,13 +701,10 @@ const AddSpotOwner = ({ onCancel }) => {
 				{/* Step 3: Instructions + Submit */}
 				{activeStep === 3 && (
 					<Box>
-						<Typography variant="body1" mb={2}>
+						<Typography variant="body1" mb={2}  sx={{color:"black"}}>
 							Please review your details and ensure all information and documents are correct. Once submitted, you
 							won’t be able to edit. Document verification may take up to 24 hours. After verification, Spot will
 							be live on the platform.
-						</Typography>
-						<Typography variant="body2" color="textSecondary">
-							Spot: {spotName}, Price: ₹{spotPrice}, Slots: {totalSlots}
 						</Typography>
 						<Grid item xs={12} mt={4}>
 							<Box display="flex" justifyContent="space-between">
