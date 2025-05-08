@@ -196,7 +196,7 @@ const NearByParkings = ({ origin, onSpotSelect, isMobile, selectedDate, startTim
 
 										<Chip
 											size="small"
-											label={`${spot.available_slots} spots`}
+											label={`${spot.available_slots} slots`}
 											color={spot.available_slots > 2 ? "success" : "warning"}
 											sx={{ fontWeight: "bold" }}
 										/>
