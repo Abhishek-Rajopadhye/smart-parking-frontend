@@ -127,12 +127,12 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 				<Table stickyHeader sx={{ width: "85vw", p: "2px" }}>
 					<TableHead>
 						<TableRow sx={{ backgroundColor: "#f5f5f5" }}>
-							<TableCell sx={{ maxWidth: "15px" }} />
-							<TableCell sx={{ fontWeight: "bold", maxWidth: "15px" }}>Name</TableCell>
-							<TableCell sx={{ fontWeight: "bold" }}>Slots Booked</TableCell>
-							<TableCell sx={{ fontWeight: "bold" }}>Cost</TableCell>
-							<TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
-							<TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
+							<TableCell sx={{ maxWidth: "10px" }} />
+							<TableCell sx={{ fontWeight: "bold", minWidth: "15px" }}>Name</TableCell>
+							<TableCell sx={{ fontWeight: "bold", minWidth: "15px" }}>Slots Booked</TableCell>
+							<TableCell sx={{ fontWeight: "bold" , minWidth: "15px"}}>Cost</TableCell>
+							<TableCell sx={{ fontWeight: "bold", minWidth: "15px" }}>Status</TableCell>
+							<TableCell sx={{ fontWeight: "bold", minWidth: "15px" }}>Actions</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>

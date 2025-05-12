@@ -42,7 +42,7 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 	const [confirmationMessage, setConfirmationMessage] = useState(null);
 	const [action, setAction] = useState(null);
 	const [formData, setFormData] = useState({
-		spot_id: -1,
+		spot_id: spot_id,
 		spot_title: "",
 		spot_address: "",
 		spot_description: "",
