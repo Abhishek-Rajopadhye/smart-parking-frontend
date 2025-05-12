@@ -94,6 +94,8 @@ const OwnerDashboard = () => {
 
 	const handleCloseDialog = () => setBookingHistoryDialogBoxOpen(false);
 
+	const toggleEditSpot = () => setEditSpotOpen(!editSpotOpen);
+
 	const handleEditSpot = async (spotId, updated_spot) => {
 		try {
 			const response = await axios.put(`${BACKEND_URL}/spots/${spotId}`, updated_spot);
@@ -104,7 +106,7 @@ const OwnerDashboard = () => {
 		} catch (error) {
 			console.error("Error updating spot:", error);
 		}
-		setBookingHistoryDialogBoxOpen(false);
+		toggleEditSpot();
 	};
 
 	const handleDeleteSpot = async (spotId) => {
@@ -112,6 +114,7 @@ const OwnerDashboard = () => {
 			const response = await axios.delete(`${BACKEND_URL}/spots/${spotId}`);
 			if (response.status === 200) {
 				fetchUserSpots();
+				setSelectedSpotID(null);
 			}
 		} catch (error) {
 			console.error("Error deleting spot:", error);
@@ -133,10 +136,8 @@ const OwnerDashboard = () => {
 		setConfirmationDialogOpen(false);
 		setConfirmationMessage(null);
 		handleDeleteSpot(selectedSpotID);
-		setSelectedSpotID(null);
 	};
 
-	const toggleEditSpot = () => setEditSpotOpen(!editSpotOpen);
 
 	return (
 		<Box sx={{ flexGrow: 1, mt: 10, px: 2 }}>

@@ -61,7 +61,7 @@ const LoadingMessage = () => (
 	<Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
 		<Box sx={{ textAlign: "center" }}>
 			<DirectionsCarIcon sx={{ fontSize: 60, color: "primary.main", mb: 2 }} />
-			<Typography variant="h6">Loading  Parking spots</Typography>
+			<Typography variant="h6">Loading Parking spots</Typography>
 			<Typography variant="body2" color="text.secondary">
 				Finding the best spots for you...
 			</Typography>
