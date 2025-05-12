@@ -90,6 +90,7 @@ const PastBooking = ({ user, isMobile }) => {
 				const response = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
 				if (response.status === 200) {
 					// Sort by latest and pick top 4
+					
 					const sorted = response.data.sort((a, b) => b.id - a.id).slice(0, 4);
 					setRecentBookings(sorted);
 				}
@@ -224,13 +225,7 @@ const PastBooking = ({ user, isMobile }) => {
 												</Typography>
 											</Box>
 
-										{/* spot address  */}
-										<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-											<LocationOnOutlined fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
-											<Typography variant="body2" color="text.secondary">
-												{booking.spot_address}
-											</Typography>
-										</Box>
+										
 
 										<Divider sx={{ my: 1.5 }} />
 
@@ -256,7 +251,7 @@ const PastBooking = ({ user, isMobile }) => {
 											<Grid item xs={6}>
 												<Box sx={{ display: "flex", alignItems: "center" }}>
 													<PaymentOutlined fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
-													<Typography variant="body2">₹{booking.payment_amount}</Typography>
+													<Typography variant="body2">₹ {booking.payment_amount}</Typography>
 												</Box>
 											</Grid>
 											<Grid item xs={6}>
