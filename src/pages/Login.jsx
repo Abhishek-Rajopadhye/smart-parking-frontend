@@ -1,7 +1,7 @@
 import { Button, Container, Typography, Box, Paper, SvgIcon } from "@mui/material";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import GoogleIcon from "../assets/google-color-icon.svg";
+
 /**
  * Login page component for BookMy Parking.
  *
@@ -22,10 +22,9 @@ const Login = () => {
 			maxWidth="sm"
 			sx={{
 				display: "flex",
-				justifyContent: "center",
 				alignItems: "center",
 				height: "100vh",
-				width: "100vw",
+				width: "95vw",
 			}}
 		>
 			<Paper
