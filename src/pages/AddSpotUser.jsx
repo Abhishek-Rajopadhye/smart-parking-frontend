@@ -75,48 +75,57 @@ const AddSpotUser = () => {
 	 * @returns
 	 */
 	const handleImageChange = (event) => {
-		const files = Array.from(event.target.files);
-		const maxSize = 2 * 1024 * 1024;
+		try {
+			const files = Array.from(event.target.files);
+			const maxSize = 2 * 1024 * 1024;
 
-		const newImages = [];
-		const newPreviews = [];
-		let validateFile = [];
-		for (let file of files) {
-			if (file.size <= maxSize) validateFile.push(file);
-		}
-		if (validateFile.length == 0) {
+			const newImages = [];
+			const newPreviews = [];
+			let validateFile = [];
+			for (let file of files) {
+				if (file.size <= maxSize) validateFile.push(file);
+			}
+			if (validateFile.length == 0) {
+				setOpenSnackbar({
+					open: true,
+					message: "Images Should be less than 2MB",
+					severity: "error",
+				});
+				return;
+			}
+			for (let file of validateFile) {
+				const reader = new FileReader();
+				reader.onloadend = () => {
+					newImages.push(reader.result.split(",")[1]);
+					newPreviews.push(reader.result);
+
+					if (newImages.length === validateFile.length) {
+						setImages((prev) => [...prev, ...newImages]);
+						setImagePreviews((prev) => [...prev, ...newPreviews]);
+
+						setOpenSnackbar({
+							open: true,
+							message: "Photos uploaded successfully",
+							severity: "success",
+						});
+					}
+				};
+				reader.readAsDataURL(file);
+			}
+
+			if (files.length != validateFile.length) {
+				setOpenSnackbar({
+					open: true,
+					message: "Some files were skipped (over 2MB)",
+					severity: "warning",
+				});
+			}
+		} catch (error) {
+			console.error(error);
 			setOpenSnackbar({
 				open: true,
-				message: "Images Should be less than 2MB",
+				message: error,
 				severity: "error",
-			});
-			return;
-		}
-		for (let file of validateFile) {
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				newImages.push(reader.result.split(",")[1]);
-				newPreviews.push(reader.result);
-
-				if (newImages.length === validateFile.length) {
-					setImages((prev) => [...prev, ...newImages]);
-					setImagePreviews((prev) => [...prev, ...newPreviews]);
-
-					setOpenSnackbar({
-						open: true,
-						message: "Photos uploaded successfully",
-						severity: "success",
-					});
-				}
-			};
-			reader.readAsDataURL(file);
-		}
-
-		if (files.length != validateFile.length) {
-			setOpenSnackbar({
-				open: true,
-				message: "Some files were skipped (over 2MB)",
-				severity: "warning",
 			});
 		}
 	};
@@ -128,7 +137,8 @@ const AddSpotUser = () => {
 	 */
 
 	const validateForm = () => {
-		setErrorHandling({
+		try {
+			setErrorHandling({
 			spotTitle: false,
 			address: false,
 			openTime: false,
@@ -184,6 +194,14 @@ const AddSpotUser = () => {
 			return msg;
 		}
 		return total;
+		} catch (error) {
+			console.error(error);
+			setOpenSnackbar({
+				open: true,
+				message: error,
+				severity: "error",
+			});
+		}
 	};
 
 	/**
@@ -191,12 +209,21 @@ const AddSpotUser = () => {
 	 * @param {*} index - index of the image to be deleted
 	 */
 	const handleDeleteImage = (index) => {
-		const newImages = [...images];
-		const newPreviews = [...imagePreviews];
-		newImages.splice(index, 1);
-		newPreviews.splice(index, 1);
-		setImages(newImages);
-		setImagePreviews(newPreviews);
+		try {
+			const newImages = [...images];
+			const newPreviews = [...imagePreviews];
+			newImages.splice(index, 1);
+			newPreviews.splice(index, 1);
+			setImages(newImages);
+			setImagePreviews(newPreviews);
+		} catch (error) {
+			console.error(error);
+			setOpenSnackbar({
+				open: true,
+				message: error,
+				severity: "error",
+			});
+		}
 	};
 
 	/**
@@ -283,69 +310,78 @@ const AddSpotUser = () => {
 	 * @returns
 	 */
 	const handleNext = () => {
-		if (activeStep === 1) {
-			setSpotAdded(false);
-			const error = validateForm();
-			if (error)
-				if (error && typeof error === "string") {
-					setOpenSnackbar({ open: true, message: error, severity: "error" });
+		try {
+			if (activeStep === 1) {
+				setSpotAdded(false);
+				const error = validateForm();
+				if (error)
+					if (error && typeof error === "string") {
+						setOpenSnackbar({ open: true, message: error, severity: "error" });
+						return;
+					}
+				setTotalSlots(error);
+				if (
+					!(
+						location.lat >= 6.554607 &&
+						location.lat <= 35.674545 &&
+						location.lng >= 68.162385 &&
+						location.lng <= 97.395561
+					)
+				) {
+					setOpenSnackbar({
+						open: true,
+						message: "Please select a location within India",
+						severity: "error",
+					});
+
 					return;
 				}
-			setTotalSlots(error);
-			if (
-				!(
-					location.lat >= 6.554607 &&
-					location.lat <= 35.674545 &&
-					location.lng >= 68.162385 &&
-					location.lng <= 97.395561
-				)
-			) {
-				setOpenSnackbar({
-					open: true,
-					message: "Please select a location within India",
-					severity: "error",
-				});
-
-				return;
-			}
-			if (parseInt(openTime.split(":")[0]) > parseInt(closeTime.split(":")[0])) {
-				setOpenSnackbar({
-					open: true,
-					message: "Enter Valid Open and Close time",
-					severity: "error",
-				});
-				return;
-			} else if (
-				parseInt(openTime.split(":")[0]) == parseInt(closeTime.split(":")[0]) &&
-				parseInt(openTime.split(":")[1]) >= parseInt(closeTime.split(":")[1])
-			) {
-				setOpenSnackbar({
-					open: true,
-					message: "Enter Valid Open and Close time",
-					severity: "error",
-				});
-				return;
-			}
-
-			let open_days = [];
-
-			for (const day in openDays) {
-				if (openDays[day]) {
-					open_days.push(day);
+				if (parseInt(openTime.split(":")[0]) > parseInt(closeTime.split(":")[0])) {
+					setOpenSnackbar({
+						open: true,
+						message: "Enter Valid Open and Close time",
+						severity: "error",
+					});
+					return;
+				} else if (
+					parseInt(openTime.split(":")[0]) == parseInt(closeTime.split(":")[0]) &&
+					parseInt(openTime.split(":")[1]) >= parseInt(closeTime.split(":")[1])
+				) {
+					setOpenSnackbar({
+						open: true,
+						message: "Enter Valid Open and Close time",
+						severity: "error",
+					});
+					return;
 				}
-			}
-			setOpenDay(open_days);
-			let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
-			let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
-			let new_open_time = openTime + " " + open;
-			let new_close_time = closeTime + " " + close;
-			setOpenTime(new_open_time);
-			setCloseTime(new_close_time);
-			setTotalSlots(parseInt(totalSlots));
-		}
 
-		if (activeStep < steps.length - 1) setActiveStep((prev) => prev + 1);
-		else handleSubmit();
+				let open_days = [];
+
+				for (const day in openDays) {
+					if (openDays[day]) {
+						open_days.push(day);
+					}
+				}
+				setOpenDay(open_days);
+				let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
+				let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
+				let new_open_time = openTime + " " + open;
+				let new_close_time = closeTime + " " + close;
+				setOpenTime(new_open_time);
+				setCloseTime(new_close_time);
+				setTotalSlots(parseInt(totalSlots));
+			}
+
+			if (activeStep < steps.length - 1) setActiveStep((prev) => prev + 1);
+			else handleSubmit();
+		} catch (error) {
+			console.error(error);
+			setOpenSnackbar({
+				open: true,
+				message: error,
+				severity: "error",
+			});
+		}
 	};
 
 	const handleBack = () => setActiveStep((prev) => prev - 1);

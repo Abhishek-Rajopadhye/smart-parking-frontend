@@ -19,7 +19,7 @@ describe("Login", () => {
 			</AuthContext.Provider>
 		);
 
-		expect(screen.getByText("Welcome to Smart Parking")).toBeInTheDocument();
+		expect(screen.getByText("Welcome to BookMy Parking")).toBeInTheDocument();
 		expect(screen.getByText("Please log in to continue")).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: /Login as User/i })).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: /Login as Owner/i })).toBeInTheDocument();
