@@ -15,8 +15,8 @@ const appTheme = createTheme({
 			contrastText: "#fff",
 		},
 		background: {
-			default: "#f4f6f8", // Very light neutral grey
-			paper: "#fff", // Preserved white
+			default: "#ffffff", // Very light neutral grey
+			paper: "#ffffff", // Preserved white
 		},
 		text: {
 			primary: "#1c1c1e", // Near-black for strong contrast

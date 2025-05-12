@@ -434,8 +434,7 @@ const AddSpotOwner = ({ onCancel }) => {
 				justifyContent: "center",
 				alignItems: "center",
 				px: 2,
-				// py: 4,
-				backgroundColor: "#ffff",
+				backgroundColor: "#ffffff",
 			}}
 		>
 			<Box
@@ -732,7 +731,7 @@ const AddSpotOwner = ({ onCancel }) => {
 								</Button>
 								{documents[key] && (
 									<Box mt={1}>
-										<Typography variant="body2" color="black">
+										<Typography variant="body2"  sx={{color:"black"}}>
 											📄 {documents[key].name} -{" "}
 											<a
 												href={URL.createObjectURL(documents[key])}

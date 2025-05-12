@@ -60,6 +60,17 @@ const NearByParkings = ({ origin, onSpotSelect, isMobile, selectedDate, startTim
 					},
 					(response, status) => {
 						if (status === "OK" && response?.rows?.length > 0) {
+							const getCurrentTimeInMinutes = () => {
+								const now = new Date();
+								return now.getHours() * 60 + now.getMinutes();
+							};
+
+							function parseTimeWithAMPM(timeStr) {
+								const time = timeStr.split(" ")[0];
+								const [hours, minutes] = time.split(":").map(Number);
+								return hours * 60 + minutes;
+							}
+
 							const updated = fetchedMarkers.map((marker, index) => {
 								const element = response.rows[0]?.elements?.[index];
 
@@ -71,7 +82,27 @@ const NearByParkings = ({ origin, onSpotSelect, isMobile, selectedDate, startTim
 								};
 							});
 
-							const sorted = updated.sort((a, b) => a.rawDistance - b.rawDistance).slice(0, 4);
+							const currentTimeMinutes = getCurrentTimeInMinutes();
+
+							const todayDay = new Date().toLocaleDateString("en-US", { weekday: "short" });
+
+							//filter by today day
+							const filteredByDay = updated.filter((marker) => {
+								const daysStr = marker.available_days[0]; // get the first string
+								const availableDaysArray = daysStr.split(",").map((d) => d.trim());
+								console.log("marker days ", availableDaysArray.includes(todayDay));
+								return availableDaysArray.includes(todayDay);
+							});
+
+							// filter by current time
+							const filteredNearbyMarker = filteredByDay.filter((spot) => {
+								const open = parseTimeWithAMPM(spot.open_time);
+								const close = parseTimeWithAMPM(spot.close_time);
+								return spot.available_slots > 0 && open <= currentTimeMinutes && close >= currentTimeMinutes;
+							});
+
+							//	filter by distance
+							const sorted = filteredNearbyMarker.sort((a, b) => a.rawDistance - b.rawDistance).slice(0, 4);
 							setSortedMarkers(sorted);
 						} else {
 							console.error("Distance Matrix failed:", status, response);
@@ -196,7 +227,7 @@ const NearByParkings = ({ origin, onSpotSelect, isMobile, selectedDate, startTim
 
 										<Chip
 											size="small"
-											label={`${spot.available_slots} spots`}
+											label={`${spot.available_slots} slots`}
 											color={spot.available_slots > 2 ? "success" : "warning"}
 											sx={{ fontWeight: "bold" }}
 										/>
