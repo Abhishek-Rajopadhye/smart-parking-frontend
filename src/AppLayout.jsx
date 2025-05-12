@@ -153,7 +153,9 @@ const AppLayout = () => {
 								startIcon={<KeyboardBackspaceIcon />}
 								onClick={() => navigate(-1)}
 							/>
-						):(<Box sx={{ width: 48, display: "inline-block" }} />)}
+						) : (
+							<Box sx={{ width: 48, display: "inline-block" }} />
+						)}
 						<Typography variant="h6" sx={{ flexGrow: 1, justifyContent: "center", textAlign: "center" }}>
 							{getPageTitle()}
 						</Typography>
@@ -198,7 +200,7 @@ const AppLayout = () => {
 						</Menu>
 					</Toolbar>
 				</AppBar>
-				<Box variant="main" sx={{ flex: 1, mt: 8, width: "100vw" }}>
+				<Box variant="main" sx={{ flex: 1, mt: 6, width: "100vw" }}>
 					<Routes>
 						<Route path="/ownerdashboard" element={<OwnerDashboard />} />
 						<Route path="/validation" element={<Validation />} />
@@ -268,7 +270,7 @@ const AppLayout = () => {
 				</Toolbar>
 			</AppBar>
 
-			<Box variant="main" sx={{ flex: 1, mt: 8, width: "100vw" }}>
+			<Box variant="main" sx={{ flex: 1, mt: 6, width: "100vw" }}>
 				<Routes>
 					<Route path="/account-details" element={<Profile />} />
 					<Route
