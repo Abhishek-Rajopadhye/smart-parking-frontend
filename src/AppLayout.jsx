@@ -15,6 +15,16 @@ import Validation from "./pages/Validation";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import { AddSpotOwner } from "./pages/AddSpotOwner";
 
+/**
+ * AppLayout component that provides the main application layout, navigation bar, and route management.
+ *
+ * @component
+ * @returns {JSX.Element} The AppLayout component.
+ *
+ * Handles authentication context, navigation, and conditional rendering of routes and navigation elements
+ * based on user type (e.g., Owner or regular user). Displays the top AppBar with navigation buttons,
+ * user avatar, and menu. Renders the appropriate page content based on the current route.
+ */
 const AppLayout = () => {
 	const authContextValue = useContext(AuthContext);
 	const { user, logout } = authContextValue;
