@@ -13,6 +13,8 @@ import {
 	IconButton,
 	Stack,
 } from "@mui/material";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import InfoIcon from "@mui/icons-material/Info";
 import { useState } from "react";
 import React, { useContext } from "react";
 import axios from "axios";
@@ -32,6 +34,15 @@ const AddSpotOwner = ({ onCancel }) => {
 	const [activeStep, setActiveStep] = useState(0);
 
 	// Spot Details States
+	const [errorHandling, setErrorHandling] = useState({
+		spotTitle: false,
+		address: false,
+		openTime: false,
+		closeTime: false,
+		hourlyRate: false,
+		totalSlots: false,
+		openDays: false,
+	});
 	const navigate = useNavigate();
 	const [spotAdded, setSpotAdded] = useState(false);
 	const [spotName, setSpotName] = useState("");
@@ -74,7 +85,7 @@ const AddSpotOwner = ({ onCancel }) => {
 
 	// Document Labels for UI display
 	const docLabels = [
-		{ key: "doc1", label: "Identification Document (PDF)" },
+		{ key: "doc1", label: "Identification Document (AadharCard, PanCard, PassPort..)" },
 		{ key: "doc2", label: "Proof Of Ownership Document (PDF)" },
 		{ key: "doc3", label: "Optional Supporting Document (PDF)" },
 	];
@@ -142,15 +153,61 @@ const AddSpotOwner = ({ onCancel }) => {
 	 */
 
 	const validateForm = () => {
+		setErrorHandling({
+			spotTitle: false,
+			address: false,
+			openTime: false,
+			closeTime: false,
+			hourlyRate: false,
+			totalSlots: false,
+			openDays: false,
+		});
 		const total = parseInt(totalSlots);
-		if (!spotTitle.trim()) return "Spot Title is required";
-		if (!spotAddress.trim()) return "Address is required";
-		if (location == null) return "Please select a location to proceed";
-		if (!openTime) return "Open Time is required";
-		if (!closeTime) return "Close Time is required";
-		if (!hourlyRate || hourlyRate <= 0) return "Hourly Rate must be positive";
-		if (!totalSlots || totalSlots <= 0) return "Total Slots must be a positive number";
-		if (!Object.values(openDays).includes(true)) return "At least one open day must be selected";
+		let flag = false,
+			msg = "Required fields are missing";
+		if (!spotTitle.trim()) {
+			setErrorHandling((prev) => ({ ...prev, spotTitle: true }));
+			//return "Spot Title is required";
+			flag = true;
+		}
+		if (!spotAddress.trim()) {
+			setErrorHandling((prev) => ({ ...prev, address: true }));
+			//return "Spot Address is required";
+			flag = true;
+		}
+		if (location == null) {
+			setErrorHandling((prev) => ({ ...prev, location: true }));
+			msg = "Please select a location to proceed";
+			flag = true;
+		}
+		if (!openTime) {
+			setErrorHandling((prev) => ({ ...prev, openTime: true }));
+			// return "Open Time is required";
+			flag = true;
+		}
+		if (!closeTime) {
+			setErrorHandling((prev) => ({ ...prev, closeTime: true }));
+			// return "Close Time is required";
+			flag = true;
+		}
+		if (!hourlyRate || hourlyRate <= 0) {
+			setErrorHandling((prev) => ({ ...prev, hourlyRate: true }));
+			//return "Hourly Rate must be positive";
+			flag = true;
+		}
+		if (!totalSlots || totalSlots <= 0) {
+			setErrorHandling((prev) => ({ ...prev, totalSlots: true }));
+			//return "Total Slots must be a positive number";
+			flag = true;
+		}
+		if (!Object.values(openDays).includes(true)) {
+			setErrorHandling((prev) => ({ ...prev, openDays: true }));
+			if (!flag) msg = "At least one open day must be selected";
+			flag = true;
+		}
+		if (flag) {
+			return msg;
+		}
 		return total;
 	};
 
@@ -246,7 +303,6 @@ const AddSpotOwner = ({ onCancel }) => {
 					setTimeout(() => {
 						navigate("/ownerdashboard");
 					}, 3000);
-					
 				}
 			}
 		} catch (error) {
@@ -283,7 +339,6 @@ const AddSpotOwner = ({ onCancel }) => {
 	 */
 	const handleNext = () => {
 		if (activeStep === 1) {
-			
 			setSpotAdded(false);
 			const error = validateForm();
 			if (error)
@@ -347,7 +402,7 @@ const AddSpotOwner = ({ onCancel }) => {
 		if (activeStep === 2) {
 			let msg = "";
 			if (documents.doc1 == null) {
-				msg += "Identification Document, ";
+				msg += "Identification Document Required ";
 				setOpenSnackbar({
 					open: true,
 					message: msg,
@@ -355,7 +410,7 @@ const AddSpotOwner = ({ onCancel }) => {
 				});
 				return;
 			} else if (documents.doc2 == null) {
-				msg += "Proof of Ownership Document, ";
+				msg += "Proof of Ownership Document Required ";
 				setOpenSnackbar({
 					open: true,
 					message: msg,
@@ -374,12 +429,12 @@ const AddSpotOwner = ({ onCancel }) => {
 	return (
 		<Box
 			sx={{
-				minHeight: "100vh",
+				minHeight: "35vh",
 				display: "flex",
 				justifyContent: "center",
 				alignItems: "center",
 				px: 2,
-				py: 4,
+				// py: 4,
 				backgroundColor: "#ffff",
 			}}
 		>
@@ -392,7 +447,7 @@ const AddSpotOwner = ({ onCancel }) => {
 				}}
 			>
 				<Grid item xs={12}>
-					<Typography variant="h5" gutterBottom textAlign="center">
+					<Typography sx={{ color: "black" }} variant="h5" gutterBottom textAlign="center">
 						Add a Parking Spot
 					</Typography>
 				</Grid>
@@ -404,9 +459,11 @@ const AddSpotOwner = ({ onCancel }) => {
 					))}
 				</Stepper>
 				{activeStep === 0 && (
-					<Box sx={{color: "black"}}>
-						<Typography gutterBottom sx={{color:"black"}}>Here are the steps to add a new parking spot:</Typography>
-						<Box component="ul" pl={2} >
+					<Box sx={{ color: "black" }}>
+						<Typography gutterBottom sx={{ color: "black" }}>
+							Here are the steps to add a new parking spot:
+						</Typography>
+						<Box component="ul" pl={2}>
 							<li>Select a location using the "Location" button and click on the map.</li>
 							<li>Fill in the spot name, total slots, open & close times, and select available days.</li>
 							<li>Upload images under 2MB each.</li>
@@ -441,12 +498,16 @@ const AddSpotOwner = ({ onCancel }) => {
 					<Box className="form-container">
 						<Box className="form-box">
 							<Grid container spacing={2}>
+								<Typography variant="body1" mb={2} ml={3} color="secondary">
+									Mandatory fields are marked with *
+								</Typography>
 								<Grid item xs={12}>
 									<TextField
 										fullWidth
-										label="Spot Title"
+										label="Spot Title*"
 										value={spotTitle}
 										onChange={(e) => setSpotTitle(e.target.value)}
+										error={errorHandling.spotTitle}
 									/>
 								</Grid>
 
@@ -454,12 +515,14 @@ const AddSpotOwner = ({ onCancel }) => {
 									<Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
 										<TextField
 											fullWidth
-											label="Spot Address"
+											label="Spot Address*"
 											variant="outlined"
 											value={spotAddress}
 											onChange={(e) => setSpotAddress(e.target.value)}
+											error={errorHandling.address}
 										/>
 										<Button
+											color={errorHandling.location ? "red" : "primary"}
 											variant="outlined"
 											size="small"
 											onClick={() => setMapOpen(true)}
@@ -522,17 +585,18 @@ const AddSpotOwner = ({ onCancel }) => {
 								<Grid item xs={6}>
 									<TextField
 										fullWidth
-										label="Open Time"
+										label="Open Time*"
 										type="time"
 										value={openTime}
 										onChange={(e) => setOpenTime(e.target.value)}
+										error={errorHandling.openTime}
 									/>
 								</Grid>
 
 								<Grid item xs={6}>
 									<TextField
 										fullWidth
-										label="Close Time"
+										label="Close Time*"
 										type="time"
 										value={closeTime}
 										onChange={(e) => setCloseTime(e.target.value)}
@@ -540,37 +604,42 @@ const AddSpotOwner = ({ onCancel }) => {
 											hours: renderTimeViewClock,
 											minutes: renderTimeViewClock,
 										}}
+										error={errorHandling.closeTime}
 									/>
 								</Grid>
 
 								<Grid item xs={6}>
 									<TextField
 										fullWidth
-										label="Hourly Rate (₹)"
+										label="Hourly Rate(₹)*"
 										type="number"
 										value={hourlyRate}
 										onChange={(e) => setHourlyRate(e.target.value)}
+										error={errorHandling.hourlyRate}
 									/>
 								</Grid>
 
 								<Grid item xs={6}>
 									<TextField
 										fullWidth
-										label="Total Slots"
+										label="Total Slots*"
 										type="number"
 										value={totalSlots}
 										onChange={(e) => setTotalSlots(e.target.value)}
+										error={errorHandling.totalSlots}
 									/>
 								</Grid>
 
 								<Grid item xs={12}>
-									<Typography variant="subtitle1">Select Open Days:</Typography>
+									<Typography variant="subtitle1" color={errorHandling.openDays ? "red" : "black"}>
+										Select Open Days*:
+									</Typography>
 									<Grid container spacing={1} justifyContent="center">
 										{Object.keys(openDays).map((day) => (
 											<Grid item key={day}>
 												<Button
 													variant={openDays[day] ? "contained" : "outlined"}
-													color={openDays[day] ? "primary" : "default"}
+													color="primary"
 													onClick={() => toggleDay(day)}
 												>
 													{day}
@@ -649,8 +718,11 @@ const AddSpotOwner = ({ onCancel }) => {
 					<Box display="flex" flexDirection="column" gap={3}>
 						{docLabels.map(({ key, label }) => (
 							<Box key={key}>
-								<Button variant="contained" component="label">
+								<Typography variant="body1" color="black">
 									{label}
+								</Typography>
+								<Button variant="contained" component="label">
+									Upload
 									<input
 										hidden
 										type="file"
@@ -660,7 +732,7 @@ const AddSpotOwner = ({ onCancel }) => {
 								</Button>
 								{documents[key] && (
 									<Box mt={1}>
-										<Typography variant="body2">
+										<Typography variant="body2" color="black">
 											📄 {documents[key].name} -{" "}
 											<a
 												href={URL.createObjectURL(documents[key])}
@@ -701,13 +773,15 @@ const AddSpotOwner = ({ onCancel }) => {
 				{/* Step 3: Instructions + Submit */}
 				{activeStep === 3 && (
 					<Box>
-						<Typography variant="body1" mb={2}>
-							Please review your details and ensure all information and documents are correct. Once submitted, you
-							won’t be able to edit. Document verification may take up to 24 hours. After verification, Spot will
-							be live on the platform.
-						</Typography>
-						<Typography variant="body2" color="textSecondary">
-							Spot: {spotName}, Price: ₹{spotPrice}, Slots: {totalSlots}
+						<WarningAmberIcon sx={{ fontSize: 30, color: "#ffa726", marginRight: 2, mt: 0.5 }} />
+						<Typography variant="body1" color="black">
+							<strong>Please review your details:</strong> Ensure all information and documents are correct. Once
+							submitted, <strong>you won’t be able to edit</strong>.
+							<br />
+							<br />
+							<InfoIcon sx={{ fontSize: 18, verticalAlign: "middle", mr: 0.5 }} />
+							<em>Document verification may take up to 24 hours.</em>
+							After verification, your spot will be <strong>live on the platform</strong>.
 						</Typography>
 						<Grid item xs={12} mt={4}>
 							<Box display="flex" justifyContent="space-between">
@@ -728,6 +802,7 @@ const AddSpotOwner = ({ onCancel }) => {
 					open={openSnackbar.open}
 					autoHideDuration={3000}
 					onClose={() => setOpenSnackbar({ ...openSnackbar, open: false })}
+					anchorOrigin={{ vertical: "top", horizontal: "center" }}
 				>
 					<Alert severity={openSnackbar.severity} variant="filled">
 						{openSnackbar.message}
