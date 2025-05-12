@@ -40,6 +40,7 @@ const Validation = () => {
 	const fetchDocuments = async () => {
 		const response = await axios.get(`${BACKEND_URL}/spots/documents/`);
 		if (response.status === 200) {
+			//console.log(response.data);
 			setRequests(response.data);
 		}
 	};
@@ -51,6 +52,7 @@ const Validation = () => {
 	 */
 	const handleAccept = async (id) => {
 		await axios.put(`${BACKEND_URL}/verify-list/request/accept/${id}`);
+		fetchDocuments();
 	};
 
 	/**
@@ -61,6 +63,7 @@ const Validation = () => {
 	const handleDeny = async (id) => {
 		const response = await axios.put(`${BACKEND_URL}/verify-list/request/reject/${id}`);
 		console.log(response.data);
+		fetchDocuments();
 	};
 
 	/**
@@ -85,7 +88,7 @@ const Validation = () => {
 
 	// Fetch documents on component load
 	useEffect(() => {
-		if (user.email == "abhishek.rajopadhye21@gmail.com") {
+		if (user.email == "abhishek.rajopadhye21@gmail.com" || user.email == "arjunghule6583@gmail.com" || user.email == "kalepradeep2001@gmail.com") {
 			fetchDocuments();
 		}
 	}, [user.email]);
@@ -131,11 +134,11 @@ const Validation = () => {
 									<TableCell>{page * rowsPerPage + index + 1}</TableCell>
 									<TableCell>{request.spot_title}</TableCell>
 									<TableCell>
-										{request.documents?.doc1 ? (
+										{request.documents["Identity Proof"] ? (
 											<Typography variant="body2">
-												📄 {request.documents.doc1.filename} -{" "}
+												📄 {request.documents["Identity Proof"].filename} -{" "}
 												<a
-													href={`${BACKEND_URL}/${request.documents.doc1.url}`}
+													href={`${BACKEND_URL}/${request.documents["Identity Proof"].url}`}
 													target="_blank"
 													rel="noopener noreferrer"
 													style={{
@@ -154,11 +157,11 @@ const Validation = () => {
 									</TableCell>
 
 									<TableCell>
-										{request.documents?.doc2 ? (
+										{request.documents["Ownership Proof"] ? (
 											<Typography variant="body2">
-												📄 {request.documents.doc2.filename} -{" "}
+												📄 {request.documents["Ownership Proof"].filename} -{" "}
 												<a
-													href={`${BACKEND_URL}/${request.documents.doc2.url}`}
+													href={`${BACKEND_URL}/${request.documents["Ownership Proof"].url}`}
 													target="_blank"
 													rel="noopener noreferrer"
 													style={{
@@ -176,11 +179,11 @@ const Validation = () => {
 										)}
 									</TableCell>
 									<TableCell>
-										{request.documents?.doc3 ? (
+										{request.documents["Other Document"] ? (
 											<Typography variant="body2">
-												📄 {request.documents.doc3.filename} -{" "}
+												📄 {request.documents["Other Document"].filename} -{" "}
 												<a
-													href={`${BACKEND_URL}/${request.documents.doc3.url}`}
+													href={`${BACKEND_URL}/${request.documents["Other Document"].url}`}
 													target="_blank"
 													rel="noopener noreferrer"
 													style={{

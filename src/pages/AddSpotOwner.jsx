@@ -380,7 +380,7 @@ const AddSpotOwner = ({ onCancel }) => {
 				alignItems: "center",
 				px: 2,
 				py: 4,
-				backgroundColor: "#f9f9f9",
+				backgroundColor: "#ffffff",
 			}}
 		>
 			<Box
@@ -404,9 +404,10 @@ const AddSpotOwner = ({ onCancel }) => {
 					))}
 				</Stepper>
 				{activeStep === 0 && (
-					<Box  sx={{color:"black"}}>
-						<Typography gutterBottom>Here are the steps to add a new parking spot:</Typography>
-						<Box component="ul" pl={2}>
+
+					<Box sx={{color: "black"}}>
+						<Typography gutterBottom sx={{color:"black"}}>Here are the steps to add a new parking spot:</Typography>
+						<Box component="ul" pl={2} >
 							<li>Select a location using the "Location" button and click on the map.</li>
 							<li>Fill in the spot name, total slots, open & close times, and select available days.</li>
 							<li>Upload images under 2MB each.</li>
