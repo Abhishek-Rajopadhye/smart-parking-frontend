@@ -17,13 +17,23 @@ import axios from "axios";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import "../style/spot.css";
 import MapDialog from "../components/MapDialog";
 import { BACKEND_URL } from "../const";
 const steps = ["Instruction", "Spot Details", "Instructions & Submit"];
 
 const AddSpotUser = () => {
+	const navigate = useNavigate();
+	const [errorHandling, setErrorHandling] = useState({
+		spotTitle: false,
+		address: false,
+		openTime: false,
+		closeTime: false,
+		hourlyRate: false,
+		totalSlots: false,
+		openDays: false,
+	});
 	const [activeStep, setActiveStep] = useState(0);
 	// Spot Details States
 	const navigate = useNavigate();
@@ -118,15 +128,61 @@ const AddSpotUser = () => {
 	 */
 
 	const validateForm = () => {
+		setErrorHandling({
+			spotTitle: false,
+			address: false,
+			openTime: false,
+			closeTime: false,
+			hourlyRate: false,
+			totalSlots: false,
+			openDays: false,
+		});
 		const total = parseInt(totalSlots);
-		if (!spotTitle.trim()) return "Spot Title is required";
-		if (!spotAddress.trim()) return "Address is required";
-		if (location == null) return "Please select a location to proceed";
-		if (!openTime) return "Open Time is required";
-		if (!closeTime) return "Close Time is required";
-		if (!hourlyRate || hourlyRate <= 0) return "Hourly Rate must be positive";
-		if (!totalSlots || totalSlots <= 0) return "Total Slots must be a positive number";
-		if (!Object.values(openDays).includes(true)) return "At least one open day must be selected";
+		let flag = false, msg = "Required fields are missing";
+		if (!spotTitle.trim()) {
+			setErrorHandling((prev) => ({ ...prev, spotTitle: true }));
+			//return "Spot Title is required";
+			flag = true;
+		}
+		if (!spotAddress.trim()) {
+			setErrorHandling((prev) => ({ ...prev, address: true }));
+			//return "Spot Address is required";
+			flag = true;
+		}
+		if (location == null) {
+			setErrorHandling((prev) => ({ ...prev, location: true }));
+			msg = "Please select a location to proceed";
+			flag = true;
+		}
+		if (!openTime) {
+			setErrorHandling((prev) => ({ ...prev, openTime: true }));
+			// return "Open Time is required";
+			flag = true;
+		}
+		if (!closeTime) {
+			setErrorHandling((prev) => ({ ...prev, closeTime: true }));
+			// return "Close Time is required";
+			flag = true;
+		}
+		if (!hourlyRate || hourlyRate <= 0) {
+			setErrorHandling((prev) => ({ ...prev, hourlyRate: true }));
+			//return "Hourly Rate must be positive";
+			flag = true;
+		}
+		if (!totalSlots || totalSlots <= 0) {
+			setErrorHandling((prev) => ({ ...prev, totalSlots: true }));
+			//return "Total Slots must be a positive number";
+			flag = true;
+		}
+		if (!Object.values(openDays).includes(true)) {
+			setErrorHandling((prev) => ({ ...prev, openDays: true }));
+			if(!flag)
+				msg = "At least one open day must be selected";
+			flag = true;
+		}
+		if (flag) {
+			return msg;
+		}
 		return total;
 	};
 
@@ -297,12 +353,12 @@ const AddSpotUser = () => {
 	return (
 		<Box
 			sx={{
-				minHeight: "100vh",
+				minHeight: "35vh",
 				display: "flex",
 				justifyContent: "center",
 				alignItems: "center",
 				px: 2,
-				py: 4,
+				paddingTop: "10px",
 				backgroundColor: "#ffffff",
 			}}
 		>
@@ -316,7 +372,7 @@ const AddSpotUser = () => {
 				}}
 			>
 				<Grid item xs={12}>
-					<Typography sx={{color:"black"}} variant="h5" gutterBottom textAlign="center">
+					<Typography sx={{ color: "black" }} variant="h5" gutterBottom textAlign="center">
 						Add a Parking Spot
 					</Typography>
 				</Grid>
@@ -328,7 +384,7 @@ const AddSpotUser = () => {
 					))}
 				</Stepper>
 				{activeStep === 0 && (
-					<Box sx={{color:"black"}}>
+					<Box sx={{ color: "black" }}>
 						<Typography gutterBottom>Here are the steps to add a new parking spot:</Typography>
 						<Box component="ul" pl={2}>
 							<li>Select a location using the "Location" button and click on the map.</li>
@@ -364,13 +420,15 @@ const AddSpotUser = () => {
 				{activeStep === 1 && (
 					<Box className="form-container">
 						<Box className="form-box">
+						<Typography variant="body1" mb={2} color="secondary" textAlign="center">Mandatory fields are marked with *</Typography>
 							<Grid container spacing={2}>
 								<Grid item xs={12}>
 									<TextField
 										fullWidth
-										label="Spot Title"
+										label="Spot Title*"
 										value={spotTitle}
 										onChange={(e) => setSpotTitle(e.target.value)}
+										error={errorHandling.spotTitle}
 									/>
 								</Grid>
 
@@ -378,12 +436,14 @@ const AddSpotUser = () => {
 									<Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
 										<TextField
 											fullWidth
-											label="Spot Address"
+											label="Spot Address*"
 											variant="outlined"
 											value={spotAddress}
 											onChange={(e) => setSpotAddress(e.target.value)}
+											error={errorHandling.address}
 										/>
 										<Button
+											color={errorHandling.location ? "error" : "primary"}
 											variant="outlined"
 											size="small"
 											onClick={() => setMapOpen(true)}
@@ -440,23 +500,25 @@ const AddSpotUser = () => {
 										rows={3}
 										value={spotDescription}
 										onChange={(e) => setSpotDescription(e.target.value)}
+										error={errorHandling.description}
 									/>
 								</Grid>
 
 								<Grid item xs={6}>
 									<TextField
 										fullWidth
-										label="Open Time"
+										label="Open Time*"
 										type="time"
 										value={openTime}
 										onChange={(e) => setOpenTime(e.target.value)}
+										error={errorHandling.openTime}
 									/>
 								</Grid>
 
 								<Grid item xs={6}>
 									<TextField
 										fullWidth
-										label="Close Time"
+										label="Close Time*"
 										type="time"
 										value={closeTime}
 										onChange={(e) => setCloseTime(e.target.value)}
@@ -464,31 +526,34 @@ const AddSpotUser = () => {
 											hours: renderTimeViewClock,
 											minutes: renderTimeViewClock,
 										}}
+										error={errorHandling.closeTime}
 									/>
 								</Grid>
 
 								<Grid item xs={6}>
 									<TextField
 										fullWidth
-										label="Hourly Rate (₹)"
+										label="Hourly Rate(₹)*"
 										type="number"
 										value={hourlyRate}
 										onChange={(e) => setHourlyRate(e.target.value)}
+										error={errorHandling.hourlyRate}
 									/>
 								</Grid>
 
 								<Grid item xs={6}>
 									<TextField
 										fullWidth
-										label="Total Slots"
+										label="Total Slots*"
 										type="number"
 										value={totalSlots}
 										onChange={(e) => setTotalSlots(e.target.value)}
+										error={errorHandling.totalSlots}
 									/>
 								</Grid>
 
 								<Grid item xs={12}>
-									<Typography variant="subtitle1">Select Open Days:</Typography>
+									<Typography variant="subtitle1" color={errorHandling.openDays ? "red" : "black"}>Select Open Days:*</Typography>
 									<Grid container spacing={1} justifyContent="center">
 										{Object.keys(openDays).map((day) => (
 											<Grid item key={day}>
@@ -548,8 +613,8 @@ const AddSpotUser = () => {
 													</IconButton>
 												</Grid>
 											))}
-											<Grid item xs={12} mt={4}>
-												<Box display="flex" justifyContent="space-between">
+											<Grid item xs={12} mt={4} sx={{paddingBottom: "10px"}}>
+												<Box display="flex" justifyContent="space-between" sx={{paddingBottom: "2px"}}>
 													<Button disabled={activeStep === 0} onClick={handleBack}>
 														Back
 													</Button>
@@ -568,20 +633,21 @@ const AddSpotUser = () => {
 					</Box>
 				)}
 				{spotAdded && (
-									<Box>
-										<Typography variant="h6" color="green" textAlign="center">
-											Spot Added Successfully!
-										</Typography>
-									</Box>
-								)}
+					<Box>
+						<Typography variant="h6" color="green" textAlign="center">
+							Spot Added Successfully!
+						</Typography>
+					</Box>
+				)}
 				{/* Step 3: Instructions + Submit */}
 				{activeStep === 2 && (
-					<Box>
-						<Typography variant="body1" mb={2} sx={{color:"black"}}>
+					<Box sx={{ p: 4 }}>
+						<Typography variant="body1" mb={2} sx={{ color: "black" }}>
 							📍 This spot is only for viewing purposes on the map.
-							<br></br>🛑 Booking or reservation is not available for this spot.
-							<br></br>💡 Want to earn by listing your own spot? Log in as an owner and add a spot to make it
-							bookable.
+							<br /><br/>
+							🛑 Booking or reservation is not available for this spot.
+							<br /><br/>
+							💡 Want to earn by listing your own spot? Log in as an owner and add a spot to make it bookable.
 						</Typography>
 						<Grid item xs={12} mt={4}>
 							<Box display="flex" justifyContent="space-between">
@@ -600,6 +666,7 @@ const AddSpotUser = () => {
 					open={openSnackbar.open}
 					autoHideDuration={3000}
 					onClose={() => setOpenSnackbar({ ...openSnackbar, open: false })}
+					anchorOrigin={{ vertical: "top", horizontal: "center" }}
 				>
 					<Alert severity={openSnackbar.severity} variant="filled">
 						{openSnackbar.message}
