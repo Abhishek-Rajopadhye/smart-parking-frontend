@@ -49,7 +49,7 @@ import { addMinutes, setMinutes } from "date-fns";
 import NearByParkings from "../components/NearByParkings";
 import PastBooking from "../components/PastBooking";
 import { AuthContext } from "../context/AuthContext";
-import  { AddSpotUser }  from "./AddSpotUser";
+import { AddSpotUser } from "./AddSpotUser";
 
 /**
  * Displays a loading indicator with message while the app initializes
@@ -61,7 +61,7 @@ const LoadingMessage = () => (
 	<Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
 		<Box sx={{ textAlign: "center" }}>
 			<DirectionsCarIcon sx={{ fontSize: 60, color: "primary.main", mb: 2 }} />
-			<Typography variant="h6">Loading  Parking spots</Typography>
+			<Typography variant="h6">Loading Parking spots</Typography>
 			<Typography variant="body2" color="text.secondary">
 				Finding the best spots for you...
 			</Typography>
@@ -519,6 +519,11 @@ const HomePage = ({ setSelectedMarker, setNewMarker, newMarker, setFilters }) =>
 					py: 1.5,
 					mb: 1,
 					backgroundImage: "linear-gradient(to right, #1976d2, #2196f3)",
+					":disabled": {
+						background: "#acaaaa", // or any color you want for disabled
+						color: "#fff",
+						opacity: 0.7,
+					},
 				}}
 			>
 				Find Parking Spots

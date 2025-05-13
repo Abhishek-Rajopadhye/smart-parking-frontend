@@ -17,15 +17,26 @@ import axios from "axios";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-
+import { useNavigate } from "react-router-dom";
 import "../style/spot.css";
 import MapDialog from "../components/MapDialog";
 import { BACKEND_URL } from "../const";
 const steps = ["Instruction", "Spot Details", "Instructions & Submit"];
 
 const AddSpotUser = () => {
+	const navigate = useNavigate();
+	const [errorHandling, setErrorHandling] = useState({
+		spotTitle: false,
+		address: false,
+		openTime: false,
+		closeTime: false,
+		hourlyRate: false,
+		totalSlots: false,
+		openDays: false,
+	});
 	const [activeStep, setActiveStep] = useState(0);
 	// Spot Details States
+
 	const [spotAdded, setSpotAdded] = useState(false);
 	const [mapOpen, setMapOpen] = useState(false);
 	const [location, setLocation] = useState(null);
@@ -64,48 +75,57 @@ const AddSpotUser = () => {
 	 * @returns
 	 */
 	const handleImageChange = (event) => {
-		const files = Array.from(event.target.files);
-		const maxSize = 2 * 1024 * 1024;
+		try {
+			const files = Array.from(event.target.files);
+			const maxSize = 2 * 1024 * 1024;
 
-		const newImages = [];
-		const newPreviews = [];
-		let validateFile = [];
-		for (let file of files) {
-			if (file.size <= maxSize) validateFile.push(file);
-		}
-		if (validateFile.length == 0) {
+			const newImages = [];
+			const newPreviews = [];
+			let validateFile = [];
+			for (let file of files) {
+				if (file.size <= maxSize) validateFile.push(file);
+			}
+			if (validateFile.length == 0) {
+				setOpenSnackbar({
+					open: true,
+					message: "Images Should be less than 2MB",
+					severity: "error",
+				});
+				return;
+			}
+			for (let file of validateFile) {
+				const reader = new FileReader();
+				reader.onloadend = () => {
+					newImages.push(reader.result.split(",")[1]);
+					newPreviews.push(reader.result);
+
+					if (newImages.length === validateFile.length) {
+						setImages((prev) => [...prev, ...newImages]);
+						setImagePreviews((prev) => [...prev, ...newPreviews]);
+
+						setOpenSnackbar({
+							open: true,
+							message: "Photos uploaded successfully",
+							severity: "success",
+						});
+					}
+				};
+				reader.readAsDataURL(file);
+			}
+
+			if (files.length != validateFile.length) {
+				setOpenSnackbar({
+					open: true,
+					message: "Some files were skipped (over 2MB)",
+					severity: "warning",
+				});
+			}
+		} catch (error) {
+			console.error(error);
 			setOpenSnackbar({
 				open: true,
-				message: "Images Should be less than 2MB",
+				message: error,
 				severity: "error",
-			});
-			return;
-		}
-		for (let file of validateFile) {
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				newImages.push(reader.result.split(",")[1]);
-				newPreviews.push(reader.result);
-
-				if (newImages.length === validateFile.length) {
-					setImages((prev) => [...prev, ...newImages]);
-					setImagePreviews((prev) => [...prev, ...newPreviews]);
-
-					setOpenSnackbar({
-						open: true,
-						message: "Photos uploaded successfully",
-						severity: "success",
-					});
-				}
-			};
-			reader.readAsDataURL(file);
-		}
-
-		if (files.length != validateFile.length) {
-			setOpenSnackbar({
-				open: true,
-				message: "Some files were skipped (over 2MB)",
-				severity: "warning",
 			});
 		}
 	};
@@ -117,16 +137,71 @@ const AddSpotUser = () => {
 	 */
 
 	const validateForm = () => {
+		try {
+			setErrorHandling({
+			spotTitle: false,
+			address: false,
+			openTime: false,
+			closeTime: false,
+			hourlyRate: false,
+			totalSlots: false,
+			openDays: false,
+		});
 		const total = parseInt(totalSlots);
-		if (!spotTitle.trim()) return "Spot Title is required";
-		if (!spotAddress.trim()) return "Address is required";
-		if (location == null) return "Please select a location to proceed";
-		if (!openTime) return "Open Time is required";
-		if (!closeTime) return "Close Time is required";
-		if (!hourlyRate || hourlyRate <= 0) return "Hourly Rate must be positive";
-		if (!totalSlots || totalSlots <= 0) return "Total Slots must be a positive number";
-		if (!Object.values(openDays).includes(true)) return "At least one open day must be selected";
+		let flag = false, msg = "Required fields are missing";
+		if (!spotTitle.trim()) {
+			setErrorHandling((prev) => ({ ...prev, spotTitle: true }));
+			//return "Spot Title is required";
+			flag = true;
+		}
+		if (!spotAddress.trim()) {
+			setErrorHandling((prev) => ({ ...prev, address: true }));
+			//return "Spot Address is required";
+			flag = true;
+		}
+		if (location == null) {
+			setErrorHandling((prev) => ({ ...prev, location: true }));
+			msg = "Please select a location to proceed";
+			flag = true;
+		}
+		if (!openTime) {
+			setErrorHandling((prev) => ({ ...prev, openTime: true }));
+			// return "Open Time is required";
+			flag = true;
+		}
+		if (!closeTime) {
+			setErrorHandling((prev) => ({ ...prev, closeTime: true }));
+			// return "Close Time is required";
+			flag = true;
+		}
+		if (!hourlyRate || hourlyRate <= 0) {
+			setErrorHandling((prev) => ({ ...prev, hourlyRate: true }));
+			//return "Hourly Rate must be positive";
+			flag = true;
+		}
+		if (!totalSlots || totalSlots <= 0) {
+			setErrorHandling((prev) => ({ ...prev, totalSlots: true }));
+			//return "Total Slots must be a positive number";
+			flag = true;
+		}
+		if (!Object.values(openDays).includes(true)) {
+			setErrorHandling((prev) => ({ ...prev, openDays: true }));
+			if(!flag)
+				msg = "At least one open day must be selected";
+			flag = true;
+		}
+		if (flag) {
+			return msg;
+		}
 		return total;
+		} catch (error) {
+			console.error(error);
+			setOpenSnackbar({
+				open: true,
+				message: error,
+				severity: "error",
+			});
+		}
 	};
 
 	/**
@@ -134,12 +209,21 @@ const AddSpotUser = () => {
 	 * @param {*} index - index of the image to be deleted
 	 */
 	const handleDeleteImage = (index) => {
-		const newImages = [...images];
-		const newPreviews = [...imagePreviews];
-		newImages.splice(index, 1);
-		newPreviews.splice(index, 1);
-		setImages(newImages);
-		setImagePreviews(newPreviews);
+		try {
+			const newImages = [...images];
+			const newPreviews = [...imagePreviews];
+			newImages.splice(index, 1);
+			newPreviews.splice(index, 1);
+			setImages(newImages);
+			setImagePreviews(newPreviews);
+		} catch (error) {
+			console.error(error);
+			setOpenSnackbar({
+				open: true,
+				message: error,
+				severity: "error",
+			});
+		}
 	};
 
 	/**
@@ -162,10 +246,13 @@ const AddSpotUser = () => {
 		formData.append("latitude", location.lat);
 		formData.append("longitude", location.lng);
 		formData.append("available_days", openDay.join(","));
-		formData.append("image", images);
+		images.forEach((img) => {
+			formData.append("image", img);
+		});
 		formData.append("verification_status", 3);
 
 		try {
+			console.log(images.length);
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot`, formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",
@@ -199,6 +286,14 @@ const AddSpotUser = () => {
 					Fri: false,
 					Sat: false,
 				});
+				setOpenSnackbar({
+					open: true,
+					message: "Spot Added Successfully",
+					severity: "success",
+				});
+				setTimeout(() => {
+					navigate("/homepage");
+				}, 3000);
 			}
 		} catch (error) {
 			console.error(error);
@@ -218,69 +313,78 @@ const AddSpotUser = () => {
 	 * @returns
 	 */
 	const handleNext = () => {
-		if (activeStep === 1) {
-			setSpotAdded(false);
-			const error = validateForm();
-			if (error)
-				if (error && typeof error === "string") {
-					setOpenSnackbar({ open: true, message: error, severity: "error" });
+		try {
+			if (activeStep === 1) {
+				setSpotAdded(false);
+				const error = validateForm();
+				if (error)
+					if (error && typeof error === "string") {
+						setOpenSnackbar({ open: true, message: error, severity: "error" });
+						return;
+					}
+				setTotalSlots(error);
+				if (
+					!(
+						location.lat >= 6.554607 &&
+						location.lat <= 35.674545 &&
+						location.lng >= 68.162385 &&
+						location.lng <= 97.395561
+					)
+				) {
+					setOpenSnackbar({
+						open: true,
+						message: "Please select a location within India",
+						severity: "error",
+					});
+
 					return;
 				}
-			setTotalSlots(error);
-			if (
-				!(
-					location.lat >= 6.554607 &&
-					location.lat <= 35.674545 &&
-					location.lng >= 68.162385 &&
-					location.lng <= 97.395561
-				)
-			) {
-				setOpenSnackbar({
-					open: true,
-					message: "Please select a location within India",
-					severity: "error",
-				});
-
-				return;
-			}
-			if (parseInt(openTime.split(":")[0]) > parseInt(closeTime.split(":")[0])) {
-				setOpenSnackbar({
-					open: true,
-					message: "Enter Valid Open and Close time",
-					severity: "error",
-				});
-				return;
-			} else if (
-				parseInt(openTime.split(":")[0]) == parseInt(closeTime.split(":")[0]) &&
-				parseInt(openTime.split(":")[1]) >= parseInt(closeTime.split(":")[1])
-			) {
-				setOpenSnackbar({
-					open: true,
-					message: "Enter Valid Open and Close time",
-					severity: "error",
-				});
-				return;
-			}
-
-			let open_days = [];
-
-			for (const day in openDays) {
-				if (openDays[day]) {
-					open_days.push(day);
+				if (parseInt(openTime.split(":")[0]) > parseInt(closeTime.split(":")[0])) {
+					setOpenSnackbar({
+						open: true,
+						message: "Enter Valid Open and Close time",
+						severity: "error",
+					});
+					return;
+				} else if (
+					parseInt(openTime.split(":")[0]) == parseInt(closeTime.split(":")[0]) &&
+					parseInt(openTime.split(":")[1]) >= parseInt(closeTime.split(":")[1])
+				) {
+					setOpenSnackbar({
+						open: true,
+						message: "Enter Valid Open and Close time",
+						severity: "error",
+					});
+					return;
 				}
-			}
-			setOpenDay(open_days);
-			let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
-			let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
-			let new_open_time = openTime + " " + open;
-			let new_close_time = closeTime + " " + close;
-			setOpenTime(new_open_time);
-			setCloseTime(new_close_time);
-			setTotalSlots(parseInt(totalSlots));
-		}
 
-		if (activeStep < steps.length - 1) setActiveStep((prev) => prev + 1);
-		else handleSubmit();
+				let open_days = [];
+
+				for (const day in openDays) {
+					if (openDays[day]) {
+						open_days.push(day);
+					}
+				}
+				setOpenDay(open_days);
+				let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
+				let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
+				let new_open_time = openTime + " " + open;
+				let new_close_time = closeTime + " " + close;
+				setOpenTime(new_open_time);
+				setCloseTime(new_close_time);
+				setTotalSlots(parseInt(totalSlots));
+			}
+
+			if (activeStep < steps.length - 1) setActiveStep((prev) => prev + 1);
+			else handleSubmit();
+		} catch (error) {
+			console.error(error);
+			setOpenSnackbar({
+				open: true,
+				message: error,
+				severity: "error",
+			});
+		}
 	};
 
 	const handleBack = () => setActiveStep((prev) => prev - 1);
@@ -288,12 +392,12 @@ const AddSpotUser = () => {
 	return (
 		<Box
 			sx={{
-				minHeight: "100vh",
+				minHeight: "35vh",
 				display: "flex",
 				justifyContent: "center",
 				alignItems: "center",
 				px: 2,
-				py: 4,
+				paddingTop: "10px",
 				backgroundColor: "#ffffff",
 			}}
 		>
@@ -307,7 +411,7 @@ const AddSpotUser = () => {
 				}}
 			>
 				<Grid item xs={12}>
-					<Typography sx={{color:"black"}} variant="h5" gutterBottom textAlign="center">
+					<Typography sx={{ color: "black" }} variant="h5" gutterBottom textAlign="center">
 						Add a Parking Spot
 					</Typography>
 				</Grid>
@@ -319,7 +423,7 @@ const AddSpotUser = () => {
 					))}
 				</Stepper>
 				{activeStep === 0 && (
-					<Box sx={{color:"black"}}>
+					<Box sx={{ color: "black" }}>
 						<Typography gutterBottom>Here are the steps to add a new parking spot:</Typography>
 						<Box component="ul" pl={2}>
 							<li>Select a location using the "Location" button and click on the map.</li>
@@ -355,13 +459,15 @@ const AddSpotUser = () => {
 				{activeStep === 1 && (
 					<Box className="form-container">
 						<Box className="form-box">
+						<Typography variant="body1" mb={2} color="secondary" textAlign="center">Mandatory fields are marked with *</Typography>
 							<Grid container spacing={2}>
 								<Grid item xs={12}>
 									<TextField
 										fullWidth
-										label="Spot Title"
+										label="Spot Title*"
 										value={spotTitle}
 										onChange={(e) => setSpotTitle(e.target.value)}
+										error={errorHandling.spotTitle}
 									/>
 								</Grid>
 
@@ -369,12 +475,14 @@ const AddSpotUser = () => {
 									<Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
 										<TextField
 											fullWidth
-											label="Spot Address"
+											label="Spot Address*"
 											variant="outlined"
 											value={spotAddress}
 											onChange={(e) => setSpotAddress(e.target.value)}
+											error={errorHandling.address}
 										/>
 										<Button
+											color={errorHandling.location ? "error" : "primary"}
 											variant="outlined"
 											size="small"
 											onClick={() => setMapOpen(true)}
@@ -431,23 +539,25 @@ const AddSpotUser = () => {
 										rows={3}
 										value={spotDescription}
 										onChange={(e) => setSpotDescription(e.target.value)}
+										error={errorHandling.description}
 									/>
 								</Grid>
 
 								<Grid item xs={6}>
 									<TextField
 										fullWidth
-										label="Open Time"
+										label="Open Time*"
 										type="time"
 										value={openTime}
 										onChange={(e) => setOpenTime(e.target.value)}
+										error={errorHandling.openTime}
 									/>
 								</Grid>
 
 								<Grid item xs={6}>
 									<TextField
 										fullWidth
-										label="Close Time"
+										label="Close Time*"
 										type="time"
 										value={closeTime}
 										onChange={(e) => setCloseTime(e.target.value)}
@@ -455,31 +565,34 @@ const AddSpotUser = () => {
 											hours: renderTimeViewClock,
 											minutes: renderTimeViewClock,
 										}}
+										error={errorHandling.closeTime}
 									/>
 								</Grid>
 
 								<Grid item xs={6}>
 									<TextField
 										fullWidth
-										label="Hourly Rate (₹)"
+										label="Hourly Rate(₹)*"
 										type="number"
 										value={hourlyRate}
 										onChange={(e) => setHourlyRate(e.target.value)}
+										error={errorHandling.hourlyRate}
 									/>
 								</Grid>
 
 								<Grid item xs={6}>
 									<TextField
 										fullWidth
-										label="Total Slots"
+										label="Total Slots*"
 										type="number"
 										value={totalSlots}
 										onChange={(e) => setTotalSlots(e.target.value)}
+										error={errorHandling.totalSlots}
 									/>
 								</Grid>
 
 								<Grid item xs={12}>
-									<Typography variant="subtitle1">Select Open Days:</Typography>
+									<Typography variant="subtitle1" color={errorHandling.openDays ? "red" : "black"}>Select Open Days:*</Typography>
 									<Grid container spacing={1} justifyContent="center">
 										{Object.keys(openDays).map((day) => (
 											<Grid item key={day}>
@@ -539,8 +652,8 @@ const AddSpotUser = () => {
 													</IconButton>
 												</Grid>
 											))}
-											<Grid item xs={12} mt={4}>
-												<Box display="flex" justifyContent="space-between">
+											<Grid item xs={12} mt={4} sx={{paddingBottom: "10px"}}>
+												<Box display="flex" justifyContent="space-between" sx={{paddingBottom: "2px"}}>
 													<Button disabled={activeStep === 0} onClick={handleBack}>
 														Back
 													</Button>
@@ -558,14 +671,22 @@ const AddSpotUser = () => {
 						</Box>
 					</Box>
 				)}
+				{spotAdded && (
+					<Box>
+						<Typography variant="h6" color="green" textAlign="center">
+							Spot Added Successfully!
+						</Typography>
+					</Box>
+				)}
 				{/* Step 3: Instructions + Submit */}
 				{activeStep === 2 && (
-					<Box>
-						<Typography variant="body1" mb={2} sx={{color:"black"}}>
+					<Box sx={{ p: 4 }}>
+						<Typography variant="body1" mb={2} sx={{ color: "black" }}>
 							📍 This spot is only for viewing purposes on the map.
-							<br></br>🛑 Booking or reservation is not available for this spot.
-							<br></br>💡 Want to earn by listing your own spot? Log in as an owner and add a spot to make it
-							bookable.
+							<br /><br/>
+							🛑 Booking or reservation is not available for this spot.
+							<br /><br/>
+							💡 Want to earn by listing your own spot? Log in as an owner and add a spot to make it bookable.
 						</Typography>
 						<Grid item xs={12} mt={4}>
 							<Box display="flex" justifyContent="space-between">
@@ -584,6 +705,7 @@ const AddSpotUser = () => {
 					open={openSnackbar.open}
 					autoHideDuration={3000}
 					onClose={() => setOpenSnackbar({ ...openSnackbar, open: false })}
+					anchorOrigin={{ vertical: "top", horizontal: "center" }}
 				>
 					<Alert severity={openSnackbar.severity} variant="filled">
 						{openSnackbar.message}

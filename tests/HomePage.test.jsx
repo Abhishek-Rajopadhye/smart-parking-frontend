@@ -149,7 +149,7 @@ describe("HomePage", () => {
 				</AuthContext.Provider>
 			</MapContext.Provider>
 		);
-		expect(screen.getByText("Loading Smart Parking")).toBeInTheDocument();
+		expect(screen.getByText("Loading Parking spots")).toBeInTheDocument();
 	});
 
 	test("renders error message when there is a load error", () => {

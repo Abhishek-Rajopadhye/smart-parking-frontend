@@ -15,6 +15,16 @@ import Validation from "./pages/Validation";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import { AddSpotOwner } from "./pages/AddSpotOwner";
 
+/**
+ * AppLayout component that provides the main application layout, navigation bar, and route management.
+ *
+ * @component
+ * @returns {JSX.Element} The AppLayout component.
+ *
+ * Handles authentication context, navigation, and conditional rendering of routes and navigation elements
+ * based on user type (e.g., Owner or regular user). Displays the top AppBar with navigation buttons,
+ * user avatar, and menu. Renders the appropriate page content based on the current route.
+ */
 const AppLayout = () => {
 	const authContextValue = useContext(AuthContext);
 	const { user, logout } = authContextValue;
@@ -146,12 +156,16 @@ const AppLayout = () => {
 			<Box className="outermost-container" sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
 				<AppBar position="fixed" sx={{ zIndex: 3, bgcolor: "#3f51b5", color: "white" }}>
 					<Toolbar>
-						<Button
-							variant="Text"
-							color="primary"
-							startIcon={<KeyboardBackspaceIcon />}
-							onClick={() => navigate(-1)}
-						/>
+						{location.pathname !== "/ownerdashboard" ? (
+							<Button
+								variant="Text"
+								color="primary"
+								startIcon={<KeyboardBackspaceIcon />}
+								onClick={() => navigate(-1)}
+							/>
+						) : (
+							<Box sx={{ width: 48, display: "inline-block" }} />
+						)}
 						<Typography variant="h6" sx={{ flexGrow: 1, justifyContent: "center", textAlign: "center" }}>
 							{getPageTitle()}
 						</Typography>
@@ -171,8 +185,8 @@ const AppLayout = () => {
 							</MenuItem>
 							{user.email == "abhishek.rajopadhye21@gmail.com" ||
 							user.email == "arjunghule6583@gmail.com" ||
-						        user.email == "saad.ahmed+101@bluepineapple.io" ||
-  						        user.email == "ahm33.saad@gmail.com" ||
+							user.email == "saad.ahmed+101@bluepineapple.io" ||
+							user.email == "ahm33.saad@gmail.com" ||
 							user.email == "saadah0143@gmail.com" ||
 							user.email == "kalepradeep2001@gmail.com" ? (
 								<MenuItem
@@ -199,7 +213,7 @@ const AppLayout = () => {
 						</Menu>
 					</Toolbar>
 				</AppBar>
-				<Box variant="main" sx={{ flex: 1, mt: 8, width: "100vw" }}>
+				<Box variant="main" sx={{ flex: 1, mt: 6, width: "100vw" }}>
 					<Routes>
 						<Route path="/ownerdashboard" element={<OwnerDashboard />} />
 						<Route path="/validation" element={<Validation />} />
@@ -218,12 +232,16 @@ const AppLayout = () => {
 				<Toolbar>
 					{location.pathname !== "/homepage" && location.pathname !== "/auth" && (
 						<>
-							<Button
-								variant="Text"
-								color="primary"
-								startIcon={<KeyboardBackspaceIcon />}
-								onClick={() => navigate(-1)}
-							/>
+							{location.pathname !== "/mapsearch" ? (
+								<Button
+									variant="Text"
+									color="primary"
+									startIcon={<KeyboardBackspaceIcon />}
+									onClick={() => navigate(-1)}
+								/>
+							) : (
+								<Box sx={{ width: 48, display: "inline-block" }} /> // Placeholder for spacing
+							)}
 							<Button
 								variant="Text"
 								color="primary"
@@ -265,7 +283,7 @@ const AppLayout = () => {
 				</Toolbar>
 			</AppBar>
 
-			<Box variant="main" sx={{ flex: 1, mt: 8, width: "100vw" }}>
+			<Box variant="main" sx={{ flex: 1, mt: 6, width: "100vw" }}>
 				<Routes>
 					<Route path="/account-details" element={<Profile />} />
 					<Route
