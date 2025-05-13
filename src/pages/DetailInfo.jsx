@@ -78,7 +78,7 @@ const DetailInfo = () => {
 		fetch(`${BACKEND_URL}/spotdetails/get-spot/${spot_id}`)
 			.then((res) => res.json())
 			.then((data) => {
-				console.log(data)
+				
 				if (typeof data.available_days === "string") {
 					data.available_days = data.available_days.split(",").map((d) => d.trim());
 				}
@@ -86,7 +86,7 @@ const DetailInfo = () => {
 			})
 			.catch((err) => console.error("Error:", err));
 	}, [spot_id]);
-	console.log("Status", selectedMarker);
+	
 	// Fetch reviews and owner details
 	useEffect(() => {
 		const fetchDetails = async () => {
@@ -179,10 +179,10 @@ const DetailInfo = () => {
 			return false;
 		}
 		if (msg == "start") {
-			console.log("Start", isoString);
+			
 			setIndianStartTime(isoString);
 		} else {
-			console.log("End", isoString);
+			
 			setIndianEndTime(isoString);
 		}
 		return true;
@@ -425,7 +425,7 @@ const DetailInfo = () => {
 		const end = new Date(endTime);
 		const diffInMs = end - start;
 		let hours = Math.ceil(diffInMs / (1000 * 60 * 60));
-		console.log(hours);
+	
 		if (hours <= 0) {
 			showSnackbar("Enter a valid time.", "error");
 			return false;
@@ -434,8 +434,8 @@ const DetailInfo = () => {
 		setTotalAmount(hours * spot_information.hourly_rate * totalSlots);
 		//setOpenDialog(true);
 		const t = `You have to pay ₹${hours * spot_information.hourly_rate * totalSlots}. Are you sure you want to proceed?`;
-		console.log(totalAmount);
-		console.log(t);
+		
+		
 		setMsg(t);
 		toggleDialogBooking();
 		return true;
@@ -459,7 +459,7 @@ const DetailInfo = () => {
 		});
 	};
 
-	console.log("Available days ", selectedMarker.available_days);
+	
 	/**
 	 * Function is used to process the payment and create the order
 	 * If the payment is successful then it will update the payment status and also available slots
@@ -482,7 +482,7 @@ const DetailInfo = () => {
 				});
 				setPrevTotalSlots(0);
 				setFlag(false);
-				console.log(response);
+			
 			}
 
 			const start_time = dateTimeToString(startTime);
@@ -580,7 +580,7 @@ const DetailInfo = () => {
 					spot_id: spot_information.spot_id,
 					total_slots: totalSlots,
 				});
-				console.log(response);
+				
 				setTotalSlots(0);
 				setStartTime(null);
 				setEndTime(null);

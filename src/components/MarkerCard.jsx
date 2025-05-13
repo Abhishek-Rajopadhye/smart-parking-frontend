@@ -57,7 +57,7 @@ const MarkerSkeleton = () => (
 );
 
 const MarkerCard = ({ markers, origin, latlng }) => {
-	// const navigate = useNavigate();
+	 const navigate = useNavigate();
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
 	const [sortedMarkers, setSortedMarkers] = useState([]);
 	const [sortType, setSortType] = useState("price");
