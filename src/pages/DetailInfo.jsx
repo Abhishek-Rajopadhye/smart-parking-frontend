@@ -762,7 +762,7 @@ const DetailInfo = () => {
 
 				<Typography variant="body1" mb={1}>
 					<AccessTimeIcon fontSize="small" sx={{ mr: 1 }} />
-					{selectedMarker.open_time} - {selectedMarker.close_time}
+					{selectedMarker.open_time.slice(0,5)} - {selectedMarker.close_time.slice(0,5)}
 				</Typography>
 
 				<Box mb={1} sx={{ display: "flex" }}>
