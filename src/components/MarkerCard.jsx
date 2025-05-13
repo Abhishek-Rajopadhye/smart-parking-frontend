@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 /**
  * MarkerCard Component
  *
@@ -11,7 +13,7 @@
  * @param {Object} props.latlng - Latitude and longitude coordinates (Note: Currently not used)
  */
 
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	Box,
 	Typography,
@@ -59,7 +61,7 @@ const MarkerSkeleton = () => (
 );
 
 const MarkerCard = ({ markers, origin, latlng }) => {
-	 const navigate = useNavigate();
+	const navigate = useNavigate();
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
 	const [sortedMarkers, setSortedMarkers] = useState([]);
 	const [sortType, setSortType] = useState("price");
