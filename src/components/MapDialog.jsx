@@ -33,6 +33,18 @@ const dialogStyle = {
 	zIndex: 9999,
 };
 
+/**
+ * MapDialog component for selecting and saving a geographic location using Google Maps.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {boolean} props.open - Whether the dialog is open.
+ * @param {Function} props.onClose - Function to close the dialog.
+ * @param {Function} props.onSave - Function to save the selected location (lat/lng).
+ * @param {string} [props.spotAddress] - Optional address to center the map and marker.
+ * @param {Function} [props.setLocation] - Optional function to update location state in parent.
+ * @returns {JSX.Element} The MapDialog component.
+ */
 function MapDialog({ open, onClose, onSave, spotAddress, setLocation }) {
 	const [markerPosition, setMarkerPosition] = useState(null);
 	const [mapCenter, setMapCenter] = useState(defaultCenter);

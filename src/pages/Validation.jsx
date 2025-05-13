@@ -87,7 +87,14 @@ const Validation = () => {
 
 	// Fetch documents on component load
 	useEffect(() => {
-		if (user.email == "abhishek.rajopadhye21@gmail.com" || user.email == "arjunghule6583@gmail.com" || user.email == "kalepradeep2001@gmail.com") {
+		if (
+			user.email == "abhishek.rajopadhye21@gmail.com" ||
+			user.email == "arjunghule6583@gmail.com" ||
+			user.email == "saad.ahmed+101@bluepineapple.io" ||
+			user.email == "ahm33.saad@gmail.com" ||
+			user.email == "saadah0143@gmail.com" ||
+			user.email == "kalepradeep2001@gmail.com"
+		) {
 			fetchDocuments();
 		}
 	}, [user.email]);

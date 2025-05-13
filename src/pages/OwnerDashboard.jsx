@@ -8,8 +8,17 @@ import { CurrencyRupee } from "@mui/icons-material";
 import { BACKEND_URL } from "../const";
 import { SpotBookingView } from "../components/SpotBookingView";
 import { ConfirmationDialogBox } from "../components/ConfirmationDialogBox";
-import { useNavigate } from "react-router-dom"; // <-- Add this import
+import { useNavigate } from "react-router-dom";
 
+/**
+ * OwnerDashboard component for parking spot owners to manage their profile, spots, and bookings.
+ *
+ * @component
+ * @returns {JSX.Element} The OwnerDashboard component.
+ *
+ * Displays the owner's profile information, a list of their parking spots with options to edit, delete, or view bookings,
+ * and allows editing the profile via a modal. Also provides dialogs for booking history, editing spots, and confirming deletions.
+ */
 const OwnerDashboard = () => {
 	const navigate = useNavigate();
 	const { user, setUser } = useContext(AuthContext);
@@ -138,7 +147,6 @@ const OwnerDashboard = () => {
 		handleDeleteSpot(selectedSpotID);
 	};
 
-
 	return (
 		<Box sx={{ flexGrow: 1, mt: 10, px: 2 }}>
 			<Grid container spacing={3}>
@@ -194,7 +202,7 @@ const OwnerDashboard = () => {
 										sx={{
 											mb: 2,
 											borderRadius: 2,
-											bgcolor:"lightgray"
+											bgcolor: "lightgray",
 										}}
 									>
 										<CardContent>
@@ -202,7 +210,7 @@ const OwnerDashboard = () => {
 												{spot.title}
 											</Typography>
 											<Typography variant="body2" color="text.secondary">
-											📍	{spot.address}
+												📍 {spot.address}
 											</Typography>
 											<Typography variant="body2" color="text.secondary">
 												<strong>Open Time:</strong> {spot.openTime}
@@ -217,8 +225,7 @@ const OwnerDashboard = () => {
 												<strong>Open Days:</strong> {spot.openDays}
 											</Typography>
 											<Typography variant="body2" fontWeight="bold" color="success.main" sx={{ mt: 1 }}>
-												Earnings: ₹  
-												 {" " +spot.totalEarning}
+												Earnings: ₹{" " + spot.totalEarning}
 											</Typography>
 										</CardContent>
 										<CardActions sx={{ justifyContent: "space-between" }}>

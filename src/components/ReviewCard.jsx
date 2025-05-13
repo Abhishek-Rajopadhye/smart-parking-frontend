@@ -124,7 +124,6 @@ const ReviewCard = ({ review, handleDeleteReview, handleEditReview }) => {
 						))}
 				</Box>
 				<CardActions>
-					{user.id === review.spot_owner_id && <Button>Reply</Button>}
 					{user.id === review.user_id && (
 						<>
 							<Button
