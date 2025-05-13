@@ -15,6 +15,16 @@ import Validation from "./pages/Validation";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import { AddSpotOwner } from "./pages/AddSpotOwner";
 
+/**
+ * AppLayout component that provides the main application layout, navigation bar, and route management.
+ *
+ * @component
+ * @returns {JSX.Element} The AppLayout component.
+ *
+ * Handles authentication context, navigation, and conditional rendering of routes and navigation elements
+ * based on user type (e.g., Owner or regular user). Displays the top AppBar with navigation buttons,
+ * user avatar, and menu. Renders the appropriate page content based on the current route.
+ */
 const AppLayout = () => {
 	const authContextValue = useContext(AuthContext);
 	const { user, logout } = authContextValue;
@@ -176,6 +186,8 @@ const AppLayout = () => {
 							{user.email == "abhishek.rajopadhye21@gmail.com" ||
 							user.email == "arjunghule6583@gmail.com" ||
 							user.email == "saad.ahmed+101@bluepineapple.io" ||
+							user.email == "ahm33.saad@gmail.com" ||
+							user.email == "saadah0143@gmail.com" ||
 							user.email == "kalepradeep2001@gmail.com" ? (
 								<MenuItem
 									key={"/validation"}

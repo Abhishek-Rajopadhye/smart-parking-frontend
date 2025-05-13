@@ -245,7 +245,9 @@ const AddSpotOwner = ({ onCancel }) => {
 		formData.append("latitude", location.lat);
 		formData.append("longitude", location.lng);
 		formData.append("available_days", openDay.join(","));
-		formData.append("image", images);
+		images.forEach((img) => {
+			formData.append("image", img);
+		});
 		formData.append("verification_status", 0);
 
 		try {

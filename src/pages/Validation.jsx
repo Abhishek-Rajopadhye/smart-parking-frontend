@@ -40,7 +40,6 @@ const Validation = () => {
 	const fetchDocuments = async () => {
 		const response = await axios.get(`${BACKEND_URL}/spots/documents/`);
 		if (response.status === 200) {
-			
 			setRequests(response.data);
 		}
 	};
@@ -61,7 +60,7 @@ const Validation = () => {
 	 * @param {number} id - The ID of the document to deny.
 	 */
 	const handleDeny = async (id) => {
-		const response = await axios.put(`${BACKEND_URL}/verify-list/request/reject/${id}`);
+		await axios.put(`${BACKEND_URL}/verify-list/request/reject/${id}`);
 		fetchDocuments();
 	};
 
@@ -87,7 +86,14 @@ const Validation = () => {
 
 	// Fetch documents on component load
 	useEffect(() => {
-		if (user.email == "abhishek.rajopadhye21@gmail.com" || user.email == "arjunghule6583@gmail.com" || user.email == "kalepradeep2001@gmail.com") {
+		if (
+			user.email == "abhishek.rajopadhye21@gmail.com" ||
+			user.email == "arjunghule6583@gmail.com" ||
+			user.email == "saad.ahmed+101@bluepineapple.io" ||
+			user.email == "ahm33.saad@gmail.com" ||
+			user.email == "saadah0143@gmail.com" ||
+			user.email == "kalepradeep2001@gmail.com"
+		) {
 			fetchDocuments();
 		}
 	}, [user.email]);
