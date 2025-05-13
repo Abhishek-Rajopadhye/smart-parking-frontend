@@ -40,7 +40,6 @@ const Validation = () => {
 	const fetchDocuments = async () => {
 		const response = await axios.get(`${BACKEND_URL}/spots/documents/`);
 		if (response.status === 200) {
-			
 			setRequests(response.data);
 		}
 	};
@@ -61,7 +60,7 @@ const Validation = () => {
 	 * @param {number} id - The ID of the document to deny.
 	 */
 	const handleDeny = async (id) => {
-		const response = await axios.put(`${BACKEND_URL}/verify-list/request/reject/${id}`);
+		await axios.put(`${BACKEND_URL}/verify-list/request/reject/${id}`);
 		fetchDocuments();
 	};
 
