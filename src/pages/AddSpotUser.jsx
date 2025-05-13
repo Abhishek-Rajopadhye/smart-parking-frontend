@@ -36,7 +36,6 @@ const AddSpotUser = () => {
 	});
 	const [activeStep, setActiveStep] = useState(0);
 	// Spot Details States
-	const navigate = useNavigate();
 	const [spotAdded, setSpotAdded] = useState(false);
 	const [mapOpen, setMapOpen] = useState(false);
 	const [location, setLocation] = useState(null);
@@ -246,10 +245,13 @@ const AddSpotUser = () => {
 		formData.append("latitude", location.lat);
 		formData.append("longitude", location.lng);
 		formData.append("available_days", openDay.join(","));
-		formData.append("image", images);
+		images.forEach((img) => {
+			formData.append("image", img);
+		});
 		formData.append("verification_status", 3);
 
 		try {
+			console.log(images.length);
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot`, formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",

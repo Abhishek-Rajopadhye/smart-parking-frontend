@@ -104,8 +104,14 @@ const DetailInfo = () => {
 		// Fetch images
 		const getImages = async () => {
 			try {
+				let t = "https://th.bing.com/th/id/OIP.X-mAKATEeDHrHYqWCf6xSwHaEK?w=305&h=180&c=7&r=0&o=5&cb=iwc2&dpr=1.3&pid=1.7"
 				const { data } = await axios.get(`${BACKEND_URL}/spotdetails/get-images/${selectedMarker.spot_id}`);
 				setSpotImages(data.images.map((b64) => `data:image/png;base64,${b64}`));
+				console.log("Spot Images", data.images);
+				console.log(spotImages.length);
+				if(data.images.length == 0){
+					setSpotImages([t]);
+				}
 			} catch (err) {
 				console.error("Image Error:", err);
 			}
