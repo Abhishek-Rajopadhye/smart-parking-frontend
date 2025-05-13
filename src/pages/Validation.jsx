@@ -40,7 +40,7 @@ const Validation = () => {
 	const fetchDocuments = async () => {
 		const response = await axios.get(`${BACKEND_URL}/spots/documents/`);
 		if (response.status === 200) {
-			//console.log(response.data);
+			
 			setRequests(response.data);
 		}
 	};
@@ -62,7 +62,6 @@ const Validation = () => {
 	 */
 	const handleDeny = async (id) => {
 		const response = await axios.put(`${BACKEND_URL}/verify-list/request/reject/${id}`);
-		console.log(response.data);
 		fetchDocuments();
 	};
 

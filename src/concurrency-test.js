@@ -23,7 +23,6 @@ async function sendRequest(userIndex) {
       }
     });
     console.timeEnd(`User ${userIndex}`);
-    console.log(`User ${userIndex}  Status: ${response.status}`);
   } catch (error) {
     console.error(`User ${userIndex}  Error:`, error.message);
   }

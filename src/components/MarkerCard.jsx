@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 /**
  * MarkerCard Component
  *
@@ -11,7 +13,7 @@
  * @param {Object} props.latlng - Latitude and longitude coordinates (Note: Currently not used)
  */
 
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	Box,
 	Typography,
@@ -24,9 +26,11 @@ import {
 	FormControl,
 	InputLabel,
 	Skeleton,
+	Chip,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Booking } from "../pages/Booking";
+import { LocalParkingOutlined } from "@mui/icons-material";
 
 /**
  * Skeleton placeholder for marker card during loading
@@ -57,7 +61,7 @@ const MarkerSkeleton = () => (
 );
 
 const MarkerCard = ({ markers, origin, latlng }) => {
-	// const navigate = useNavigate();
+	const navigate = useNavigate();
 	const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
 	const [sortedMarkers, setSortedMarkers] = useState([]);
 	const [sortType, setSortType] = useState("price");
@@ -270,6 +274,27 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 						key={spot.spot_id}
 						sx={{ display: "flex", mb: 2, borderRadius: 3, flexDirection: "column", boxShadow: 2 }}
 					>
+						{spot.status===3 && (
+							<Chip
+							icon={<LocalParkingOutlined fontSize="small" />}
+							label="Community Spot"
+							size="small"
+							color="sucess"
+							variant="filled"
+							sx={{ m: 1.5 }}
+						/>
+						)}
+
+						{spot.status===1 && (
+							<Chip
+							icon={<LocalParkingOutlined fontSize="small" />}
+							label="Reservation Spot"
+							size="small"
+							color="info"
+							variant="filled"
+							sx={{ m: 1.5 }}
+						/>
+						)}
 						<CardContent sx={{ pb: 1 }}>
 							<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
 								<Typography
@@ -300,6 +325,7 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 								🚶 {spot.walkingDuration} ({spot.walkingDistance})
 							</Typography>
 						</CardContent>
+						
 
 						<CardActions>
 							<Button
@@ -313,7 +339,8 @@ const MarkerCard = ({ markers, origin, latlng }) => {
 							</Button>
 
 							{/* Only show booking button if not owned by current user */}
-							{spot.owner_id != "google-oauth2|1234567890" && (
+							{spot.status !=3 && (
+								
 								<Button
 									size="small"
 									color="success"

@@ -273,7 +273,7 @@ const PastBooking = ({ user, isMobile }) => {
 											fullWidth
 											onClick={() => handleBooking(booking)}
 										>
-											Book Now
+											Book Again
 										</Button>
 									</CardActions>
 								</Card>
