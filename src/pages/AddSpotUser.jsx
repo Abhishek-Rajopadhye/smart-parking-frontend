@@ -36,7 +36,7 @@ const AddSpotUser = () => {
 	});
 	const [activeStep, setActiveStep] = useState(0);
 	// Spot Details States
-	const navigate = useNavigate();
+	
 	const [spotAdded, setSpotAdded] = useState(false);
 	const [mapOpen, setMapOpen] = useState(false);
 	const [location, setLocation] = useState(null);
