@@ -88,9 +88,7 @@ const NearByParkings = ({ origin, onSpotSelect, isMobile, selectedDate, startTim
 
 							//filter by today day
 							const filteredByDay = updated.filter((marker) => {
-								const daysStr = marker.available_days[0]; // get the first string
-								const availableDaysArray = daysStr.split(",").map((d) => d.trim());
-								return availableDaysArray.includes(todayDay);
+								return marker.available_days.includes(todayDay);
 							});
 
 							// filter by current time
