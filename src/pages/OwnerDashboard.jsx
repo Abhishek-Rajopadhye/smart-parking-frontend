@@ -184,7 +184,7 @@ const OwnerDashboard = () => {
 								variant="contained"
 								color="primary"
 								onClick={handleOpenModal}
-								sx={{ ml: 10, minWidth: 120 }}
+								sx={{ ml: 2 }}
 							>
 								Edit Profile
 							</Button>
