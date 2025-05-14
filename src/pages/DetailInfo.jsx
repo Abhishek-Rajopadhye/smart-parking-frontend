@@ -75,18 +75,16 @@ const DetailInfo = () => {
 
 	// Fetch spot details
 	useEffect(() => {
-		fetch(`${BACKEND_URL}/spotdetails/get-spot/${spot_id}`)
-			.then((res) => res.json())
-			.then((data) => {
-				
-				if (typeof data.available_days === "string") {
-					data.available_days = data.available_days.split(",").map((d) => d.trim());
-				}
+		const fetchSpotDetails = async () => {
+			const response = await axios.get(`${BACKEND_URL}/spotdetails/get-spot/${spot_id}`);
+			if (response.status === 200) {
+				const data = response.data;
 				setSelectedMarker(data);
-			})
-			.catch((err) => console.error("Error:", err));
+			}
+		};
+		fetchSpotDetails();
 	}, [spot_id]);
-	
+
 	// Fetch reviews and owner details
 	useEffect(() => {
 		const fetchDetails = async () => {
@@ -104,12 +102,13 @@ const DetailInfo = () => {
 		// Fetch images
 		const getImages = async () => {
 			try {
-				let t = "https://th.bing.com/th/id/OIP.X-mAKATEeDHrHYqWCf6xSwHaEK?w=305&h=180&c=7&r=0&o=5&cb=iwc2&dpr=1.3&pid=1.7"
+				let t =
+					"https://th.bing.com/th/id/OIP.X-mAKATEeDHrHYqWCf6xSwHaEK?w=305&h=180&c=7&r=0&o=5&cb=iwc2&dpr=1.3&pid=1.7";
 				const { data } = await axios.get(`${BACKEND_URL}/spotdetails/get-images/${selectedMarker.spot_id}`);
 				setSpotImages(data.images.map((b64) => `data:image/png;base64,${b64}`));
 				console.log("Spot Images", data.images);
 				console.log(spotImages.length);
-				if(data.images.length == 0){
+				if (data.images.length == 0) {
 					setSpotImages([t]);
 				}
 			} catch (err) {
@@ -121,7 +120,7 @@ const DetailInfo = () => {
 			fetchDetails();
 			getImages();
 		}
-	}, [selectedMarker.spot_id, selectedMarker.owner_id]);
+	}, [selectedMarker.spot_id, selectedMarker.owner_id, spotImages.length]);
 
 	const averageRating =
 		reviews.length > 0 ? reviews.reduce((acc, review) => acc + review.rating_score, 0) / reviews.length : 0;
@@ -185,10 +184,8 @@ const DetailInfo = () => {
 			return false;
 		}
 		if (msg == "start") {
-			
 			setIndianStartTime(isoString);
 		} else {
-			
 			setIndianEndTime(isoString);
 		}
 		return true;
@@ -431,7 +428,7 @@ const DetailInfo = () => {
 		const end = new Date(endTime);
 		const diffInMs = end - start;
 		let hours = Math.ceil(diffInMs / (1000 * 60 * 60));
-	
+
 		if (hours <= 0) {
 			showSnackbar("Enter a valid time.", "error");
 			return false;
@@ -440,8 +437,7 @@ const DetailInfo = () => {
 		setTotalAmount(hours * spot_information.hourly_rate * totalSlots);
 		//setOpenDialog(true);
 		const t = `You have to pay ₹${hours * spot_information.hourly_rate * totalSlots}. Are you sure you want to proceed?`;
-		
-		
+
 		setMsg(t);
 		toggleDialogBooking();
 		return true;
@@ -465,7 +461,6 @@ const DetailInfo = () => {
 		});
 	};
 
-	
 	/**
 	 * Function is used to process the payment and create the order
 	 * If the payment is successful then it will update the payment status and also available slots
@@ -482,13 +477,12 @@ const DetailInfo = () => {
 				return;
 			}
 			if (flag) {
-				const response = await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
+				await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
 					spot_id: spot_information.spot_id,
 					total_slots: prevTotalSlots,
 				});
 				setPrevTotalSlots(0);
 				setFlag(false);
-			
 			}
 
 			const start_time = dateTimeToString(startTime);
@@ -582,11 +576,11 @@ const DetailInfo = () => {
 	const handleCancel = async () => {
 		try {
 			if (flag && totalSlots != 0 && razorpay_order_id != null) {
-				const response = await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
+				await axios.put(`${BACKEND_URL}/bookings/update-booking-slots`, {
 					spot_id: spot_information.spot_id,
 					total_slots: totalSlots,
 				});
-				
+
 				setTotalSlots(0);
 				setStartTime(null);
 				setEndTime(null);
@@ -768,7 +762,11 @@ const DetailInfo = () => {
 
 				<Typography variant="body1" mb={1}>
 					<AccessTimeIcon fontSize="small" sx={{ mr: 1 }} />
-					{selectedMarker.open_time.slice(0,5)} - {selectedMarker.close_time.slice(0,5)}
+					{selectedMarker.open_time && selectedMarker.close_time
+						? `${selectedMarker.open_time.replace("AM", "").replace("PM", "")} - ${selectedMarker.close_time
+								.replace("AM", "")
+								.replace("PM", "")}`
+						: "Time not available"}
 				</Typography>
 
 				<Box mb={1} sx={{ display: "flex" }}>

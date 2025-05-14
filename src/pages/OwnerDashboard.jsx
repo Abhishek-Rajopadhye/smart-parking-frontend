@@ -71,7 +71,6 @@ const OwnerDashboard = () => {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 			if (response.status === 200) {
-				console.log(response.data.openDays);
 				setUserSpots(response.data);
 				const total = response.data.reduce((acc, spot) => acc + (spot.totalEarning || 0), 0);
 				setTotalEarning(total);
@@ -123,7 +122,6 @@ const OwnerDashboard = () => {
 		try {
 			const response = await axios.put(`${BACKEND_URL}/spots/${spotId}`, updated_spot);
 			if (response.status === 200) {
-				// Optionally update the spot in userSpots
 				fetchUserSpots();
 			}
 		} catch (error) {
