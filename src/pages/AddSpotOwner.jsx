@@ -32,7 +32,7 @@ const steps = ["Instruction", "Spot Details", "Upload Documents", "Instructions 
 
 const AddSpotOwner = ({ onCancel }) => {
 	const [activeStep, setActiveStep] = useState(0);
-
+	let open_days = [];
 	// Spot Details States
 	const [errorHandling, setErrorHandling] = useState({
 		spotTitle: false,
@@ -244,7 +244,7 @@ const AddSpotOwner = ({ onCancel }) => {
 		formData.append("available_slots", totalSlots);
 		formData.append("latitude", location.lat);
 		formData.append("longitude", location.lng);
-		formData.append("available_days", openDay.join(","));
+		formData.append("available_days", open_days;
 		images.forEach((img) => {
 			formData.append("image", img);
 		});
@@ -383,8 +383,6 @@ const AddSpotOwner = ({ onCancel }) => {
 				});
 				return;
 			}
-
-			let open_days = [];
 
 			for (const day in openDays) {
 				if (openDays[day]) {
