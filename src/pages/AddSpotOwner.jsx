@@ -285,6 +285,7 @@ const AddSpotOwner = ({ onCancel }) => {
 					setImages([]);
 					setImagePreviews([]);
 					setLocation(null);
+					open_days = [];
 					setOpenDays({
 						Sun: false,
 						Mon: false,
@@ -309,6 +310,7 @@ const AddSpotOwner = ({ onCancel }) => {
 			}
 		} catch (error) {
 			console.error(error);
+			open_days = [];
 			setOpenSnackbar({
 				open: true,
 				message: "Error uploading data",
