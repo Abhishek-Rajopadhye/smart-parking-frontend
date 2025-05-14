@@ -275,11 +275,11 @@ const OwnerDashboard = () => {
 												{" "}
 												<Typography variant="body2" color="text.secondary" sx={{ mr: 2 }}>
 													<strong>Total Slots:</strong>{" "}
-													{userSpots.reduce((acc, spot) => acc + (spot.total_slots || 0), 0)}
+													{spot.total_slots}
 												</Typography>
 												<Typography variant="body2" color="text.secondary">
 													<strong>Available Slots:</strong>{" "}
-													{userSpots.reduce((acc, spot) => acc + (spot.available_slots || 0), 0)}
+													{spot.available_slots}
 												</Typography>
 											</Box>
 
