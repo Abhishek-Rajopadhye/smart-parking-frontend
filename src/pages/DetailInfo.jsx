@@ -808,7 +808,7 @@ const DetailInfo = () => {
 										minDateTime={new Date()}
 										shouldDisableDate={(date) => {
 											const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-											return !spot_information.available_days[0].split(",").includes(days[date.getDay()]);
+											return !spot_information.available_days.includes(days[date.getDay()]);
 										}}
 										slotProps={{
 											textField: {
@@ -827,7 +827,7 @@ const DetailInfo = () => {
 										minDateTime={new Date()}
 										shouldDisableDate={(date) => {
 											const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-											return !spot_information.available_days[0].split(",").includes(days[date.getDay()]);
+											return !spot_information.available_days.includes(days[date.getDay()]);
 										}}
 										slotProps={{
 											textField: {
