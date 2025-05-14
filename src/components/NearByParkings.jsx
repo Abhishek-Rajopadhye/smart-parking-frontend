@@ -100,7 +100,12 @@ const NearByParkings = ({ origin, onSpotSelect, isMobile, selectedDate, startTim
 
 							//	filter by distance
 							const sorted = filteredNearbyMarker.sort((a, b) => a.rawDistance - b.rawDistance).slice(0, 4);
-							setSortedMarkers(sorted);
+
+							const validMarker = sorted.filter((marker) => {
+								const distanceKm = parseFloat(marker.walkingDistance); // Extracts the number part
+								return distanceKm < 1;
+							});
+							setSortedMarkers(validMarker);
 						} else {
 							console.error("Distance Matrix failed:", status, response);
 						}

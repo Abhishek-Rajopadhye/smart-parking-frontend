@@ -327,6 +327,18 @@ const MapSidebar = ({ mapRef, setNewMarker, setSelectedMarker, markers, setFilte
 		setNewMarker(null);
 	};
 
+	
+	const hasInitializedRef = useRef(false);
+
+	useEffect(() => {
+		if (!hasInitializedRef.current && tempLocation && tempStartTime && tempEndTime && tempDate) {
+			handleUpdateSearch();
+			hasInitializedRef.current = true;
+		}
+	}, [tempLocation, tempStartTime, tempEndTime, tempDate]);
+	
+	
+
 	/**
 	 * Updates the search filters and triggers a map update.
 	 */
