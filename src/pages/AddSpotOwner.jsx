@@ -29,10 +29,10 @@ import MapDialog from "../components/MapDialog";
 import { AuthContext } from "../context/AuthContext";
 import { BACKEND_URL } from "../const";
 const steps = ["Instruction", "Spot Details", "Upload Documents", "Instructions & Submit"];
-
+let open_days = [];
 const AddSpotOwner = ({ onCancel }) => {
 	const [activeStep, setActiveStep] = useState(0);
-	let open_days = [];
+	
 	// Spot Details States
 	const [errorHandling, setErrorHandling] = useState({
 		spotTitle: false,
