@@ -1,5 +1,18 @@
 import { useContext, useEffect, useState } from "react";
-import { Box, Typography, Paper, Grid, Avatar, Button, Card, CardContent, CardActions, Divider, Dialog } from "@mui/material";
+import {
+	Box,
+	Typography,
+	Paper,
+	Grid,
+	Avatar,
+	Button,
+	Card,
+	CardContent,
+	CardActions,
+	Divider,
+	Dialog,
+	Chip,
+} from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import { EditProfileModal } from "../components/EditProfileModal";
 import { EditSpot } from "../components/EditSpot";
@@ -58,6 +71,7 @@ const OwnerDashboard = () => {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 			if (response.status === 200) {
+				console.log(response.data.openDays);
 				setUserSpots(response.data);
 				const total = response.data.reduce((acc, spot) => acc + (spot.totalEarning || 0), 0);
 				setTotalEarning(total);
@@ -166,18 +180,25 @@ const OwnerDashboard = () => {
 									Ph.No: {user.phone || "Not provided"}
 								</Typography>
 							</Box>
+							<Button
+								variant="contained"
+								color="primary"
+								onClick={handleOpenModal}
+								sx={{ ml: 10, minWidth: 120 }}
+							>
+								Edit Profile
+							</Button>
 						</Box>
 						<Divider sx={{ my: 2 }} />
-						<Typography variant="subtitle1" fontWeight="bold">
-							Total Earnings:
-						</Typography>
-						<Typography variant="h6" color="success.main" display="flex" alignItems="center">
-							<CurrencyRupee fontSize="small" />
-							{totalEarning}
-						</Typography>
-						<Button variant="contained" color="primary" onClick={handleOpenModal} sx={{ mt: 2 }} fullWidth>
-							Edit Profile
-						</Button>
+						<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+							<Typography variant="subtitle1" fontWeight="bold">
+								Total Earnings:
+							</Typography>
+							<Typography variant="h6" color="success.main" display="flex" alignItems="center">
+								<CurrencyRupee fontSize="small" />
+								{totalEarning}
+							</Typography>
+						</Box>
 					</Paper>
 				</Grid>
 
@@ -188,7 +209,7 @@ const OwnerDashboard = () => {
 							<Typography variant="h6" fontWeight="bold" sx={{ flexGrow: 1 }}>
 								My Spots
 							</Typography>
-							<Button variant="text" color="secondary" onClick={() => navigate("/addspotowner")} sx={{ ml: 1 }}>
+							<Button variant="outlined" color="success" onClick={() => navigate("/addspotowner")} sx={{ ml: 1 }}>
 								Add Spot
 							</Button>
 						</Box>
@@ -206,27 +227,73 @@ const OwnerDashboard = () => {
 										}}
 									>
 										<CardContent>
-											<Typography variant="subtitle1" fontWeight="bold">
-												{spot.title}
-											</Typography>
+											<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+												<Typography variant="subtitle1" fontWeight="bold" sx={{ flexGrow: 1 }}>
+													{spot.title}
+												</Typography>
+												{/* Spot Status Chip */}
+												{spot.status === 1 && (
+													<Chip label="Verified" color="success" size="small" sx={{ ml: 1 }} />
+												)}
+												{spot.status === 0 && (
+													<Chip
+														label="Pending"
+														color="warning"
+														size="small"
+														sx={{ ml: 1, bgcolor: "#ffb300", color: "#fff" }}
+													/>
+												)}
+												{spot.status === -1 && (
+													<Chip label="Rejected" color="error" size="small" sx={{ ml: 1 }} />
+												)}
+											</Box>
 											<Typography variant="body2" color="text.secondary">
 												📍 {spot.address}
 											</Typography>
 											<Typography variant="body2" color="text.secondary">
-												<strong>Open Time:</strong> {spot.openTime}
+												<strong>Open Days:</strong>{" "}
+												{Array.isArray(spot.openDays)
+													? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+															.filter((day) => spot.openDays.includes(day))
+															.join(", ")
+													: typeof spot.openDays === "string"
+													? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+															.filter((day) => spot.openDays.includes(day))
+															.join(", ")
+													: ""}
 											</Typography>
+											<Box sx={{ display: "flex", alignItems: "center" }}>
+												<Typography variant="body2" color="text.secondary" sx={{ mr: 2 }}>
+													<strong>Open Time:</strong> {spot.openTime}
+												</Typography>
+												<Typography variant="body2" color="text.secondary">
+													<strong>Close Time:</strong> {spot.closeTime}
+												</Typography>
+											</Box>
+
+											<Box sx={{ display: "flex", alignItems: "center" }}>
+												{" "}
+												<Typography variant="body2" color="text.secondary" sx={{ mr: 2 }}>
+													<strong>Total Slots:</strong>{" "}
+													{userSpots.reduce((acc, spot) => acc + (spot.total_slots || 0), 0)}
+												</Typography>
+												<Typography variant="body2" color="text.secondary">
+													<strong>Available Slots:</strong>{" "}
+													{userSpots.reduce((acc, spot) => acc + (spot.available_slots || 0), 0)}
+												</Typography>
+											</Box>
+
 											<Typography variant="body2" color="text.secondary">
-												<strong>Close Time:</strong> {spot.closeTime}
+												<strong>Rate:</strong> ₹{spot.hourlyRate}/hr
 											</Typography>
-											<Typography variant="body2" color="text.secondary">
-												<strong>Hourly Rate: ₹</strong> {spot.hourlyRate}
-											</Typography>
-											<Typography variant="body2" color="text.secondary">
-												<strong>Open Days:</strong> {spot.openDays}
-											</Typography>
-											<Typography variant="body2" fontWeight="bold" color="success.main" sx={{ mt: 1 }}>
-												Earnings: ₹{" " + spot.totalEarning}
-											</Typography>
+											<Box sx={{ display: "flex", alignItems: "center" }}>
+												<Typography variant="body2" fontWeight="bold" sx={{ mr: 1 }}>
+													Earnings:
+												</Typography>
+												<Typography variant="body2" color="success.main">
+													₹{" " + spot.totalEarning}
+												</Typography>
+											</Box>
 										</CardContent>
 										<CardActions sx={{ justifyContent: "space-between" }}>
 											<Button variant="outlined" color="primary" onClick={() => onEditSpotClick(spot.id)}>
