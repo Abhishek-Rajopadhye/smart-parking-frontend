@@ -25,6 +25,7 @@ const steps = ["Instruction", "Spot Details", "Instructions & Submit"];
 
 const AddSpotUser = () => {
 	const navigate = useNavigate();
+	let open_days = [];
 	const [errorHandling, setErrorHandling] = useState({
 		spotTitle: false,
 		address: false,
@@ -245,7 +246,7 @@ const AddSpotUser = () => {
 		formData.append("available_slots", totalSlots);
 		formData.append("latitude", location.lat);
 		formData.append("longitude", location.lng);
-		formData.append("available_days", openDay.join(","));
+		formData.append("available_days", open_days;
 		images.forEach((img) => {
 			formData.append("image", img);
 		});
@@ -357,8 +358,6 @@ const AddSpotUser = () => {
 					});
 					return;
 				}
-
-				let open_days = [];
 
 				for (const day in openDays) {
 					if (openDays[day]) {
