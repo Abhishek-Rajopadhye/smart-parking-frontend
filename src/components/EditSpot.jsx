@@ -104,13 +104,8 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 				open_time: formatTime(spot.openTime),
 				close_time: formatTime(spot.closeTime),
 				hourly_rate: spot.hourlyRate,
-				total_slots: spot.totalSlots,
-				available_days: spot.openDays
-					? spot.openDays
-							.split(",")
-							.map((d) => d.trim())
-							.filter((d, i, arr) => d && arr.indexOf(d) === i)
-					: [],
+				total_slots: spot.total_slots,
+				available_days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].filter((day) => spot.openDays.includes(day)),
 				image: images,
 			});
 		};
