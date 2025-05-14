@@ -105,7 +105,12 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 				close_time: formatTime(spot.closeTime),
 				hourly_rate: spot.hourlyRate,
 				total_slots: spot.totalSlots,
-				available_days: spot.openDays.split(",") || [],
+				available_days: spot.openDays
+					? spot.openDays
+							.split(",")
+							.map((d) => d.trim())
+							.filter((d, i, arr) => d && arr.indexOf(d) === i)
+					: [],
 				image: images,
 			});
 		};
@@ -226,8 +231,8 @@ const EditSpot = ({ open, handleClose, spot, handleSave, spot_id }) => {
 	const toggleDay = (day) => {
 		setFormData((prevData) => {
 			const updatedDays = prevData.available_days.includes(day)
-				? prevData.available_days.filter((d) => d !== day) // Remove the day
-				: [...prevData.available_days, day]; // Add the day
+				? prevData.available_days.filter((d) => d !== day)
+				: [...new Set([...prevData.available_days, day])];
 			return { ...prevData, available_days: updatedDays };
 		});
 	};
