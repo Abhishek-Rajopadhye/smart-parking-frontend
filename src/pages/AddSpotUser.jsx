@@ -246,7 +246,7 @@ const AddSpotUser = () => {
 		formData.append("available_slots", totalSlots);
 		formData.append("latitude", location.lat);
 		formData.append("longitude", location.lng);
-		formData.append("available_days", open_days;
+		formData.append("available_days", open_days);
 		images.forEach((img) => {
 			formData.append("image", img);
 		});
