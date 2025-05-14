@@ -180,18 +180,25 @@ const OwnerDashboard = () => {
 									Ph.No: {user.phone || "Not provided"}
 								</Typography>
 							</Box>
+							<Button
+								variant="contained"
+								color="primary"
+								onClick={handleOpenModal}
+								sx={{ ml: 10, minWidth: 120 }}
+							>
+								Edit Profile
+							</Button>
 						</Box>
 						<Divider sx={{ my: 2 }} />
-						<Typography variant="subtitle1" fontWeight="bold">
-							Total Earnings:
-						</Typography>
-						<Typography variant="h6" color="success.main" display="flex" alignItems="center">
-							<CurrencyRupee fontSize="small" />
-							{totalEarning}
-						</Typography>
-						<Button variant="contained" color="primary" onClick={handleOpenModal} sx={{ mt: 2 }} fullWidth>
-							Edit Profile
-						</Button>
+						<Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+							<Typography variant="subtitle1" fontWeight="bold">
+								Total Earnings:
+							</Typography>
+							<Typography variant="h6" color="success.main" display="flex" alignItems="center">
+								<CurrencyRupee fontSize="small" />
+								{totalEarning}
+							</Typography>
+						</Box>
 					</Paper>
 				</Grid>
 
@@ -275,12 +282,18 @@ const OwnerDashboard = () => {
 													{userSpots.reduce((acc, spot) => acc + (spot.available_slots || 0), 0)}
 												</Typography>
 											</Box>
+
 											<Typography variant="body2" color="text.secondary">
-												<strong>Hourly Rate: ₹</strong> {spot.hourlyRate}
+												<strong>Rate:</strong> ₹{spot.hourlyRate}/hr
 											</Typography>
-											<Typography variant="body2" fontWeight="bold" color="success.main" sx={{ mt: 1 }}>
-												Earnings: ₹{" " + spot.totalEarning}
-											</Typography>
+											<Box sx={{ display: "flex", alignItems: "center" }}>
+												<Typography variant="body2" fontWeight="bold" sx={{ mr: 1 }}>
+													Earnings:
+												</Typography>
+												<Typography variant="body2" color="success.main">
+													₹{" " + spot.totalEarning}
+												</Typography>
+											</Box>
 										</CardContent>
 										<CardActions sx={{ justifyContent: "space-between" }}>
 											<Button variant="outlined" color="primary" onClick={() => onEditSpotClick(spot.id)}>
