@@ -57,9 +57,7 @@ const AppLayout = () => {
 
 		if (filters.available_days && filters.available_days.length > 0) {
 			result = result.filter((marker) => {
-				const daysStr = marker.available_days[0]; // get the first string
-				const availableDaysArray = daysStr.split(",").map((d) => d.trim()); // now ['Mon', 'Tue', 'Wed', 'Thu']
-				return filters.available_days.every((day) => availableDaysArray.includes(day));
+				return filters.available_days.every((day) => marker.available_days.includes(day));
 			});
 		}
 
