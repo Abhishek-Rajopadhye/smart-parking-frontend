@@ -22,10 +22,9 @@ import "../style/spot.css";
 import MapDialog from "../components/MapDialog";
 import { BACKEND_URL } from "../const";
 const steps = ["Instruction", "Spot Details", "Instructions & Submit"];
-
+let open_days = [];
 const AddSpotUser = () => {
 	const navigate = useNavigate();
-	let open_days = [];
 	const [errorHandling, setErrorHandling] = useState({
 		spotTitle: false,
 		address: false,
